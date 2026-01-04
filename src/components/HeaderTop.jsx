@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { CloudSun, Activity, Phone, MapPin, X, Navigation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNews } from '../context/NewsContext';
 
 const HeaderTop = () => {
+    const { pharmacies, pharmacyDuty } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
-    const today = new Date().toLocaleDateString('es-ES', {
+
+    const todayISO = new Date().toISOString().split('T')[0];
+    const dutyToday = pharmacyDuty.find(d => d.date === todayISO);
+    const pharmacyOnDuty = pharmacies.find(p => p.id === dutyToday?.pharmacyId);
+
+    const todayDisplay = new Date().toLocaleDateString('es-ES', {
         weekday: 'long',
         day: 'numeric',
         month: 'short',
@@ -15,7 +22,7 @@ const HeaderTop = () => {
         <div className="bg-[#0f172a] text-white text-[11px] font-medium border-b border-white/5 relative z-[100]">
             <div className="px-4 lg:px-8 max-w-[1440px] mx-auto h-10 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <span className="opacity-60 hidden sm:inline capitalize font-light">{today}</span>
+                    <span className="opacity-60 hidden sm:inline capitalize font-light">{todayDisplay}</span>
                     <div className="flex items-center gap-2 px-2 py-0.5 bg-white/5 rounded-full border border-white/5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                         <span className="tracking-wide text-[10px]">EDICIÓN DIGITAL <span className="text-primary font-black">#42.891</span></span>
@@ -67,7 +74,9 @@ const HeaderTop = () => {
                                                     <div className="size-8 rounded-xl bg-white/20 flex items-center justify-center">
                                                         <Activity size={18} className="text-white" />
                                                     </div>
-                                                    <h4 className="font-black text-sm uppercase tracking-wider text-white">Farmacia Central</h4>
+                                                    <h4 className="font-black text-sm uppercase tracking-wider text-white">
+                                                        {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar Farmacia'}
+                                                    </h4>
                                                 </div>
                                                 <button
                                                     onClick={() => setShowPharmacyInfo(false)}
@@ -86,7 +95,7 @@ const HeaderTop = () => {
                                                 </div>
                                                 <div className="flex flex-col gap-1">
                                                     <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Ubicación</span>
-                                                    <p className="text-sm font-bold text-slate-200">Av. Rivadavia 4500, Almagro, CABA</p>
+                                                    <p className="text-sm font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.address : 'Dirección no disponible'}</p>
                                                 </div>
                                             </div>
 
@@ -96,7 +105,7 @@ const HeaderTop = () => {
                                                 </div>
                                                 <div className="flex flex-col gap-1">
                                                     <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Contacto Directo</span>
-                                                    <p className="text-sm font-bold text-slate-200">+54 11 4981-1234</p>
+                                                    <p className="text-sm font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.phone : 'Cargando información'}</p>
                                                 </div>
                                             </div>
 

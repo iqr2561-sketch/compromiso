@@ -44,7 +44,8 @@ export const NewsProvider = ({ children }) => {
             category: "Deportes",
             date: "Hace 20 min",
             image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800",
-            isHero: false
+            isHero: false,
+            isFlash: true
         },
         {
             id: 5,
@@ -53,7 +54,8 @@ export const NewsProvider = ({ children }) => {
             category: "Actualidad",
             date: "Hace 2 horas",
             image: "https://images.unsplash.com/photo-1454165833767-027ffea10c3b?auto=format&fit=crop&q=80&w=800",
-            isHero: false
+            isHero: false,
+            isFlash: true
         },
         {
             id: 6,
@@ -62,7 +64,8 @@ export const NewsProvider = ({ children }) => {
             category: "Viral",
             date: "Ayer",
             image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=800",
-            isHero: false
+            isHero: false,
+            isFlash: true
         }
     ]);
 
