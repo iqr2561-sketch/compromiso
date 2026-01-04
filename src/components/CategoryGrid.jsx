@@ -14,14 +14,17 @@ const CategoryGrid = () => {
     ];
 
     const getNewsByCategory = (cat) => {
-        return news.filter(n => n.category.toLowerCase().includes(cat.toLowerCase()) && !n.isHero).slice(0, 3);
+        // Relaxed filter: if no specific secondary news exist, show any news from category
+        const filtered = news.filter(n => n.category.toLowerCase().includes(cat.toLowerCase()));
+        const nonHeroes = filtered.filter(n => !n.isHero);
+        return nonHeroes.length > 0 ? nonHeroes.slice(0, 3) : filtered.slice(0, 3);
     };
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {categories.map((cat) => (
                 <section key={cat.name} className="flex flex-col gap-6" id={cat.name.toLowerCase()}>
-                    <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-4">
+                    <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 pb-4">
                         <div className="flex items-center gap-3">
                             <span className={`w-2.5 h-8 rounded-full ${cat.color} shadow-lg shadow-black/10`}></span>
                             <h2 className="text-2xl font-black tracking-tighter uppercase italic">
@@ -40,7 +43,7 @@ const CategoryGrid = () => {
                     <div className="flex flex-col gap-4">
                         {getNewsByCategory(cat.name).map((item) => (
                             <Link
-                                to={`/categoria/${cat.name}`}
+                                to={`/noticia/${item.id}`}
                                 key={item.id}
                                 className="bg-white dark:bg-surface-darker rounded-[2rem] p-5 flex gap-5 hover:shadow-2xl transition-all border border-gray-100 dark:border-white/5 cursor-pointer group shadow-lg shadow-black/5"
                             >
@@ -51,7 +54,7 @@ const CategoryGrid = () => {
                                     <div className="w-full h-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
                                 </div>
                                 <div className="flex flex-col justify-between py-1">
-                                    <h3 className="font-bold text-md leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                                    <h3 className="font-bold text-md leading-snug group-hover:text-primary transition-colors line-clamp-2 uppercase italic tracking-tighter">
                                         {item.title}
                                     </h3>
                                     <div className="flex items-center gap-3">
