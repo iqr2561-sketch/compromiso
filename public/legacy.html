@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Diario Digital - Noticias Destacadas</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "primary-dark": "#1a4bb0",
+                        "accent-pink": "#f4256a",
+                        "accent-green": "#00d68f",
+                        "accent-purple": "#8c4fff",
+                        "accent-orange": "#ff6b00",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2234",
+                        "surface-darker": "#151b2b",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "sans": ["Lexend", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-x-hidden selection:bg-primary selection:text-white">
+<header class="sticky top-0 z-50 w-full flex flex-col shadow-xl shadow-black/5">
+<div class="bg-slate-900 text-white text-[11px] font-medium border-b border-white/5 relative z-50">
+<div class="px-4 lg:px-8 max-w-[1440px] mx-auto h-9 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="opacity-60 hidden sm:inline">Martes, 24 Oct 2024</span>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="tracking-wide">EDICIÓN DIGITAL <span class="text-primary font-bold">#42.891</span></span>
+</div>
+</div>
+<div class="flex items-center gap-4 md:gap-6">
+<div class="flex items-center gap-2 group cursor-help" title="Pronóstico Local">
+<span class="material-symbols-outlined text-yellow-400 text-base animate-float">partly_cloudy_day</span>
+<div class="flex items-center gap-1 leading-none">
+<span class="font-bold text-sm">22°C</span>
+<span class="text-[10px] opacity-60 uppercase hidden md:inline">Buenos Aires</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pl-4 md:pl-6 border-l border-white/10">
+<div class="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-3 py-0.5 rounded-full border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">local_pharmacy</span>
+<span class="font-bold tracking-wide text-[10px] md:text-[11px]">FARMACIA: <span class="text-white">CENTRAL</span></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full backdrop-blur-md bg-white/80 dark:bg-[#111318]/90 border-b border-gray-200 dark:border-[#282e39]">
+<div class="px-4 lg:px-8 max-w-[1440px] mx-auto h-16 md:h-20 flex items-center justify-between gap-4">
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center size-9 md:size-10 rounded-xl bg-gradient-to-br from-primary to-accent-purple shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-white" style="font-size: 24px;">newspaper</span>
+</div>
+<h1 class="hidden sm:block text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                    DIARIO<span class="text-primary">.DIGITAL</span>
+</h1>
+</div>
+<nav class="hidden lg:flex items-center gap-1 bg-surface-dark/5 dark:bg-white/5 p-1.5 rounded-full border border-gray-200 dark:border-white/10">
+<a class="px-4 py-2 text-sm font-bold rounded-full bg-white dark:bg-surface-dark shadow-sm text-primary transition-all" href="#">Inicio</a>
+<a class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white transition-colors" href="#">Actualidad</a>
+<a class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-accent-purple dark:hover:text-white transition-colors" href="#">Tech</a>
+<a class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-accent-orange dark:hover:text-white transition-colors" href="#">Deportes</a>
+<a class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-accent-pink dark:hover:text-white transition-colors" href="#">Viral</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="hidden sm:flex h-10 px-5 items-center justify-center rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors shadow-lg shadow-primary/10">
+                    Suscríbete
+                </button>
+<button class="lg:hidden flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="w-full max-w-[1440px] mx-auto px-4 lg:px-8 py-6 flex flex-col gap-10">
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[600px]">
+<div class="lg:col-span-8 relative rounded-3xl overflow-hidden group cursor-pointer shadow-2xl shadow-black/20">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Futuristic artificial intelligence robot hand touching human hand" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnuu2Xpgv5Futna5wsiG4MD3rWxoO3yh_YCtmVrlNNhzVtN1bS8qch6UowSmyMNAmzb7vFTAXLZXYpOlKjr5XfqxwjFkrS8pyoEZKIv8ZXl3KYQnAkU5uWmRUvLyZ8OqfN9ncMQSUpgw8p577SHMyHcJBuVBHm-Uc2TSI0oFI7GHL2aBETSr6MJsyfpvHU9DTjQOCYYND_4QcPKXGULTlwoGI4AzXWExDnTRW-VSHpIAKmFj_m1ubvGuEL32spsU7j_CzilA04ZVY');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col items-start gap-4">
+<span class="px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/20 backdrop-blur-sm">
+                        Tech &amp; Futuro
+                    </span>
+<h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
+                        La IA Generativa: ¿El fin de la creatividad humana?
+                    </h1>
+<p class="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
+                        Expertos debaten sobre el impacto de las nuevas herramientas de inteligencia artificial en el arte, la música y el desarrollo de software.
+                    </p>
+<div class="flex items-center gap-3 mt-2">
+<div class="size-8 rounded-full bg-gray-600 bg-cover bg-center border-2 border-white" data-alt="Author portrait" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAm0OVMVJAclDo2Q4ho4uYyc_-08ABBkbhIzd75DVaGmFcZCVy1kiFG1a-GcavsNJWRkzwOJ60M1Ei9CWvpx6cl06JEl45qLD9ScQDJLTa3cJnweka3jnFfUgO8Ek7Zt4ILEFhpCzGLHgCrK3pT4lQw0QGfrr8c_AWC4nnwFK_UmNGyYkX0CCimqcYdwkkxp7NtgJLJVcZUEGXQnQ0wNmMd47BZk7H8ZF7Df4JosQgrVZTSBI7PPjzQ3F0AzkMlnSfSBUG_fE4WDBc');"></div>
+<span class="text-sm text-white font-medium">Por Ana García</span>
+<span class="text-xs text-gray-400">• 5 min de lectura</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 flex flex-col gap-4 h-full">
+<div class="flex-1 relative rounded-3xl overflow-hidden group cursor-pointer bg-surface-darker border border-white/5">
+<div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
+<div class="flex justify-between items-start">
+<span class="text-accent-pink text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-accent-pink animate-pulse"></span>
+                                En Vivo
+                            </span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-xl md:text-2xl font-bold text-white group-hover:text-accent-pink transition-colors leading-tight">
+                                Final del Mundial de E-Sports en Seúl
+                            </h3>
+<span class="text-xs text-gray-400">Hace 2 horas</span>
+</div>
+</div>
+<div class="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center" data-alt="E-sports arena with glowing lights" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAMHsjuUPcTRwf8oph6J8BFHyPjvPwUgHOz6WHUh8RAWUXJAZ1hy79EI1SQTPpT5ow9arCGjquIbG0TqEV6_4wxBSOMKhHGIYmWuNfIFbiholxDXP5R9W1vL_i1DepaTf7zEYRiYXNolBpS7KoJq9-RA6CPTKrMz37q9guRUM8a_SpvkMoE_YMBJ33jFWhP2JvLgJJgcbmToLL_-9NBDrS4GocPXuj4ki-jWgmxLiqAW2gLL6KoFPmJEPhWTlLvQb9oW2JA6PdBxug');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+</div>
+<div class="flex-1 relative rounded-3xl overflow-hidden group cursor-pointer bg-surface-darker border border-white/5">
+<div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
+<div class="flex justify-between items-start">
+<span class="text-accent-green text-xs font-bold uppercase tracking-widest">Finanzas</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-xl md:text-2xl font-bold text-white group-hover:text-accent-green transition-colors leading-tight">
+                                Bitcoin rompe la barrera de los 100k
+                            </h3>
+<span class="text-xs text-gray-400">Mercados • Hace 45 min</span>
+</div>
+</div>
+<div class="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center" data-alt="Crypto chart on a screen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0GiaSn2mIluUfQSXVqhE-EJ9ZLHN6xbPVbBRSNnE00RTESO_t_OZtby38K5Blla4m2R8jf54Eps0gJQCCUY2LleZa0gIXhkHMJCcouMZHkXMyr1AU9bYB0RiZPo-PVzq9k8uih9pKHf4pJLw1DtNuea-ZsWGRy77kDwg9mqTUwGJnivus5g3o96rUEH4_mVGO8XC7FgD816Mvw1UEfCbFYkXHR5g6IohIGl_Ich0vFGVsoQZes_2HMR14WRegAgiO57cIfyjZ7Ic');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-accent-pink animate-pulse">flash_on</span>
+<h2 class="text-lg font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Noticias Flash</h2>
+</div>
+<div class="flex gap-2">
+<button class="hidden md:flex items-center justify-center size-8 rounded-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 hover:border-primary dark:hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="hidden md:flex items-center justify-center size-8 rounded-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 hover:border-primary dark:hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 hide-scroll snap-x">
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-primary transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Space rocket launch" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCE7oOxfAunIvFC7tD0AuVuOhJ-xQEJX53AQM0P96hwlvElfjAnMUDGrlamMeTp_hhHZDh8yv_FnOC1uNxKkpnaskZh_fTJDTltazEiTUIcdZvWTWHUisdZEAeXOLAZ_5QjUjrypjzPbQxd2mkTn94KHif3rNZqsY8xSc_ELNxXLwVxXvRsdbTH-Te5lmXCdhJtzoC3RhZDswBPi2hPcq1T1HeKgclQgtYQdhkx5B9ywBB7hhKhZe0D4h1uIFSDT1y4kWbAB-5BigE');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-primary transition-colors">SpaceX Misión Lunar</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-accent-green transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Climate change protest" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMfQl6QZAJlNjvG8Ejxq-P3Px1soR739599AQgOzRT-Get5yomsOWjF3rAF4HEGnPE5IaJFzxSgx3t56wlm7gtJefXnf3jslsEOyJmiSNHgjCqzANHfaTV-_1ILK7efPdToCRrdUegJ37fPlBMobWFYzTSvq8jDDne541wB50dJyZqboLeVQFp4aX098xWIGpi7BFi0txxbVhRnB7anrSc4dvwE7z-kk3SPV_eI8rWn0rdjjQhMNe7Osjino325sNOQl7VC0990Xk');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-accent-green transition-colors">Cumbre Climática</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-accent-purple transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Virtual reality headset" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBo1aUeZ5KuvewMDzsCDP-kKYpxo6RVRZ9m9no5M11R76ZoGj4RSwQ9zNTg57p54GYTNbORsUC2sROVA4n1jAAn7zxIrRJdYHB5YRTXC5nfzNEdQiQQG8sn0d6iJCvLDg8BmnAIbQgZE_4oGX8ALpOEZ6QhyYZ1dlaSbiRAK7D37_fuYYmiScaKsP90GtmKjSF0bzspfPc1ccwHVB3PZBsbhtF0oaPYDuiuTwrtPK3Pd3zX8rDKht9ksZK7iJT0GrdbETH9JTUzWRI');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-accent-purple transition-colors">Metaverse Update</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-accent-pink transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Concert crowd" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHxFDBs0TQqMF7Rly5NmHT0DCNRoQ5Ssz0xU1DG3B8kuU0-ciJS68mqYn4svqICbsIJOdX9VR4W_CIjEmd2ou5r0q5NEH4PxyZqg7UEdaJJUuUomFQhaWAwaEhQBHEChrLyQKgZPJFjCj3ASUh7wyC4j74w19bZ9Zgoa4crbtu8Oo38k5601MCg_3uOEHElOGRNkwuXF0m1BHf8dT8VxkuS2SXkkNJDgX5nFe9SGtsR3OvuQ4E9vhnhZ5vzKfDMfXlxYFXdztgXec');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-accent-pink transition-colors">Gira Mundial 2024</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-blue-400 transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Modern electric car" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_jxsVfXhewd02INgV7mMKwCAZDwhh-T5grxEjC378bHViYnrFHSGE4HM5iHvhADlZ3XrXyY_3NwKblWR5liPcszpe1vBMvu4lwiShU8UVLWgKMZVbWCVspYzjl2YeesrVXHja7uIaOTu46SqsPS2ca-u3sxbCutDEgUNCThHAUV47KpF7qTYTRKIHgqQ194LRuv01VqnyFX8uEFzP467oD83tndQN_Hs6v2YeOpcP9BTc1Bfqpdug_U7v45OcKeOs-PHIPMfxUBQ');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-blue-400 transition-colors">Autos Eléctricos</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden relative ring-2 ring-transparent group-hover:ring-accent-orange transition-all">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" data-alt="Basketball player dunking" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD55pnTFOmWv1FehW9lfbaIbKnUOr2lHdFVAPxfeg_vKiP1FIrxIKQx8TS34JirgWbABkbzy0r8VcG3xvS_9M7FyqhIINFeggbrYXSfbK__vMZrW4FcFu-2EcnisVZ-KmAU1B8u0RnfaUpGthrfdI3NnNw56vk4k7rlFkyzNtkeg06NleO5BDe_muoG7EZc1YlnBYbb-NI9AgbwRRQK3hZpHNtM3DlvtW04mW1612Ya4ubyw9FFadhFPccL0DfVpckWsMS7hF8SCjA');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+</div>
+<p class="text-xs font-semibold text-center leading-tight group-hover:text-accent-orange transition-colors">NBA Highlights</p>
+</div>
+<div class="snap-start shrink-0 w-28 md:w-36 flex items-center justify-center">
+<button class="flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-primary transition-colors">
+<div class="size-12 rounded-full border-2 border-current flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+<span class="text-xs font-bold uppercase">Ver más</span>
+</button>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+<section class="flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-3">
+<h2 class="text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2">
+<span class="w-2 h-6 md:h-8 rounded-full bg-primary"></span>
+                        Actualidad
+                    </h2>
+<a class="text-xs font-bold text-primary hover:underline" href="#">Ver todo</a>
+</div>
+<div class="flex flex-col gap-4">
+<article class="bg-white dark:bg-surface-dark rounded-2xl p-4 flex gap-4 hover:shadow-xl transition-shadow border border-transparent dark:border-white/5 cursor-pointer group">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-cover bg-center overflow-hidden" data-alt="Political debate stage" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCIu3z8TCJjKLQyyFeDv_m9f-pTVL-tCrbW60MCz1MOpqzXM7d37QKb7owFZdhjOJNiw4l_rQyvxgLGR3ugai4_leAYelDoNW4ztt1x9sFJ7qkDB3faEzTamJnkx9qCuF_s9TnkaJAE3ggZBCqVhxFkTBkAuhRzeAVhj_GU3CtO7XN9IwmYoA8ggiSwNlH-MnqtNi5YcNgrkLOOdYXYLUJkBf4t6q6-AQIXXJMrZn_uknloz0jeI6D-x_dPisVN-7EivroPU3RiR_w');"></div>
+<div class="flex flex-col justify-between py-1">
+<h3 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">Nuevas reformas educativas aprobadas hoy</h3>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>2h atrás</span>
+</div>
+</div>
+</article>
+<article class="bg-white dark:bg-surface-dark rounded-2xl p-4 flex gap-4 hover:shadow-xl transition-shadow border border-transparent dark:border-white/5 cursor-pointer group">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-cover bg-center overflow-hidden" data-alt="Traffic jam in city" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAv7m1tuyd71U5AqLCdjnRFYqvU-pJEICjdp7ybEgQ_eraGcWdpPWhL9f2NtdbBe1QXKkQ9JPGH4HfPhivhOJJZcqypnT-LvvlORlzCPv48mJaQ2hopav_Sz2gLUJB0IxayLmj0p3wok71KdF8MU2jJrTa5qehccTGBhpmIyRGNv_5sfS1EEDmgybuvGU1muvbOI-k_AX8CtG-ZP9OUI1rmN31GYnHn0rAh7TjTZRF12I9KwCHH03fKVLxFjt8nQjVxj3LPhVHcM5s');"></div>
+<div class="flex flex-col justify-between py-1">
+<h3 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">Caos vehicular en el centro tras protesta</h3>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>4h atrás</span>
+</div>
+</div>
+</article>
+<article class="bg-white dark:bg-surface-dark rounded-2xl p-4 flex gap-4 hover:shadow-xl transition-shadow border border-transparent dark:border-white/5 cursor-pointer group">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-cover bg-center overflow-hidden" data-alt="Doctor holding stethoscope" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB7MD4jwuZ-4bfjR97-orPqc8BFckrBFB8VitWUPWQ9d9bBOjYrERmVBQvV4bfiDvJTIfV2J0DvVrIrE-lg5Dsh9rc-AmtZ5sJHnK6bsbkD-NGYe9AY8IRIDdC_MaO78QYawC8bde5VAIOLYXVcvyqXc-KWB9nDA1kYX6UM_RE52K_fiF0yOcFhH7Z1vU72T3jevwStK9Nhw8mw-BjufN6ava2GOSrG0NaqPNMeWDiVxl8kf5Hxc5zsSxTdCrMd2kgZ0wGJK8MEOoE');"></div>
+<div class="flex flex-col justify-between py-1">
+<h3 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">Avance médico: Vacuna contra la gripe</h3>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>6h atrás</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<section class="flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-3">
+<h2 class="text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2">
+<span class="w-2 h-6 md:h-8 rounded-full bg-accent-purple"></span>
+                        Tech
+                    </h2>
+<a class="text-xs font-bold text-accent-purple hover:underline" href="#">Ver todo</a>
+</div>
+<article class="relative h-60 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Futuristic glowing smartphone" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-NL4hGpYN39_UM0PequZJsbZBeDCtfc8Tf2eAENj6ohOXpRZDnjexneH3rTSu_32n7cAawH7b3g9tlTePCGHUKP6PwV9q_9mpMKLPCi-i6bkLdv5QJJBeI0gzDebdbsJKW278L7MICNJRSWibX3VlcULLlXsBbSZNgNcC7Ye0veMnOrkWeHXOVhPADso-dMLCyPnadZ0NvGzunOD-UTTdk3idsq8_HhznPFRfEDdiuufkwaHnbazp5KV3jee8bwqbodi5aLHwd5U');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-accent-purple/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-5 w-full">
+<span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">Review</span>
+<h3 class="text-lg font-bold text-white leading-tight">iPhone 16 Pro: ¿Vale la pena?</h3>
+</div>
+</article>
+<div class="flex flex-col gap-4">
+<article class="flex items-center gap-3 group cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-darker flex items-center justify-center text-accent-purple border border-white/5">
+<span class="material-symbols-outlined text-xl">rocket_launch</span>
+</div>
+<div class="flex-1 border-b border-gray-200 dark:border-white/5 pb-2 group-hover:border-accent-purple/50 transition-colors">
+<h4 class="font-bold text-xs dark:text-gray-200 group-hover:text-accent-purple transition-colors line-clamp-1">SpaceX lanza 50 satélites</h4>
+<span class="text-[10px] text-slate-500">Ciencia • 30 min</span>
+</div>
+</article>
+<article class="flex items-center gap-3 group cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-darker flex items-center justify-center text-accent-purple border border-white/5">
+<span class="material-symbols-outlined text-xl">terminal</span>
+</div>
+<div class="flex-1 border-b border-gray-200 dark:border-white/5 pb-2 group-hover:border-accent-purple/50 transition-colors">
+<h4 class="font-bold text-xs dark:text-gray-200 group-hover:text-accent-purple transition-colors line-clamp-1">Python 4.0: Novedades</h4>
+<span class="text-[10px] text-slate-500">Dev • 1h</span>
+</div>
+</article>
+</div>
+</section>
+<section class="flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-3">
+<h2 class="text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2">
+<span class="w-2 h-6 md:h-8 rounded-full bg-accent-orange"></span>
+            Deportes
+        </h2>
+<a class="text-xs font-bold text-accent-orange hover:underline" href="#">Ver todo</a>
+</div>
+<article class="relative h-60 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Basketball player dunking" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD55pnTFOmWv1FehW9lfbaIbKnUOr2lHdFVAPxfeg_vKiP1FIrxIKQx8TS34JirgWbABkbzy0r8VcG3xvS_9M7FyqhIINFeggbrYXSfbK__vMZrW4FcFu-2EcnisVZ-KmAU1B8u0RnfaUpGthrfdI3NnNw56vk4k7rlFkyzNtkeg06NleO5BDe_muoG7EZc1YlnBYbb-NI9AgbwRRQK3hZpHNtM3DlvtW04mW1612Ya4ubyw9FFadhFPccL0DfVpckWsMS7hF8SCjA');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-accent-orange/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-5 w-full">
+<span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">NBA</span>
+<h3 class="text-lg font-bold text-white leading-tight">Lakers ganan en tiempo extra</h3>
+</div>
+</article>
+<div class="flex flex-col gap-4">
+<article class="flex items-center gap-3 group cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-darker flex items-center justify-center text-accent-orange border border-white/5">
+<span class="material-symbols-outlined text-xl">sports_soccer</span>
+</div>
+<div class="flex-1 border-b border-gray-200 dark:border-white/5 pb-2 group-hover:border-accent-orange/50 transition-colors">
+<h4 class="font-bold text-xs dark:text-gray-200 group-hover:text-accent-orange transition-colors line-clamp-1">Messi vuelve a la selección</h4>
+<span class="text-[10px] text-slate-500">Fútbol • 15 min</span>
+</div>
+</article>
+<article class="flex items-center gap-3 group cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-darker flex items-center justify-center text-accent-orange border border-white/5">
+<span class="material-symbols-outlined text-xl">sports_tennis</span>
+</div>
+<div class="flex-1 border-b border-gray-200 dark:border-white/5 pb-2 group-hover:border-accent-orange/50 transition-colors">
+<h4 class="font-bold text-xs dark:text-gray-200 group-hover:text-accent-orange transition-colors line-clamp-1">Alcaraz avanza a la final</h4>
+<span class="text-[10px] text-slate-500">Tenis • 2h</span>
+</div>
+</article>
+</div>
+</section>
+<section class="flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-3">
+<h2 class="text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2">
+<span class="w-2 h-6 md:h-8 rounded-full bg-accent-pink"></span>
+                        Viral
+                    </h2>
+<a class="text-xs font-bold text-accent-pink hover:underline" href="#">Ver todo</a>
+</div>
+<div class="grid grid-cols-2 gap-3 h-full">
+<article class="relative h-full min-h-[240px] rounded-2xl overflow-hidden group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Person dancing in bright clothes" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWEQzWt7w7O3JC4BR-YMsLDaScQksowfNfNgpqQ1eZ5V06UZCc2TrihOUe8Y-U6kVSN-Ccahli_1_Uvps-foPr2WlOWsiSCauRgBJNzfqstZUsmmknZxEhad3s4utCdFdfa8uZPN9_Vx6yjUJ-sNWtbkKXZB_wyHeHhE6EkxDrVSRNnERPBBKmnAZ62O-vscmiBlm5UqMZs3bDZ3vyimemE4YTh90lwM8I0XikSxwOLrZkqNK0iPHnt70slsKjTKH_HLuK274y7N8');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-0 p-3">
+<div class="size-6 rounded-full bg-white/20 backdrop-blur flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-white text-xs">play_arrow</span>
+</div>
+<h3 class="text-xs font-bold text-white leading-snug">El baile que rompe TikTok</h3>
+</div>
+</article>
+<article class="relative h-full min-h-[240px] rounded-2xl overflow-hidden group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Funny cat with sunglasses" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwvX0COKceNhsYfN-GVVbadO3hQDU47xXW5c_phjN-IldxDwEdBqIupsMy0D2olwCY-XxH9SFfbll7DxxaWCQV7M6p5Kv8Vuv5y7S5ocau5aiYPuL3TI0qJ8JQ7kPw-Z4Lhkxr9_rC5JHt5uDrKUfNhiogwQcgQibrguLQsOZN5zVqBiWxWlVZpwP84dS_87VkLu_DpN-UzpHokFLBpkX-bwWNWxMDiuEIPhNJ0as_JSUVQXdGOqDmumCBZSSV5UA2DL-Z6UE2_dI');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-0 p-3">
+<span class="text-accent-pink text-[9px] font-bold">#Trending</span>
+<h3 class="text-xs font-bold text-white leading-snug mt-1">Los memes más divertidos</h3>
+</div>
+</article>
+</div>
+</section>
+</div>
+<section class="relative w-full rounded-3xl overflow-hidden bg-gradient-to-r from-primary-dark to-slate-900 px-6 py-12 md:p-16 text-center shadow-2xl">
+<div class="absolute top-0 left-0 w-64 h-64 bg-primary rounded-full blur-[100px] opacity-30"></div>
+<div class="absolute bottom-0 right-0 w-64 h-64 bg-accent-purple rounded-full blur-[100px] opacity-30"></div>
+<div class="relative z-10 max-w-2xl mx-auto flex flex-col items-center gap-6">
+<div class="size-16 rounded-2xl bg-white/10 backdrop-blur-lg flex items-center justify-center border border-white/20 shadow-lg mb-2">
+<span class="material-symbols-outlined text-white text-4xl">mail</span>
+</div>
+<h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">
+                     No te pierdas lo importante.
+                 </h2>
+<p class="text-lg text-slate-300">
+                     Recibe un resumen diario de las noticias que realmente importan, directo a tu bandeja de entrada. Sin spam, solo contenido curado.
+                 </p>
+<form class="flex flex-col sm:flex-row gap-3 w-full max-w-md mt-4">
+<input class="flex-1 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-slate-400 focus:ring-2 focus:ring-accent-green focus:border-transparent px-5 py-3 outline-none backdrop-blur-sm transition-all" placeholder="tu@email.com" type="email"/>
+<button class="px-8 py-3 bg-white text-primary font-bold rounded-xl hover:bg-slate-100 transition-colors shadow-lg hover:shadow-xl hover:scale-105 transform duration-200" type="button">
+                         Suscribirme
+                     </button>
+</form>
+<p class="text-xs text-slate-400 mt-2">Únete a más de 50,000 lectores informados.</p>
+</div>
+</section>
+<footer class="border-t border-gray-200 dark:border-white/10 pt-12 pb-8">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
+<div class="col-span-2 lg:col-span-2 flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">newspaper</span>
+<h2 class="text-xl font-black text-slate-900 dark:text-white">DIARIO.DIGITAL</h2>
+</div>
+<p class="text-slate-500 text-sm max-w-xs">
+                        Periodismo moderno para la generación digital. Rápido, veraz y visualmente impactante.
+                    </p>
+<div class="flex gap-4 mt-2">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a> 
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">photo_camera</span></a> 
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">smart_display</span></a> 
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-slate-900 dark:text-white">Secciones</h4>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Actualidad</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Tecnología</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Deportes</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Opinión</a>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-slate-900 dark:text-white">Compañía</h4>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Nosotros</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Carreras</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Publicidad</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Contacto</a>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-slate-900 dark:text-white">Legal</h4>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Privacidad</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Términos</a>
+<a class="text-sm text-slate-500 hover:text-primary transition-colors" href="#">Cookies</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 gap-4">
+<p class="text-xs text-slate-500">© 2024 Diario Digital Inc. Todos los derechos reservados.</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-xs text-slate-500 font-medium">Sistemas Operativos</span>
+</div>
+</div>
+</footer>
+</main>
+</body></html>
