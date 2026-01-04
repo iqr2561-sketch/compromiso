@@ -7,10 +7,15 @@ import { Link } from 'react-router-dom';
 const HeroSection = () => {
     const { news, scores } = useNews();
     const [currentIndex, setCurrentIndex] = useState(0);
-    const heroNewsList = news.filter(n => n.isHero || n.category.includes('Tech'));
-    const sidebarNews = news.filter(n => !n.isHero && !n.isFlash && !n.category.includes('Tech')).slice(0, 2);
+
+    // Improved logic: Heroes are the ones specifically marked as such
+    const heroNewsList = news.filter(n => n.isHero).slice(0, 5);
+    // Sidebar news: any news that is NOT a hero, OR if there aren't enough, just the rest of the news
+    const otherNews = news.filter(n => !n.isHero && !n.isFlash);
+    const sidebarNews = otherNews.length >= 2 ? otherNews.slice(0, 2) : news.filter(n => !n.isFlash && !heroNewsList.slice(0, 1).includes(n)).slice(1, 3);
 
     useEffect(() => {
+        if (heroNewsList.length === 0) return;
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % heroNewsList.length);
         }, 5000);
@@ -24,7 +29,7 @@ const HeroSection = () => {
             {/* Main Hero Carousel */}
             <div className="lg:col-span-8 relative rounded-3xl overflow-hidden group shadow-2xl shadow-black/20 bg-slate-900 min-h-[400px] lg:h-[600px]">
                 <AnimatePresence mode="wait">
-                    {heroNews && (
+                    {heroNews ? (
                         <motion.div
                             key={heroNews.id}
                             initial={{ opacity: 0, scale: 1.1 }}
@@ -62,37 +67,42 @@ const HeroSection = () => {
                                 </div>
                             </Link>
                         </motion.div>
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-white/20 font-black uppercase tracking-widest">Cargando Portada...</div>
                     )}
                 </AnimatePresence>
 
-                <div className="absolute bottom-6 right-6 flex gap-2 z-20">
-                    <button
-                        onClick={() => setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length)}
-                        className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-                    <button
-                        onClick={() => setCurrentIndex((prev) => (prev + 1) % heroNewsList.length)}
-                        className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-                    >
-                        <ChevronRight size={20} />
-                    </button>
-                </div>
-
-                <div className="absolute top-6 right-6 flex gap-1 z-20">
-                    {heroNewsList.map((_, idx) => (
-                        <div
-                            key={idx}
-                            className={`h-1 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-primary' : 'w-2 bg-white/30'}`}
-                        ></div>
-                    ))}
-                </div>
+                {heroNewsList.length > 1 && (
+                    <>
+                        <div className="absolute bottom-6 right-6 flex gap-2 z-20">
+                            <button
+                                onClick={() => setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length)}
+                                className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                            <button
+                                onClick={() => setCurrentIndex((prev) => (prev + 1) % heroNewsList.length)}
+                                className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                        <div className="absolute top-6 right-6 flex gap-1 z-20">
+                            {heroNewsList.map((_, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`h-1 transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-primary' : 'w-2 bg-white/30'} rounded-full`}
+                                ></div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News */}
+                {/* Lateral News - RESTORED and Corrected */}
                 <div className="grid grid-cols-1 gap-4 flex-1">
                     {sidebarNews.map((item, idx) => (
                         <motion.div
@@ -100,28 +110,25 @@ const HeroSection = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative min-h-[180px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-darker border border-white/5"
+                            className="relative min-h-[160px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
-                                <div className="absolute inset-0 p-6 flex flex-col justify-between z-10 text-pretty">
-                                    <div className="flex justify-between items-start">
-                                        <span className={`${item.isLive ? 'text-accent-pink' : 'text-accent-green'} text-[10px] font-bold uppercase tracking-widest flex items-center gap-1`}>
-                                            {item.isLive && <span className="w-1.5 h-1.5 rounded-full bg-accent-pink animate-pulse"></span>}
-                                            {item.category}
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <h3 className={`text-lg md:text-xl font-bold text-white group-hover:text-primary transition-colors leading-tight`}>
-                                            {item.title}
-                                        </h3>
-                                        <span className="text-[10px] text-gray-400 font-medium">{item.date}</span>
-                                    </div>
-                                </div>
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
                                     style={{ backgroundImage: `url(${item.image})` }}
                                 ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                                <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-primary text-[9px] font-black uppercase tracking-widest mb-1">
+                                            {item.category}
+                                        </span>
+                                        <h3 className={`text-lg font-black text-white group-hover:text-primary transition-colors leading-tight uppercase italic tracking-tighter`}>
+                                            {item.title}
+                                        </h3>
+                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">{item.date}</span>
+                                    </div>
+                                </div>
                             </Link>
                         </motion.div>
                     ))}
@@ -131,38 +138,37 @@ const HeroSection = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-surface-dark flex flex-col rounded-3xl border border-white/5 overflow-hidden shadow-xl"
+                    transition={{ delay: 0.3 }}
+                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl"
                 >
-                    <div className="bg-slate-900/50 px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                    <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Trophy size={16} className="text-yellow-500" />
-                            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white">Resultados Locales</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Marcadores en vivo</h4>
                         </div>
-                        <span className="text-[9px] font-bold text-accent-green bg-accent-green/10 px-2 py-0.5 rounded-full animate-pulse">EN VIVO</span>
+                        <span className="flex items-center gap-1">
+                            <span className="size-1.5 rounded-full bg-accent-pink animate-pulse"></span>
+                            <span className="text-[8px] font-black text-accent-pink uppercase tracking-widest">LIVE</span>
+                        </span>
                     </div>
-                    <div className="p-2 flex flex-col gap-2">
-                        {scores.map(score => (
-                            <div key={score.id} className="flex items-center justify-between p-3 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors group cursor-pointer">
-                                <div className="flex items-center gap-3 flex-1">
-                                    <div className="flex flex-col items-center gap-1 flex-1">
-                                        <img src={score.homeLogo} alt={score.home} className="size-6 rounded-full group-hover:scale-110 transition-transform" />
-                                        <span className="text-[9px] font-bold text-slate-400 group-hover:text-white transition-colors">{score.home}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center justify-center px-4 py-1 bg-black/30 rounded-xl">
-                                        <span className="text-lg font-black text-white italic">{score.homeScore} - {score.awayScore}</span>
-                                        <span className="text-[8px] font-bold text-primary tracking-widest uppercase">{score.time}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-1 flex-1">
-                                        <img src={score.awayLogo} alt={score.away} className="size-6 rounded-full group-hover:scale-110 transition-transform" />
-                                        <span className="text-[9px] font-bold text-slate-400 group-hover:text-white transition-colors">{score.away}</span>
-                                    </div>
+                    <div className="p-3 flex flex-col gap-2">
+                        {scores.slice(0, 3).map(score => (
+                            <div key={score.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5 group transition-all hover:border-primary/20">
+                                <div className="flex items-center gap-2 flex-1">
+                                    <img src={score.homeLogo} alt="" className="size-5 rounded-full" />
+                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase truncate w-16">{score.home}</span>
+                                </div>
+                                <div className="flex flex-col items-center bg-white dark:bg-black/20 px-3 py-1 rounded-xl shadow-inner border border-gray-100 dark:border-white/5">
+                                    <span className="text-sm font-black text-slate-900 dark:text-white italic">{score.homeScore} - {score.awayScore}</span>
+                                    <span className="text-[7px] font-black text-primary uppercase">{score.time}</span>
+                                </div>
+                                <div className="flex items-center gap-2 flex-1 justify-end text-right">
+                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase truncate w-16">{score.away}</span>
+                                    <img src={score.awayLogo} alt="" className="size-5 rounded-full" />
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <Link to="/categoria/Deportes" className="w-full py-3 bg-white/5 hover:bg-white/10 text-[10px] font-bold text-slate-500 hover:text-white transition-all uppercase tracking-widest text-center">
-                        Ver todos los resultados
-                    </Link>
                 </motion.div>
             </div>
         </section>

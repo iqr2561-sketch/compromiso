@@ -67,15 +67,12 @@ const TickerBar = () => {
                     </AnimatePresence>
                 </div>
 
-                <div className="hidden md:ml-6 md:flex items-center gap-4 shrink-0 border-l border-gray-200 dark:border-white/10 pl-6">
-                    <div className="flex -space-x-2">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="size-6 rounded-full border-2 border-white dark:border-surface-dark bg-slate-300 overflow-hidden">
-                                <img src={`https://i.pravatar.cc/100?u=${i + 14}`} alt="user" />
-                            </div>
-                        ))}
+                {/* Removed avatars and people count for cleaner design */}
+                <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-gray-200 dark:border-white/10 pl-6 h-6">
+                    <div className="flex items-center gap-2">
+                        <div className="size-1.5 rounded-full bg-accent-green animate-pulse"></div>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Señal Digital Activa</span>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter cursor-pointer hover:text-primary transition-colors">+12k personas leyendo</span>
                 </div>
             </div>
         </div>
