@@ -24,10 +24,10 @@ const FlashNews = () => {
         <div className="flex flex-col gap-8 py-12">
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 pb-6">
                 <div className="flex items-center gap-4">
-                    <div className="size-12 rounded-xl bg-[#111] dark:bg-white flex items-center justify-center text-white dark:text-[#111] shadow-2xl">
+                    <div className="hidden md:flex size-12 rounded-xl bg-[#111] dark:bg-white items-center justify-center text-white dark:text-[#111] shadow-2xl">
                         <Zap size={24} className="fill-current" />
                     </div>
-                    <div>
+                    <div className="hidden md:block">
                         <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase italic">Flash Editorial</h2>
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-1">Primicias en tiempo real</p>
                     </div>

@@ -143,7 +143,7 @@ const HeaderTop = () => {
                                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                                        className="absolute top-10 left-0 w-80 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
+                                        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:absolute md:top-10 md:left-0 md:translate-x-0 md:translate-y-0 w-[90vw] max-w-[320px] md:w-80 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
                                     >
                                         <div className="bg-gradient-to-r from-yellow-600 to-orange-500 p-5 flex flex-col gap-1">
                                             <div className="flex justify-between items-center">
