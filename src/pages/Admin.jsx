@@ -30,6 +30,8 @@ const Admin = () => {
     const [imageSource, setImageSource] = useState('url');
     const [displayDate, setDisplayDate] = useState(new Date().toISOString().split('T')[0]);
     const [pharmacyMode, setPharmacyMode] = useState('list'); // 'list' or 'schedule'
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const [formData, setFormData] = useState({
         title: '', category: 'Actualidad', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
@@ -305,7 +307,104 @@ const Admin = () => {
                                         <div className="bg-[#11141b] p-6 rounded-2xl border border-primary/20 bg-primary/5">
                                             <h4 className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-4">Programador Automático</h4>
                                             <p className="text-[11px] text-slate-400 font-bold leading-relaxed mb-6">Selecciona una fecha y asigna el establecimiento que estará de turno ese día.</p>
-                                            <input type="date" className="w-full bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3 text-sm font-bold text-white mb-4 outline-none focus:border-primary" value={displayDate} onChange={e => setDisplayDate(e.target.value)} />
+
+                                            {/* Calendar Component */}
+                                            <div className="bg-[#0a0c10] border border-white/5 rounded-2xl p-4 mb-4">
+                                                {/* Calendar Header */}
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            const newMonth = new Date(currentMonth);
+                                                            newMonth.setMonth(newMonth.getMonth() - 1);
+                                                            setCurrentMonth(newMonth);
+                                                        }}
+                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                                    >
+                                                        <ChevronLeft size={16} className="text-slate-400" />
+                                                    </button>
+                                                    <span className="text-xs font-black uppercase text-white tracking-widest">
+                                                        {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => {
+                                                            const newMonth = new Date(currentMonth);
+                                                            newMonth.setMonth(newMonth.getMonth() + 1);
+                                                            setCurrentMonth(newMonth);
+                                                        }}
+                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                                    >
+                                                        <ChevronRight size={16} className="text-slate-400" />
+                                                    </button>
+                                                </div>
+
+                                                {/* Days of Week */}
+                                                <div className="grid grid-cols-7 gap-1 mb-2">
+                                                    {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
+                                                        <div key={i} className="text-center text-[9px] font-black text-slate-600 uppercase py-1">
+                                                            {day}
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Calendar Days */}
+                                                <div className="grid grid-cols-7 gap-1">
+                                                    {(() => {
+                                                        const year = currentMonth.getFullYear();
+                                                        const month = currentMonth.getMonth();
+                                                        const firstDay = new Date(year, month, 1).getDay();
+                                                        const daysInMonth = new Date(year, month + 1, 0).getDate();
+                                                        const days = [];
+
+                                                        // Empty cells for days before month starts
+                                                        for (let i = 0; i < firstDay; i++) {
+                                                            days.push(<div key={`empty-${i}`} className="aspect-square" />);
+                                                        }
+
+                                                        // Actual days
+                                                        for (let day = 1; day <= daysInMonth; day++) {
+                                                            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                                            const isSelected = dateStr === displayDate;
+                                                            const hasAssignment = pharmacyDuty.some(d => d.date === dateStr);
+                                                            const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+                                                            days.push(
+                                                                <button
+                                                                    key={day}
+                                                                    onClick={() => setDisplayDate(dateStr)}
+                                                                    className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
+                                                                            ? 'bg-primary text-white shadow-lg scale-110'
+                                                                            : hasAssignment
+                                                                                ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                                                                                : 'text-slate-400 hover:bg-white/5'
+                                                                        } ${isToday ? 'ring-1 ring-primary/50' : ''}`}
+                                                                >
+                                                                    {day}
+                                                                    {hasAssignment && !isSelected && (
+                                                                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400" />
+                                                                    )}
+                                                                </button>
+                                                            );
+                                                        }
+
+                                                        return days;
+                                                    })()}
+                                                </div>
+
+                                                {/* Selected Date Display */}
+                                                <div className="mt-4 pt-4 border-t border-white/5">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Fecha Seleccionada</span>
+                                                        <span className="text-xs font-black text-primary">
+                                                            {new Date(displayDate + 'T00:00:00').toLocaleDateString('es-ES', {
+                                                                day: '2-digit',
+                                                                month: 'short',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
                                                 {pharmacies.map(phi => (
                                                     <button
