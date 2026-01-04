@@ -6,6 +6,7 @@ import { useNews } from '../context/NewsContext';
 const HeaderTop = () => {
     const { pharmacies, pharmacyDuty } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
+    const [showWeatherInfo, setShowWeatherInfo] = useState(false);
 
     const todayISO = new Date().toISOString().split('T')[0];
     const dutyToday = pharmacyDuty.find(d => d.date === todayISO);
@@ -17,6 +18,16 @@ const HeaderTop = () => {
         month: 'short',
         year: 'numeric'
     });
+
+    const weatherData = {
+        city: 'Ciudad de Dolores',
+        current: { temp: 22, condition: 'Parcialmente nublado', humidity: 65, wind: 12 },
+        forecast: [
+            { day: 'Hoy', high: 24, low: 18, condition: 'Nublado' },
+            { day: 'Mañana', high: 26, low: 19, condition: 'Soleado' },
+            { day: 'Lunes', high: 23, low: 17, condition: 'Lluvia' }
+        ]
+    };
 
     return (
         <div className="bg-[#0f172a] text-white text-[11px] font-medium border-b border-white/5 relative z-[100]">
@@ -30,13 +41,18 @@ const HeaderTop = () => {
                 </div>
 
                 <div className="flex items-center gap-4 md:gap-8">
-                    <div className="flex items-center gap-2 group cursor-help transition-opacity hover:opacity-80" title="Pronóstico Local">
-                        <CloudSun size={14} className="text-yellow-400 animate-float" />
+                    <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setShowWeatherInfo(!showWeatherInfo)}
+                        className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 cursor-pointer transition-all relative"
+                    >
+                        <CloudSun size={14} className="text-yellow-400" />
                         <div className="flex items-center gap-1.5 leading-none">
-                            <span className="font-black text-[12px]">22°C</span>
-                            <span className="text-[8px] opacity-40 uppercase tracking-tighter hidden xs:inline">Buenos Aires</span>
+                            <span className="font-black text-[12px]">{weatherData.current.temp}°C</span>
+                            <span className="text-[8px] opacity-60 uppercase tracking-tighter hidden xs:inline">{weatherData.city}</span>
                         </div>
-                    </div>
+                    </motion.div>
 
                     <div className="relative flex items-center h-full pl-4 md:pl-8 border-l border-white/10">
                         <motion.div
@@ -106,6 +122,83 @@ const HeaderTop = () => {
                                                 <Navigation size={14} />
                                                 ¿CÓMO LLEGAR?
                                             </button>
+                                        </div>
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Weather Modal */}
+                        <AnimatePresence>
+                            {showWeatherInfo && (
+                                <>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        onClick={() => setShowWeatherInfo(false)}
+                                        className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-[2px]"
+                                    />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                                        className="absolute top-10 left-0 w-80 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
+                                    >
+                                        <div className="bg-gradient-to-r from-yellow-600 to-orange-500 p-5 flex flex-col gap-1">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <CloudSun size={16} className="text-white" />
+                                                    <h4 className="font-black text-xs uppercase tracking-wider text-white">
+                                                        {weatherData.city}
+                                                    </h4>
+                                                </div>
+                                                <button
+                                                    onClick={() => setShowWeatherInfo(false)}
+                                                    className="size-7 flex items-center justify-center rounded-lg bg-black/10 hover:bg-black/20 text-white transition-colors"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 space-y-4">
+                                            {/* Current Weather */}
+                                            <div className="bg-slate-800/50 rounded-2xl p-4 border border-white/5">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Ahora</span>
+                                                    <CloudSun size={24} className="text-yellow-400" />
+                                                </div>
+                                                <div className="text-3xl font-black text-white mb-1">{weatherData.current.temp}°C</div>
+                                                <div className="text-xs text-slate-400 font-bold mb-3">{weatherData.current.condition}</div>
+                                                <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-slate-500">💧</span>
+                                                        <span className="text-slate-400 font-bold">{weatherData.current.humidity}%</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-slate-500">💨</span>
+                                                        <span className="text-slate-400 font-bold">{weatherData.current.wind} km/h</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Forecast */}
+                                            <div>
+                                                <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-3 block">Pronóstico</span>
+                                                <div className="space-y-2">
+                                                    {weatherData.forecast.map((day, idx) => (
+                                                        <div key={idx} className="flex items-center justify-between p-3 bg-slate-800/30 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                                                            <span className="text-xs font-bold text-white w-20">{day.day}</span>
+                                                            <span className="text-[10px] text-slate-400 flex-1">{day.condition}</span>
+                                                            <div className="flex items-center gap-2 text-xs font-black">
+                                                                <span className="text-white">{day.high}°</span>
+                                                                <span className="text-slate-600">{day.low}°</span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 </>

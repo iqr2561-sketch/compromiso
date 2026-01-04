@@ -26,8 +26,8 @@ const Navbar = () => {
                         <div className="relative flex items-center justify-center size-9 md:size-10 rounded-xl bg-gradient-to-br from-primary to-accent-purple shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                             <Newspaper className="text-white" size={24} />
                         </div>
-                        <h1 className="hidden sm:block text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
-                            Compromiso<span className="text-primary">.Diario</span>
+                        <h1 className="text-base sm:text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                            Diario <span className="text-primary">Compromiso</span>
                         </h1>
                     </Link>
 
