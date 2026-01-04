@@ -36,6 +36,33 @@ export const NewsProvider = ({ children }) => {
             date: "Hoy",
             image: "https://images.unsplash.com/photo-1451187530221-87c062f43c21?auto=format&fit=crop&q=80&w=800",
             isHero: true
+        },
+        {
+            id: 4,
+            title: "Final de Temporada: Rivadavia se consagra campeón local",
+            content: "Con un gol agónico en el minuto 94, el equipo de la ciudad derrotó a Social en una final para el recuerdo.",
+            category: "Deportes",
+            date: "Hace 20 min",
+            image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800",
+            isHero: false
+        },
+        {
+            id: 5,
+            title: "Nuevas medidas económicas para el comercio local",
+            content: "El municipio anunció una reducción de tasas para pequeños emprendedores durante el primer trimestre.",
+            category: "Actualidad",
+            date: "Hace 2 horas",
+            image: "https://images.unsplash.com/photo-1454165833767-027ffea10c3b?auto=format&fit=crop&q=80&w=800",
+            isHero: false
+        },
+        {
+            id: 6,
+            title: "El video viral del perro que 'habla' es furor",
+            content: "Un video capturado en el centro de la ciudad muestra a una mascota interactuando de forma sorprendente.",
+            category: "Viral",
+            date: "Ayer",
+            image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=800",
+            isHero: false
         }
     ]);
 

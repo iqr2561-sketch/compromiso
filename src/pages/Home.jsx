@@ -6,9 +6,24 @@ import MultimediaSection from '../components/MultimediaSection';
 import Newsletter from '../components/Newsletter';
 import AdSection from '../components/AdSection';
 import { motion } from 'framer-motion';
-import { History, TrendingUp, Star, Bell } from 'lucide-react';
+import { History, TrendingUp, Star, Bell, ArrowUpRight } from 'lucide-react';
+import { useNews } from '../context/NewsContext';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
+    const { news } = useNews();
+
+    // Select specific news for the Quick Stats row
+    const trendingNews = news.find(n => n.category.includes('Tech')) || news[0];
+    const exclusiveNews = news.find(n => n.category.includes('Actualidad')) || news[1];
+    const alertNews = news.find(n => n.category.includes('Deportes')) || news[2];
+
+    const quickStats = [
+        { label: 'Tendencia del día', item: trendingNews, icon: <TrendingUp size={18} className="text-primary" />, color: 'primary' },
+        { label: 'Exclusivo Locales', item: exclusiveNews, icon: <Star size={18} className="text-yellow-500" />, color: 'yellow' },
+        { label: 'Última Alerta', item: alertNews, icon: <Bell size={18} className="text-accent-pink" />, color: 'pink' },
+    ];
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -17,22 +32,19 @@ const Home = () => {
         >
             <HeroSection />
 
-            {/* Quick Stats / Trending Row */}
+            {/* Quick Stats / Trending Row - Connected to Context */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                    { label: 'Tendencia del día', title: 'Elon Musk confirma base en Marte', icon: <TrendingUp size={18} className="text-primary" /> },
-                    { label: 'Exclusivo Gold', title: 'Infraestructura del Sur: Informe', icon: <Star size={18} className="text-yellow-500" /> },
-                    { label: 'Última Alerta', title: 'Medidas económicas para Enero', icon: <Bell size={18} className="text-accent-pink" /> },
-                ].map((item, i) => (
-                    <div key={i} className="bg-white dark:bg-surface-dark p-6 rounded-[2.5rem] border border-gray-100 dark:border-white/5 flex items-center gap-4 hover:shadow-xl transition-all shadow-lg shadow-black/5 cursor-pointer group">
-                        <div className="size-12 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                            {item.icon}
+                {quickStats.map((stat, i) => (
+                    <Link to={`/noticia/${stat.item?.id}`} key={i} className="bg-white dark:bg-surface-dark p-6 rounded-[2.5rem] border border-gray-100 dark:border-white/5 flex items-center gap-4 hover:shadow-2xl transition-all shadow-lg shadow-black/5 cursor-pointer group relative overflow-hidden">
+                        <div className="size-12 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors shrink-0">
+                            {stat.icon}
                         </div>
-                        <div>
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors">{item.label}</span>
-                            <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{item.title}</h4>
+                        <div className="flex-1 min-w-0">
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors">{stat.label}</span>
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-primary transition-colors">{stat.item?.title || 'Cargando...'}</h4>
                         </div>
-                    </div>
+                        <ArrowUpRight size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                    </Link>
                 ))}
             </div>
 
