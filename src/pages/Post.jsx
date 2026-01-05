@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useNews } from '../context/NewsContext';
 import { motion } from 'framer-motion';
 import {
-    Calendar, User, Clock, Share2, MessageCircle,
+    Calendar, Clock, Share2, MessageCircle,
     Bookmark, ArrowLeft, Twitter, Facebook, Link as LinkIcon
 } from 'lucide-react';
 import AdSection from '../components/AdSection';
@@ -69,78 +69,73 @@ const Post = () => {
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-6 border-y border-gray-100 dark:border-white/5 py-6">
-                            <div className="flex items-center gap-3">
-                                <div className="size-10 rounded-full bg-primary flex items-center justify-center text-white font-black text-xs border-2 border-white dark:border-surface-dark shadow-lg">
-                                    {(post.author || 'A').charAt(0)}
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">{post.author || 'Equipo Editorial'}</span>
-                                    <span className="text-[10px] font-bold text-slate-400">Cronista Especial</span>
-                                </div>
-                            </div>
-                            <div className="h-8 w-px bg-gray-100 dark:bg-white/5 hidden md:block"></div>
                             <div className="flex items-center gap-6">
                                 <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                     <Calendar size={14} className="text-primary" /> {post.date}
                                 </div>
-                                <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                    <Clock size={14} className="text-primary" /> {post.timeRead || '5 MIN'} LECTURA
-                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Article Text */}
+                    <div className="prose dark:prose-invert max-w-none">
+                        <p className="text-xl font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
+                            {post.content || "En una jornada histórica para el país, los acontecimientos se desarrollan con una rapidez que desafía los análisis convencionales. Compromiso Diario ha estado en el lugar de los hechos para traer la verdad a nuestros lectores."}
+                        </p>
+
+                        <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-6">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+                            <AdSection type="horizontal" className="my-8 h-40" />
+
+                            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+
+                            <blockquote className="p-8 bg-slate-50 dark:bg-white/5 rounded-[2.5rem] my-10 border border-gray-100 dark:border-white/5">
+                                <p className="text-2xl font-black italic text-slate-900 dark:text-white leading-snug">"La información no solo debe ser rápida, debe ser veraz y comprometerse con el lector por encima de todo interés comercial."</p>
+                                <cite className="mt-4 block text-[10px] font-black uppercase tracking-widest text-primary">— Director Editorial CD</cite>
+                            </blockquote>
+
+                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                        </div>
+                    </div>
+
+                    {/* Article Footer */}
+                    <div className="flex flex-col gap-8 mt-12 pt-12 border-t border-gray-100 dark:border-white/5">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Etiquetas:</span>
+                                {['Sociedad', 'Novedades', post.category].map(t => (
+                                    <span key={t} className="px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-lg text-[9px] font-bold text-slate-600 dark:text-slate-400 group cursor-pointer hover:bg-primary hover:text-white transition-all">#{t}</span>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-[#1DA1F2] hover:text-white transition-all"><Twitter size={16} /></button>
+                                <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-[#4267B2] hover:text-white transition-all"><Facebook size={16} /></button>
+                                <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition-all"><LinkIcon size={16} /></button>
                             </div>
                         </div>
 
-                        {/* Article Text */}
-                        <div className="prose dark:prose-invert max-w-none">
-                            <p className="text-xl font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
-                                {post.content || "En una jornada histórica para el país, los acontecimientos se desarrollan con una rapidez que desafía los análisis convencionales. Compromiso Diario ha estado en el lugar de los hechos para traer la verdad a nuestros lectores."}
-                            </p>
-
-                            <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-6">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-
-                                <AdSection type="horizontal" className="my-8 h-40" />
-
-                                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-
-                                <blockquote className="p-8 bg-slate-50 dark:bg-white/5 rounded-[2.5rem] my-10 border border-gray-100 dark:border-white/5">
-                                    <p className="text-2xl font-black italic text-slate-900 dark:text-white leading-snug">"La información no solo debe ser rápida, debe ser veraz y comprometerse con el lector por encima de todo interés comercial."</p>
-                                    <cite className="mt-4 block text-[10px] font-black uppercase tracking-widest text-primary">— Director Editorial CD</cite>
-                                </blockquote>
-
-                                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-                            </div>
+                        {/* Data Fiscal */}
+                        <div className="flex justify-center py-8">
+                            <a href="https://www.afip.gob.ar/" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+                                <img src="https://images.afip.gob.ar/images/datafiscal96x96.png" alt="Data Fiscal" className="w-24" />
+                            </a>
                         </div>
 
-                        {/* Article Footer */}
-                        <div className="flex flex-col gap-8 mt-12 pt-12 border-t border-gray-100 dark:border-white/5">
-                            <div className="flex items-center justify-between flex-wrap gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Etiquetas:</span>
-                                    {['Sociedad', 'Novedades', post.category].map(t => (
-                                        <span key={t} className="px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-lg text-[9px] font-bold text-slate-600 dark:text-slate-400 group cursor-pointer hover:bg-primary hover:text-white transition-all">#{t}</span>
-                                    ))}
+                        {/* Comments Section */}
+                        <div className="bg-slate-50 dark:bg-white/5 p-8 rounded-[2rem]">
+                            <h3 className="text-2xl font-black mb-6">Comentarios</h3>
+                            <form className="flex flex-col gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="text" placeholder="Tu Nombre" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm" />
+                                    <input type="email" placeholder="Email de contacto" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm" />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-[#1DA1F2] hover:text-white transition-all"><Twitter size={16} /></button>
-                                    <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-[#4267B2] hover:text-white transition-all"><Facebook size={16} /></button>
-                                    <button className="size-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition-all"><LinkIcon size={16} /></button>
+                                <textarea placeholder="Tu comentario..." rows="4" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm resize-none"></textarea>
+                                <div className="flex items-center justify-between mt-2">
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">* Los comentarios requieren aprobación del editor.</p>
+                                    <button type="submit" className="px-8 py-3 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20">Enviar Comentario</button>
                                 </div>
-                            </div>
-
-                            {/* Author Card Large */}
-                            <div className="bg-gradient-to-br from-slate-900 to-black p-10 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 text-white relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 size-40 bg-primary/20 blur-[100px] rounded-full"></div>
-                                <div className="size-24 rounded-full bg-white/10 flex items-center justify-center text-white text-5xl font-black italic relative z-10 border-4 border-white/20">
-                                    {(post.author || 'A').charAt(0)}
-                                </div>
-                                <div className="flex flex-col gap-2 relative z-10 text-center md:text-left">
-                                    <h4 className="text-xl font-black uppercase tracking-tighter">Sobre {post.author || 'Redacción CD'}</h4>
-                                    <p className="text-sm text-slate-400 font-medium max-w-lg mb-4">Especialista en temas de actualidad y análisis profundo. Con más de 10 años de trayectoria cubriendo las historias más relevantes de la región.</p>
-                                    <Link to={`/categoria/${post.category}`} className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2 hover:gap-4 transition-all">
-                                        Ver todas sus crónicas <ArrowLeft size={14} className="rotate-180" />
-                                    </Link>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </article>

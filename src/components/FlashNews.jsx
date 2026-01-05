@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const FlashNews = () => {
     const { news } = useNews();
-    const flashNews = news.filter(n => n.isFlash);
+    const flashNews = news.filter(n => n.isFlash).slice(0, 15);
     const [startIndex, setStartIndex] = useState(0);
     const visibleCount = 4;
 

@@ -9,7 +9,7 @@ const HeroSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Improved logic: Heroes are the ones specifically marked as such
-    const heroNewsList = news.filter(n => n.isHero).slice(0, 5);
+    const heroNewsList = news.filter(n => n.isHero).slice(0, 10);
     // Sidebar news: any news that is NOT a hero, OR if there aren't enough, just the rest of the news
     const otherNews = news.filter(n => !n.isHero && !n.isFlash);
     const sidebarNews = otherNews.length >= 2 ? otherNews.slice(0, 2) : news.filter(n => !n.isFlash && !heroNewsList.slice(0, 1).includes(n)).slice(1, 3);

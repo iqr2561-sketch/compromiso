@@ -16,7 +16,7 @@ const Navbar = () => {
                 { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' }
             ]
         },
-        { name: 'Deportes', path: '/categoria/Deportes' },
+        // Deportes removed
         { name: 'Sociedad', path: '/categoria/Sociedad' },
         { name: '¿Te Acordás Dolores?', path: '/categoria/Te-Acordas-Dolores' },
         { name: 'Zonales', path: '/categoria/Zonales' },
