@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Newspaper, Search, Menu, X, Settings } from 'lucide-react';
+import { Newspaper, Search, Menu, X, Settings, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
@@ -9,14 +9,32 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Inicio', path: '/' },
-        { name: 'Actualidad', path: '/categoria/Actualidad' },
-        { name: 'Tech', path: '/categoria/Tech' },
+        {
+            name: 'Locales',
+            path: '/categoria/Locales',
+            submenu: [
+                { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' }
+            ]
+        },
         { name: 'Deportes', path: '/categoria/Deportes' },
-        { name: 'Viral', path: '/categoria/Viral' },
+        { name: 'Sociedad', path: '/categoria/Sociedad' },
+        { name: '¿Te Acordás Dolores?', path: '/categoria/Te-Acordas-Dolores' },
+        { name: 'Zonales', path: '/categoria/Zonales' },
+        { name: 'Provinciales', path: '/categoria/Provinciales' },
+        { name: 'Nacionales', path: '/categoria/Nacionales' },
+        {
+            name: 'Actualidad',
+            path: '/categoria/Actualidad',
+            submenu: [
+                { name: 'Interés General', path: '/categoria/Actualidad/Interes-General' },
+                { name: 'Cocina', path: '/categoria/Actualidad/Cocina' },
+                { name: 'Tecnología', path: '/categoria/Actualidad/Tecnologia' }
+            ]
+        },
         { name: 'Admin', path: '/admin', icon: Settings },
     ];
 
-    const isActive = (path) => location.pathname === path;
+    const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
     return (
         <header className="sticky top-0 z-50 w-full flex flex-col shadow-xl shadow-black/5">
@@ -33,17 +51,35 @@ const Navbar = () => {
 
                     <nav className="hidden lg:flex items-center gap-1 bg-surface-dark/5 dark:bg-white/5 p-1.5 rounded-full border border-gray-200 dark:border-white/10">
                         {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                to={link.path}
-                                className={`px-4 py-2 text-sm font-bold rounded-full transition-all flex items-center gap-2 ${isActive(link.path)
-                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl'
-                                    : 'text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white'
-                                    }`}
-                            >
-                                {link.icon && <link.icon size={14} />}
-                                {link.name}
-                            </Link>
+                            <div key={link.name} className="relative group">
+                                <Link
+                                    to={link.path}
+                                    className={`px-4 py-2 text-sm font-bold rounded-full transition-all flex items-center gap-2 ${isActive(link.path)
+                                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl'
+                                        : 'text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white'
+                                        }`}
+                                >
+                                    {link.icon && <link.icon size={14} />}
+                                    {link.name}
+                                    {link.submenu && <ChevronDown size={14} className="opacity-70" />}
+                                </Link>
+
+                                {link.submenu && (
+                                    <div className="absolute top-full left-0 pt-2 w-48 hidden group-hover:block z-50">
+                                        <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-xl border border-gray-100 dark:border-white/10 overflow-hidden p-1.5">
+                                            {link.submenu.map((subLink) => (
+                                                <Link
+                                                    key={subLink.name}
+                                                    to={subLink.path}
+                                                    className="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white rounded-lg transition-colors"
+                                                >
+                                                    {subLink.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </nav>
 
@@ -72,16 +108,35 @@ const Navbar = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="lg:hidden bg-white dark:bg-background-dark border-b border-gray-200 dark:border-white/10"
                     >
-                        <div className="flex flex-col p-4 gap-2">
+                        <div className="flex flex-col p-4 gap-2 h-[calc(100vh-80px)] overflow-y-auto">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className={`px-4 py-3 rounded-xl font-bold transition-colors ${isActive(link.path) ? 'bg-primary text-white' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                                >
-                                    {link.name}
-                                </Link>
+                                <div key={link.name}>
+                                    <Link
+                                        to={link.path}
+                                        onClick={() => !link.submenu && setIsMenuOpen(false)}
+                                        className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors ${isActive(link.path) && !link.submenu ? 'bg-primary text-white' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            {link.icon && <link.icon size={16} />}
+                                            {link.name}
+                                        </div>
+                                        {link.submenu && <ChevronDown size={16} />}
+                                    </Link>
+                                    {link.submenu && (
+                                        <div className="ml-4 pl-4 border-l border-gray-200 dark:border-white/10 mt-1 space-y-1">
+                                            {link.submenu.map((subLink) => (
+                                                <Link
+                                                    key={subLink.name}
+                                                    to={subLink.path}
+                                                    onClick={() => setIsMenuOpen(false)}
+                                                    className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"
+                                                >
+                                                    {subLink.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             ))}
                         </div>
                     </motion.div>

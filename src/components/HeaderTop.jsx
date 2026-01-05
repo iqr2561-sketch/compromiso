@@ -13,12 +13,10 @@ const HeaderTop = () => {
     const dutyToday = pharmacyDuty.find(d => d.date === todayISO);
     const pharmacyOnDuty = pharmacies.find(p => p.id === dutyToday?.pharmacyId);
 
-    const todayDisplay = new Date().toLocaleDateString('es-ES', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-    });
+    const today = new Date();
+    const dateOptions = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+    const dateStr = today.toLocaleDateString('es-ES', dateOptions);
+    const todayDisplay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
     const weatherData = {
         city: 'Ciudad de Dolores',
@@ -147,13 +145,18 @@ const HeaderTop = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setShowPharmacyInfo(!showPharmacyInfo)}
-                            className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-all duration-300 cursor-pointer shadow-lg shadow-emerald-500/5 ${showPharmacyInfo
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg shadow-emerald-500/5 ${showPharmacyInfo
                                 ? 'bg-emerald-500 border-emerald-400 text-white'
                                 : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20'
                                 }`}
                         >
-                            <Activity size={10} className={showPharmacyInfo ? '' : 'animate-pulse'} />
-                            <span className="font-black tracking-widest text-[8px] uppercase">Farmacia</span>
+                            <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse'} />
+                            <div className="flex flex-col items-start leading-none gap-0.5">
+                                <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>
+                                <span className={`text-[9px] font-bold truncate max-w-[120px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-300'}`}>
+                                    {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}
+                                </span>
+                            </div>
                         </motion.div>
 
                         <AnimatePresence>

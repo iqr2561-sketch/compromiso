@@ -7,6 +7,9 @@ Todo limpio. Las correcciones de UI han sido aplicadas.
 
 - ✅ Fix: Modal del clima centrado correctamente (Implementación definitiva con React Portal)
 - ✅ Fix: Título "Flash Editorial" oculto en móvil/tablet (Breakpoint actualizado a lg:flex)
+- ✅ Feat: Actualización formato fecha "Lunes, 5 de ene de 2026"
+- ✅ Feat: Botón Farmacia mejorado (Muestra nombre de farmacia y texto "FARMACIAS DE TURNO")
+- ✅ Feat: Nueva estructura de menús con subcategorías (Locales/Correo, Actualidad/Interés General/Cocina/Tecnología)
 
 ## ✅ Completado (Anterior)
 
