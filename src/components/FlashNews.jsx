@@ -23,7 +23,7 @@ const FlashNews = () => {
     return (
         <div className="flex flex-col gap-8 py-12">
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 pb-6">
-                <div className="hidden md:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
                     <div className="size-12 rounded-xl bg-[#111] dark:bg-white flex items-center justify-center text-white dark:text-[#111] shadow-2xl">
                         <Zap size={24} className="fill-current" />
                     </div>
