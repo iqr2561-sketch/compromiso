@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -45,6 +45,15 @@ const Admin = () => {
     const [showAiModal, setShowAiModal] = useState(false);
     const [aiPrompt, setAiPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
 
     const [formData, setFormData] = useState({
         title: '', category: 'Locales', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
@@ -190,15 +199,15 @@ const Admin = () => {
     );
 
     return (
-        <div className="flex min-h-screen bg-[#0a0c10] text-slate-400 font-sans">
-            <aside className="w-64 bg-[#11141b] border-r border-white/5 flex flex-col p-6 gap-6 fixed h-full z-50 shadow-2xl shadow-black/50">
+        <div className="flex min-h-screen bg-slate-50 dark:bg-[#0a0c10] text-slate-600 dark:text-slate-400 font-sans transition-colors duration-300">
+            <aside className="w-64 bg-white dark:bg-[#11141b] border-r border-gray-200 dark:border-white/5 flex flex-col p-6 gap-6 fixed h-full z-50 shadow-2xl shadow-black/5 dark:shadow-black/50 transition-colors duration-300">
                 <div className="flex items-center gap-3 px-2 mb-4">
                     <div className="size-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
                         <Newspaper className="text-white" size={20} />
                     </div>
                     <div>
-                        <h2 className="text-sm font-black tracking-tight uppercase leading-none text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ADMIN V4.3 - RELEASE</span>
+                        <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.3 - RELEASE</span>
                     </div>
                 </div>
 
@@ -230,22 +239,29 @@ const Admin = () => {
             <main className="flex-1 ml-64 p-8 min-h-screen">
                 <header className="flex items-center justify-between mb-10">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight uppercase italic text-white leading-none mb-1">
+                        <h1 className="text-3xl font-black tracking-tight uppercase italic text-slate-900 dark:text-white leading-none mb-1">
                             {menuItems.find(m => m.id === activeTab).label}
                         </h1>
-                        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Gestión integral de la plataforma comercial</p>
+                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-600 uppercase tracking-widest">Gestión integral de la plataforma comercial</p>
                     </div>
                     {activeTab !== 'dashboard' && (
                         <div className="flex gap-4">
+                            <button
+                                onClick={() => setIsDarkMode(!isDarkMode)}
+                                className="size-10 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-slate-400 hover:text-primary transition-colors hover:shadow-lg"
+                                title="Cambiar Tema"
+                            >
+                                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                            </button>
                             {activeTab === 'pharmacies' && (
-                                <div className="flex p-1 bg-white/5 rounded-xl border border-white/5">
-                                    <button onClick={() => setPharmacyMode('list')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-500'}`}>Listado</button>
-                                    <button onClick={() => setPharmacyMode('schedule')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-500'}`}>Programar</button>
+                                <div className="flex p-1 bg-white dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/5">
+                                    <button onClick={() => setPharmacyMode('list')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'}`}>Listado</button>
+                                    <button onClick={() => setPharmacyMode('schedule')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'}`}>Programar</button>
                                 </div>
                             )}
                             <button
                                 onClick={() => { setIsAdding(!isAdding); if (isAdding) resetForms(); }}
-                                className={`h-10 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${isAdding ? 'bg-slate-800 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'}`}
+                                className={`h-10 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'}`}
                             >
                                 {isAdding ? <X size={14} /> : <Plus size={14} />}
                                 {isAdding ? 'Cerrar' : `Añadir Nuevo`}
@@ -256,14 +272,14 @@ const Admin = () => {
 
                 <AnimatePresence mode="wait">
                     {isAdding && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-[#11141b] p-8 rounded-2xl border border-white/5 mb-10 shadow-2xl overflow-hidden">
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-white dark:bg-[#11141b] p-8 rounded-2xl border border-gray-200 dark:border-white/5 mb-10 shadow-2xl overflow-hidden">
                             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
                                 {activeTab === 'news' && (
                                     <div className="flex flex-col gap-8">
-                                        <div className="flex items-center justify-between bg-[#0a0c10] p-4 rounded-2xl border border-white/5">
+                                        <div className="flex items-center justify-between bg-white dark:bg-[#0a0c10] p-4 rounded-2xl border border-gray-200 dark:border-white/5">
                                             <div className="flex items-center gap-4">
-                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>Editor</button>
-                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>Previsualizar</button>
+                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>Editor</button>
+                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>Previsualizar</button>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {aiConfig.enabled && previewMode && (
@@ -293,7 +309,7 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-6">
                                                     <div className="flex flex-col gap-2">
                                                         <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Cabecera de Noticia</label>
-                                                        <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
+                                                        <input className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
                                                     </div>
 
                                                     <div className="grid grid-cols-2 gap-4">

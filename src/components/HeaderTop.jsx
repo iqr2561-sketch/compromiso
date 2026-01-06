@@ -8,7 +8,7 @@ const HeaderTop = () => {
     const { pharmacies, pharmacyDuty, editionNumber } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     React.useEffect(() => {
         if (isDarkMode) {
