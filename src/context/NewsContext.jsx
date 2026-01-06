@@ -57,6 +57,7 @@ export const NewsProvider = ({ children }) => {
         fetchNews();
         fetchSettings();
         fetchCategories();
+        fetchGallery();
     }, []);
 
     const fetchNews = async () => {
@@ -115,6 +116,44 @@ export const NewsProvider = ({ children }) => {
         } catch (err) {
             console.error('Failed to fetch categories:', err);
         }
+    };
+
+    const fetchGallery = async () => {
+        try {
+            const res = await fetch('/api/gallery');
+            if (res.ok) {
+                const data = await res.json();
+                // Extract just the URLs from the gallery objects
+                const urls = data.map(img => img.url);
+                if (urls.length > 0) {
+                    setImageGallery(urls);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch gallery:', err);
+        }
+    };
+
+    const addToGallery = async (url, filename = null) => {
+        try {
+            const res = await fetch('/api/gallery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, filename })
+            });
+            if (res.ok) {
+                setImageGallery(prev => [url, ...prev]);
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to add to gallery:', err);
+        }
+        return false;
+    };
+
+    const deleteFromGallery = async (url) => {
+        // For now, just remove from state - full implementation would need id tracking
+        setImageGallery(prev => prev.filter(img => img !== url));
     };
 
     const updateEdition = async (newVal) => {
@@ -280,8 +319,6 @@ export const NewsProvider = ({ children }) => {
     const deleteVideo = (id) => setVideos(prev => prev.filter(v => v.id !== id));
     const updateVideo = (id, item) => setVideos(prev => prev.map(v => v.id === id ? { ...v, ...item } : v));
 
-    const addToGallery = (img) => setImageGallery(prev => [img, ...prev]);
-
     const addPharmacy = (p) => setPharmacies(prev => [...prev, { ...p, id: Date.now() }]);
     const deletePharmacy = (id) => setPharmacies(prev => prev.filter(p => p.id !== id));
     const updatePharmacy = (id, p) => setPharmacies(prev => prev.map(phi => phi.id === id ? { ...phi, ...p } : phi));
@@ -300,7 +337,7 @@ export const NewsProvider = ({ children }) => {
             categories, addCategory, deleteCategory, updateCategory,
             ads, addAd, deleteAd, updateAd,
             videos, addVideo, deleteVideo, updateVideo,
-            imageGallery, addToGallery,
+            imageGallery, addToGallery, deleteFromGallery,
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
             pharmacyDuty, setDuty,
             aiConfig, updateAiConfig,
