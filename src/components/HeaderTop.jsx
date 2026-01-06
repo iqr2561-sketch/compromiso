@@ -227,9 +227,11 @@ const HeaderTop = () => {
                                 <Activity size={18} className={showPharmacyInfo ? '' : 'animate-pulse text-emerald-400'} />
                                 <div className="flex flex-col items-start leading-none gap-0.5 relative z-10">
                                     <span className="font-black tracking-widest text-[10px] uppercase">Farmacias de Turno</span>
-                                    <span className={`text-xs font-bold truncate max-w-[140px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-600 dark:text-emerald-300'}`}>
-                                        {pharmacyOnDuty ? pharmacyOnDuty.name : '---'}
-                                    </span>
+                                    {pharmacyOnDuty && (
+                                        <span className={`text-xs font-bold truncate max-w-[140px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-600 dark:text-emerald-300'}`}>
+                                            {pharmacyOnDuty.name}
+                                        </span>
+                                    )}
                                 </div>
                             </motion.div>
 
