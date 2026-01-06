@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { NewsProvider } from './context/NewsContext';
 import Home from './pages/Home';
@@ -14,6 +14,11 @@ import Footer from './components/Footer';
 
 const AppLayout = ({ children }) => {
     const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
+
     const isAdmin = location.pathname.startsWith('/admin');
 
     if (isAdmin) {
