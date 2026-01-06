@@ -1,22 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { CloudSun, Activity, Phone, MapPin, X, Navigation, Sun, Moon } from 'lucide-react';
+import { CloudSun, Activity, Phone, MapPin, X, Navigation, Sun, Moon, Newspaper, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
+import { Link } from 'react-router-dom';
 
 const HeaderTop = () => {
-    const { pharmacies, pharmacyDuty, editionNumber } = useNews();
+    const { pharmacies, pharmacyDuty, editionNumber, news } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [newsIndex, setNewsIndex] = useState(0);
 
-    React.useEffect(() => {
+    // Get latest 10 news for ticker
+    const latestNews = news.slice(0, 10);
+
+    useEffect(() => {
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
     }, [isDarkMode]);
+
+    // Auto-rotate news ticker
+    useEffect(() => {
+        if (latestNews.length === 0) return;
+        const timer = setInterval(() => {
+            setNewsIndex((prev) => (prev + 1) % latestNews.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [latestNews.length]);
 
     const formatEdition = (num) => {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -27,7 +41,7 @@ const HeaderTop = () => {
     const pharmacyOnDuty = pharmacies.find(p => p.id === dutyToday?.pharmacyId);
 
     const today = new Date();
-    const dateOptions = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+    const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     const dateStr = today.toLocaleDateString('es-ES', dateOptions);
     const todayDisplay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
@@ -41,25 +55,62 @@ const HeaderTop = () => {
         ]
     };
 
+    const currentNews = latestNews[newsIndex];
+
     return (
-        <div className="bg-white dark:bg-[#0f172a] text-slate-800 dark:text-white text-[11px] font-medium border-b border-gray-200 dark:border-white/5 relative z-[100] transition-colors duration-300">
-            <div className="px-4 lg:px-8 max-w-[1440px] mx-auto min-h-[40px] py-1 flex flex-wrap items-center justify-between gap-y-1">
-                <div className="flex items-center gap-3">
-                    <span className="opacity-60 hidden md:inline font-light">{todayDisplay}</span>
-                    <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/5">
-                        <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
-                        <span className="tracking-widest text-[10px] font-black text-slate-700 dark:text-white">Edición N<sup className="text-[7px]">o</sup> <span className="text-primary">{formatEdition(editionNumber)}</span></span>
+        <div className="bg-white dark:bg-[#0f172a] text-slate-800 dark:text-white border-b border-gray-200 dark:border-white/5 relative z-[100] transition-colors duration-300">
+            <div className="px-4 lg:px-8 max-w-[1440px] mx-auto min-h-[48px] py-2 flex flex-wrap items-center justify-between gap-y-2">
+                {/* Left Section: Date & Edition */}
+                <div className="flex items-center gap-4">
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400 hidden md:inline">{todayDisplay}</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/5">
+                        <span className="size-2 rounded-full bg-primary animate-pulse"></span>
+                        <span className="text-xs font-bold text-slate-700 dark:text-white">Edición N<sup className="text-[8px]">o</sup> <span className="text-primary font-black">{formatEdition(editionNumber)}</span></span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 md:gap-8">
+                {/* Center Section: News Ticker (Desktop Only) */}
+                {latestNews.length > 0 && (
+                    <div className="hidden lg:flex flex-1 items-center justify-center max-w-xl mx-8">
+                        <div className="flex items-center gap-3 px-4 py-1.5 bg-slate-50 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10 w-full">
+                            <div className="flex items-center gap-2 shrink-0">
+                                <Newspaper size={14} className="text-primary" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Últimas</span>
+                            </div>
+                            <div className="relative flex-1 h-5 overflow-hidden">
+                                <AnimatePresence mode="wait">
+                                    {currentNews && (
+                                        <motion.div
+                                            key={newsIndex}
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -12 }}
+                                            className="absolute inset-0 flex items-center"
+                                        >
+                                            <Link
+                                                to={`/noticia/${currentNews.id}`}
+                                                className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate hover:text-primary transition-colors"
+                                            >
+                                                {currentNews.title}
+                                            </Link>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                            <ChevronRight size={14} className="text-slate-400 shrink-0" />
+                        </div>
+                    </div>
+                )}
+
+                {/* Right Section: Controls */}
+                <div className="flex items-center gap-3 md:gap-4">
                     {/* Theme Toggle */}
                     <button
                         onClick={() => setIsDarkMode(!isDarkMode)}
-                        className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+                        className="p-2 rounded-full bg-slate-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
                         title={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
                     >
-                        {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                        {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
                     </button>
 
                     {/* Weather Button with Modal */}
@@ -68,12 +119,11 @@ const HeaderTop = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setShowWeatherInfo(true)}
-                            className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 cursor-pointer transition-all"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 cursor-pointer transition-all"
                         >
-                            <CloudSun size={14} className="text-yellow-400" />
+                            <CloudSun size={16} className="text-yellow-500" />
                             <div className="flex items-center gap-1.5 leading-none">
-                                <span className="font-black text-[12px]">{weatherData.current.temp}°C</span>
-                                <span className="text-[8px] opacity-60 uppercase tracking-tighter hidden xs:inline">{weatherData.city}</span>
+                                <span className="font-black text-sm">{weatherData.current.temp}°C</span>
                             </div>
                         </motion.div>
 
@@ -163,21 +213,21 @@ const HeaderTop = () => {
 
                     <div className="relative flex items-center h-full gap-4">
                         {/* Pharmacy Button with Modal */}
-                        <div className="relative flex items-center h-full pl-4 md:pl-8 border-l border-white/10">
+                        <div className="relative flex items-center h-full pl-4 md:pl-6 border-l border-gray-200 dark:border-white/10">
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => setShowPharmacyInfo(!showPharmacyInfo)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg relative overflow-hidden ${showPharmacyInfo
+                                className={`flex items-center gap-3 px-4 py-2 rounded-full border transition-all duration-300 cursor-pointer shadow-lg relative overflow-hidden ${showPharmacyInfo
                                     ? 'bg-emerald-500 border-emerald-400 text-white shadow-emerald-500/20'
-                                    : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 shadow-emerald-500/5'
+                                    : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 shadow-emerald-500/5'
                                     }`}
                             >
                                 <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 translate-x-[-150%] ${!showPharmacyInfo ? 'animate-[shimmer_2.5s_infinite]' : ''}`} />
-                                <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse text-emerald-300'} />
+                                <Activity size={18} className={showPharmacyInfo ? '' : 'animate-pulse text-emerald-400'} />
                                 <div className="flex flex-col items-start leading-none gap-0.5 relative z-10">
-                                    <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>
-                                    <span className={`text-[9px] font-bold truncate max-w-[120px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-300'}`}>
+                                    <span className="font-black tracking-widest text-[10px] uppercase">Farmacias de Turno</span>
+                                    <span className={`text-xs font-bold truncate max-w-[140px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-600 dark:text-emerald-300'}`}>
                                         {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}
                                     </span>
                                 </div>
