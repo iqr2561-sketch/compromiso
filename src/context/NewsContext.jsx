@@ -128,9 +128,13 @@ export const NewsProvider = ({ children }) => {
                 if (urls.length > 0) {
                     setImageGallery(urls);
                 }
+            } else {
+                // If gallery API fails (404, 500, etc.), just keep the default values
+                console.warn('Gallery API returned error status:', res.status);
             }
         } catch (err) {
-            console.error('Failed to fetch gallery:', err);
+            // Silent fail - keep the default gallery images
+            console.warn('Failed to fetch gallery, using defaults:', err.message);
         }
     };
 
