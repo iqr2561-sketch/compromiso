@@ -1,73 +1,31 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const NewsContext = createContext();
 
 export const useNews = () => useContext(NewsContext);
 
 export const NewsProvider = ({ children }) => {
-    const [news, setNews] = useState([
-        {
-            id: 1,
-            title: "La IA Generativa: ¿El fin de la creatividad humana?",
-            content: "Expertos debaten sobre el impacto de las nuevas herramientas de inteligencia artificial en el arte, la música y el desarrollo de software.",
-            category: "Tech & Futuro",
-            author: "Ana García",
-            date: "Hace 5 min",
-            image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1600",
-            isHero: true,
-            timeRead: "5 min"
-        },
-        {
-            id: 2,
-            title: "Misión Mars 2026: El primer asentamiento humano",
-            content: "SpaceX confirma los planes para la primera base permanente en el planeta rojo, un hito que cambiará la historia.",
-            category: "Tech",
-            author: "Elon Musk",
-            date: "Hace 1 hora",
-            image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=1600",
-            isHero: true,
-            timeRead: "8 min"
-        },
-        {
-            id: 3,
-            title: "Inauguración del Gran Túnel Bioceánico",
-            content: "Unirá Chile y Argentina en un trayecto de solo 2 horas, revolucionando el comercio en el sur.",
-            category: "Actualidad",
-            date: "Hoy",
-            image: "https://images.unsplash.com/photo-1451187530221-87c062f43c21?auto=format&fit=crop&q=80&w=800",
-            isHero: true
-        },
-        {
-            id: 4,
-            title: "Final de Temporada: Rivadavia se consagra campeón local",
-            content: "Con un gol agónico en el minuto 94, el equipo de la ciudad derrotó a Social en una final para el recuerdo.",
-            category: "Deportes",
-            date: "Hace 20 min",
-            image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800",
-            isHero: false,
-            isFlash: true
-        },
-        {
-            id: 5,
-            title: "Nuevas medidas económicas para el comercio local",
-            content: "El municipio anunció una reducción de tasas para pequeños emprendedores durante el primer trimestre.",
-            category: "Actualidad",
-            date: "Hace 2 horas",
-            image: "https://images.unsplash.com/photo-1454165833767-027ffea10c3b?auto=format&fit=crop&q=80&w=800",
-            isHero: false,
-            isFlash: true
-        },
-        {
-            id: 6,
-            title: "El video viral del perro que 'habla' es furor",
-            content: "Un video capturado en el centro de la ciudad muestra a una mascota interactuando de forma sorprendente.",
-            category: "Viral",
-            date: "Ayer",
-            image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=800",
-            isHero: false,
-            isFlash: true
+    const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Initial fetch
+    useEffect(() => {
+        fetchNews();
+    }, []);
+
+    const fetchNews = async () => {
+        try {
+            const res = await fetch('/api/news');
+            if (res.ok) {
+                const data = await res.json();
+                setNews(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch news:', err);
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
 
     const [flashTickers, setFlashTickers] = useState([
         { id: 1, text: "Urgente: Nuevas medidas económicas anunciadas para el próximo mes", tag: "BREAKING NEWS", type: 'alert' },
@@ -81,16 +39,19 @@ export const NewsProvider = ({ children }) => {
     ]);
 
     const [categories, setCategories] = useState([
-        { id: 1, name: "Actualidad", color: "primary", bgImage: "https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600" },
-        { id: 2, name: "Tech", color: "accent-purple", bgImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1600" },
-        { id: 3, name: "Deportes", color: "accent-orange", bgImage: "https://images.unsplash.com/photo-1461891213817-5e204c71ef2e?auto=format&fit=crop&q=80&w=1600" },
-        { id: 4, name: "Viral", color: "accent-pink", bgImage: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1600" },
-        { id: 5, name: "Finanzas", color: "accent-green", bgImage: "https://images.unsplash.com/photo-1611974714024-462cd9dc10c7?auto=format&fit=crop&q=80&w=1600" }
+        { id: 1, name: "Locales", color: "primary", bgImage: "https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600" },
+        { id: 2, name: "Sociedad", color: "accent-orange", bgImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1600" },
+        { id: 3, name: "Zonales", color: "accent-green", bgImage: "https://images.unsplash.com/photo-1461891213817-5e204c71ef2e?auto=format&fit=crop&q=80&w=1600" },
+        { id: 4, name: "Provinciales", color: "accent-purple", bgImage: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1600" },
+        { id: 5, name: "Nacionales", color: "accent-pink", bgImage: "https://images.unsplash.com/photo-1611974714024-462cd9dc10c7?auto=format&fit=crop&q=80&w=1600" },
+        { id: 6, name: "Actualidad", color: "indigo-500", bgImage: "https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600" }
     ]);
 
     const [ads, setAds] = useState([
         { id: 1, type: 'premium', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
-        { id: 2, type: 'square', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', link: '#', active: true }
+        { id: 2, type: 'square', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', link: '#', active: true },
+        { id: 3, type: 'horizontal', image: 'https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
+        { id: 4, type: 'horizontal', image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600', link: '#', active: true }
     ]);
 
     const [videos, setVideos] = useState([
@@ -112,9 +73,51 @@ export const NewsProvider = ({ children }) => {
         { date: "2026-01-05", pharmacyId: 2 }
     ]);
 
-    const addNews = (item) => setNews(prev => [{ ...item, id: Date.now() }, ...prev]);
-    const deleteNews = (id) => setNews(prev => prev.filter(n => n.id !== id));
-    const updateNews = (id, item) => setNews(prev => prev.map(n => n.id === id ? { ...n, ...item } : n));
+    const addNews = async (item) => {
+        try {
+            const res = await fetch('/api/news', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+            if (res.ok) {
+                const newItem = await res.json();
+                setNews(prev => [newItem, ...prev]);
+            }
+        } catch (err) {
+            console.error('Failed to add news:', err);
+        }
+    };
+
+    const deleteNews = async (id) => {
+        try {
+            const res = await fetch(`/api/news?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setNews(prev => prev.filter(n => n.id !== id));
+            }
+        } catch (err) {
+            console.error('Failed to delete news:', err);
+        }
+    };
+
+    const updateNews = async (id, item) => {
+        try {
+            const res = await fetch('/api/news', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, ...item })
+            });
+            if (res.ok) {
+                const updatedItem = await res.json();
+                setNews(prev => prev.map(n => n.id === id ? updatedItem : n));
+            }
+        } catch (err) {
+            console.error('Failed to update news:', err);
+        }
+    };
+
+    // Other state handlers remain local for now as per minimal migration request
+    // These can be migrated similarly if needed.
 
     const addTicker = (item) => setFlashTickers(prev => [...prev, { ...item, id: Date.now() }]);
     const deleteTicker = (id) => setFlashTickers(prev => prev.filter(t => t.id !== id));
@@ -144,7 +147,7 @@ export const NewsProvider = ({ children }) => {
 
     return (
         <NewsContext.Provider value={{
-            news, addNews, deleteNews, updateNews,
+            news, addNews, deleteNews, updateNews, loading,
             flashTickers, addTicker, deleteTicker, updateTicker,
             scores, setScores,
             categories, addCategory, deleteCategory, updateCategory,
@@ -158,3 +161,4 @@ export const NewsProvider = ({ children }) => {
         </NewsContext.Provider>
     );
 };
+

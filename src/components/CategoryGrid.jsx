@@ -7,10 +7,12 @@ const CategoryGrid = () => {
     const { news } = useNews();
 
     const categories = [
-        { name: 'Actualidad', color: 'bg-primary', accent: 'text-primary' },
-        { name: 'Tech', color: 'bg-accent-purple', accent: 'text-accent-purple' },
-        { name: 'Deportes', color: 'bg-accent-orange', accent: 'text-accent-orange' },
-        { name: 'Viral', color: 'bg-accent-pink', accent: 'text-accent-pink' },
+        { name: 'Locales', color: 'bg-primary', accent: 'text-primary' },
+        { name: 'Sociedad', color: 'bg-accent-orange', accent: 'text-accent-orange' },
+        { name: 'Zonales', color: 'bg-accent-green', accent: 'text-accent-green' },
+        { name: 'Provinciales', color: 'bg-accent-purple', accent: 'text-accent-purple' },
+        { name: 'Nacionales', color: 'bg-accent-pink', accent: 'text-accent-pink' },
+        { name: 'Actualidad', color: 'bg-indigo-500', accent: 'text-indigo-500' },
     ];
 
     const getNewsByCategory = (cat) => {
