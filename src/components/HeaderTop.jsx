@@ -228,7 +228,7 @@ const HeaderTop = () => {
                                 <div className="flex flex-col items-start leading-none gap-0.5 relative z-10">
                                     <span className="font-black tracking-widest text-[10px] uppercase">Farmacias de Turno</span>
                                     <span className={`text-xs font-bold truncate max-w-[140px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-600 dark:text-emerald-300'}`}>
-                                        {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}
+                                        {pharmacyOnDuty ? pharmacyOnDuty.name : '---'}
                                     </span>
                                 </div>
                             </motion.div>
@@ -273,7 +273,7 @@ const HeaderTop = () => {
                                                     <div className="flex items-center gap-2">
                                                         <Activity size={16} className="text-white" />
                                                         <h4 className="font-black text-xs uppercase tracking-wider text-white truncate max-w-[150px]">
-                                                            {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar Farmacia'}
+                                                            {pharmacyOnDuty ? pharmacyOnDuty.name : 'Farmacias de Turno'}
                                                         </h4>
                                                     </div>
                                                     <button

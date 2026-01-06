@@ -46,6 +46,7 @@ const Admin = () => {
     const [aiPrompt, setAiPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (isDarkMode) {
@@ -170,6 +171,26 @@ const Admin = () => {
                 addToGallery(reader.result);
             };
             reader.readAsDataURL(file);
+        });
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    addToGallery(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
         });
     };
 
@@ -926,11 +947,17 @@ const Admin = () => {
                     {activeTab === 'gallery' && (
                         <div className="flex flex-col gap-8">
                             {/* Mass Upload Area */}
-                            <div className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative">
+                            <div
+                                className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
+                                onDrop={handleDrop}
+                                onDragOver={handleDragOver}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
                                 <input
+                                    ref={fileInputRef}
                                     type="file"
                                     multiple
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    className="hidden"
                                     onChange={handleGalleryUpload}
                                     accept="image/*"
                                 />
