@@ -139,85 +139,106 @@ const HeaderTop = () => {
                         )}
                     </div>
 
-                    {/* Pharmacy Button with Modal */}
-                    <div className="relative flex items-center h-full pl-4 md:pl-8 border-l border-white/10">
-                        <motion.div
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowPharmacyInfo(!showPharmacyInfo)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg shadow-emerald-500/5 ${showPharmacyInfo
-                                ? 'bg-emerald-500 border-emerald-400 text-white'
-                                : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20'
-                                }`}
-                        >
-                            <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse'} />
-                            <div className="flex flex-col items-start leading-none gap-0.5">
-                                <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>
-                                <span className={`text-[9px] font-bold truncate max-w-[120px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-300'}`}>
-                                    {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}
-                                </span>
-                            </div>
-                        </motion.div>
+                    <div className="relative flex items-center h-full gap-4">
+                        {/* Pharmacy Button with Modal */}
+                        <div className="relative flex items-center h-full pl-4 md:pl-8 border-l border-white/10">
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setShowPharmacyInfo(!showPharmacyInfo)}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg shadow-emerald-500/5 ${showPharmacyInfo
+                                    ? 'bg-emerald-500 border-emerald-400 text-white'
+                                    : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20'
+                                    }`}
+                            >
+                                <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse'} />
+                                <div className="flex flex-col items-start leading-none gap-0.5">
+                                    <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>
+                                    <span className={`text-[9px] font-bold truncate max-w-[120px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-300'}`}>
+                                        {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}
+                                    </span>
+                                </div>
+                            </motion.div>
 
-                        <AnimatePresence>
-                            {showPharmacyInfo && (
-                                <>
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        onClick={() => setShowPharmacyInfo(false)}
-                                        className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-[2px]"
-                                    />
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                                        className="absolute top-10 right-0 w-72 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
-                                    >
-                                        <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-5 flex flex-col gap-1">
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex items-center gap-2">
-                                                    <Activity size={16} className="text-white" />
-                                                    <h4 className="font-black text-xs uppercase tracking-wider text-white truncate max-w-[150px]">
-                                                        {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar Farmacia'}
-                                                    </h4>
+                            {/* DB Status Test Button */}
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={async () => {
+                                    try {
+                                        const res = await fetch('/api/test-db');
+                                        const data = await res.json();
+                                        alert(data.message + '\nLatencia: ' + (data.latency || 'N/A'));
+                                    } catch (err) {
+                                        alert('Error al conectar con la base de datos. Asegúrate de estar corriendo en un entorno que soporte /api (como vercel dev).');
+                                    }
+                                }}
+                                className="ml-3 size-8 flex-shrink-0 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/20 transition-all group"
+                                title="Probar conexión SQL"
+                            >
+                                <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                            </motion.button>
+
+                            <AnimatePresence>
+                                {showPharmacyInfo && (
+                                    <>
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            onClick={() => setShowPharmacyInfo(false)}
+                                            className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-[2px]"
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                                            className="absolute top-10 right-0 w-72 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
+                                        >
+                                            <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-5 flex flex-col gap-1">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex items-center gap-2">
+                                                        <Activity size={16} className="text-white" />
+                                                        <h4 className="font-black text-xs uppercase tracking-wider text-white truncate max-w-[150px]">
+                                                            {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar Farmacia'}
+                                                        </h4>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => setShowPharmacyInfo(false)}
+                                                        className="size-7 flex items-center justify-center rounded-lg bg-black/10 hover:bg-black/20 text-white transition-colors"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
                                                 </div>
-                                                <button
-                                                    onClick={() => setShowPharmacyInfo(false)}
-                                                    className="size-7 flex items-center justify-center rounded-lg bg-black/10 hover:bg-black/20 text-white transition-colors"
-                                                >
-                                                    <X size={14} />
+                                            </div>
+
+                                            <div className="p-5 space-y-4">
+                                                <div className="flex items-start gap-3">
+                                                    <MapPin size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Ubicación</span>
+                                                        <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.address : 'Ver en mapa'}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-3">
+                                                    <Phone size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Contacto Directo</span>
+                                                        <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.phone : 'Cargando...'}</p>
+                                                    </div>
+                                                </div>
+
+                                                <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black text-[10px] py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 uppercase tracking-widest">
+                                                    <Navigation size={14} />
+                                                    ¿CÓMO LLEGAR?
                                                 </button>
                                             </div>
-                                        </div>
-
-                                        <div className="p-5 space-y-4">
-                                            <div className="flex items-start gap-3">
-                                                <MapPin size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                                                <div className="flex flex-col gap-0.5">
-                                                    <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Ubicación</span>
-                                                    <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.address : 'Ver en mapa'}</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-start gap-3">
-                                                <Phone size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                                                <div className="flex flex-col gap-0.5">
-                                                    <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Contacto Directo</span>
-                                                    <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.phone : 'Cargando...'}</p>
-                                                </div>
-                                            </div>
-
-                                            <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black text-[10px] py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                                <Navigation size={14} />
-                                                ¿CÓMO LLEGAR?
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                </>
-                            )}
-                        </AnimatePresence>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
             </div>
