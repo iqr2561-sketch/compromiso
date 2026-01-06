@@ -27,102 +27,110 @@ const HeroSection = () => {
 
     return (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto">
-            {/* Main Hero Carousel */}
-            <div className="lg:col-span-8 relative rounded-3xl overflow-hidden group shadow-2xl shadow-black/20 bg-slate-900 min-h-[400px] lg:h-[600px]">
-                <AnimatePresence mode="wait">
-                    {heroNews ? (
-                        <motion.div
-                            key={heroNews.id}
-                            initial={{ opacity: 0, scale: 1.1 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.8 }}
-                            className="absolute inset-0"
-                        >
-                            <Link to={`/noticia/${heroNews.id}`}>
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                    style={{ backgroundImage: `url(${heroNews.image})` }}
-                                ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                                <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col items-start gap-4 cursor-pointer">
-                                    <div className="flex items-center gap-3">
-                                        <span className="px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/20 backdrop-blur-sm">
-                                            {heroNews.category}
-                                        </span>
-                                        <div className="flex items-center gap-1 text-yellow-500">
-                                            <Star size={12} className="fill-yellow-500" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-white">Destacado</span>
+            <div className="lg:col-span-8 flex flex-col gap-6">
+                {/* Main Hero Carousel */}
+                <div className="relative rounded-3xl overflow-hidden group shadow-2xl shadow-black/20 bg-slate-900 min-h-[400px] lg:h-[600px]">
+                    <AnimatePresence mode="wait">
+                        {heroNews ? (
+                            <motion.div
+                                key={heroNews.id}
+                                initial={{ opacity: 0, scale: 1.1 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.8 }}
+                                className="absolute inset-0"
+                            >
+                                <Link to={`/noticia/${heroNews.id}`}>
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                        style={{ backgroundImage: `url(${heroNews.image})` }}
+                                    ></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                                    <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col items-start gap-4 cursor-pointer">
+                                        <div className="flex items-center gap-3">
+                                            <span className="px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/20 backdrop-blur-sm">
+                                                {heroNews.category}
+                                            </span>
+                                            <div className="flex items-center gap-1 text-yellow-500">
+                                                <Star size={12} className="fill-yellow-500" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-white">Destacado</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
-                                        {heroNews.title}
-                                    </h1>
-                                    <p className="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
-                                        {(() => {
-                                            try {
-                                                if (heroNews.content.startsWith('[')) {
-                                                    const blocks = JSON.parse(heroNews.content);
-                                                    const textBlock = blocks.find(b => b.type === 'text');
-                                                    return textBlock ? textBlock.content : '';
+                                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
+                                            {heroNews.title}
+                                        </h1>
+                                        <p className="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
+                                            {(() => {
+                                                try {
+                                                    if (heroNews.content.startsWith('[')) {
+                                                        const blocks = JSON.parse(heroNews.content);
+                                                        const textBlock = blocks.find(b => b.type === 'text');
+                                                        return textBlock ? textBlock.content : '';
+                                                    }
+                                                    return heroNews.content;
+                                                } catch (e) {
+                                                    return heroNews.content;
                                                 }
-                                                return heroNews.content;
-                                            } catch (e) {
-                                                return heroNews.content;
-                                            }
-                                        })()}
-                                    </p>
-                                    {/* Removed by user request */}
+                                            })()}
+                                        </p>
+                                        {/* Removed by user request */}
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-white/20 font-black uppercase tracking-widest">Cargando Portada...</div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Bottom 3 News Strip */}
+                    <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-md border-t border-white/10 p-4 z-30 hidden md:grid grid-cols-3 divide-x divide-white/10">
+                        {otherNews.slice(0, 3).map((item, i) => (
+                            <Link to={`/noticia/${item.id}`} key={item.id} className="px-4 flex flex-col gap-1 group/item hover:bg-white/5 transition-colors rounded-lg py-2">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
+                                    <span className="text-[8px] text-gray-500 font-bold">{item.time_read || '2 min'}</span>
                                 </div>
+                                <h4 className="text-xs font-bold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
+                                    {item.title}
+                                </h4>
                             </Link>
-                        </motion.div>
-                    ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-white/20 font-black uppercase tracking-widest">Cargando Portada...</div>
-                    )}
-                </AnimatePresence>
+                        ))}
+                    </div>
 
-                {/* Bottom 3 News Strip */}
-                <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-md border-t border-white/10 p-4 z-30 hidden md:grid grid-cols-3 divide-x divide-white/10">
-                    {otherNews.slice(0, 3).map((item, i) => (
-                        <Link to={`/noticia/${item.id}`} key={item.id} className="px-4 flex flex-col gap-1 group/item hover:bg-white/5 transition-colors rounded-lg py-2">
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
-                                <span className="text-[8px] text-gray-500 font-bold">{item.time_read || '2 min'}</span>
+                    {heroNewsList.length > 1 && (
+                        <>
+                            {/* Navigation Buttons - Adjusted position */}
+                            <div className="absolute bottom-32 right-6 flex gap-2 z-20">
+                                <button
+                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length); }}
+                                    className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % heroNewsList.length); }}
+                                    className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
                             </div>
-                            <h4 className="text-xs font-bold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
-                                {item.title}
-                            </h4>
-                        </Link>
-                    ))}
+                            <div className="absolute top-6 right-6 flex gap-1 z-20">
+                                {heroNewsList.map((_, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`h-1 transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-primary' : 'w-2 bg-white/30'} rounded-full`}
+                                    ></div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
-
-                {heroNewsList.length > 1 && (
-                    <>
-                        {/* Navigation Buttons - Adjusted position */}
-                        <div className="absolute bottom-32 right-6 flex gap-2 z-20">
-                            <button
-                                onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length); }}
-                                className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
-                            >
-                                <ChevronLeft size={20} />
-                            </button>
-                            <button
-                                onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % heroNewsList.length); }}
-                                className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
-                            >
-                                <ChevronRight size={20} />
-                            </button>
-                        </div>
-                        <div className="absolute top-6 right-6 flex gap-1 z-20">
-                            {heroNewsList.map((_, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`h-1 transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-primary' : 'w-2 bg-white/30'} rounded-full`}
-                                ></div>
-                            ))}
-                        </div>
-                    </>
-                )}
+                {/* Hero Ads Section - 3 Columns */}
+                <div className="grid grid-cols-3 gap-4">
+                    <AdSection type="hero_1" className="!aspect-auto h-32 !p-0 !rounded-xl" />
+                    <AdSection type="hero_2" className="!aspect-auto h-32 !p-0 !rounded-xl" />
+                    <AdSection type="hero_3" className="!aspect-auto h-32 !p-0 !rounded-xl" />
+                </div>
             </div>
 
             {/* Sidebar with News and Scores */}
@@ -159,12 +167,7 @@ const HeroSection = () => {
                     ))}
                 </div>
 
-                {/* Hero Ads Section - 3 Mini Boxes */}
-                <div className="grid grid-cols-3 gap-2">
-                    <AdSection type="hero_1" className="!aspect-square !p-0 !rounded-xl" />
-                    <AdSection type="hero_2" className="!aspect-square !p-0 !rounded-xl" />
-                    <AdSection type="hero_3" className="!aspect-square !p-0 !rounded-xl" />
-                </div>
+
 
                 {/* Cover Page Section */}
                 <motion.div
