@@ -450,4 +450,4 @@ Ninguna requerida actualmente.
 
 ---
 
-Última actualización: 04/01/2026 - v4.1
+Última actualización: 05/01/2026 - v4.2 - Navbar Optimization & Content Strategy

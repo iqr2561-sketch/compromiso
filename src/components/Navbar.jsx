@@ -18,7 +18,7 @@ const Navbar = () => {
         },
         // Deportes removed
         { name: 'Sociedad', path: '/categoria/Sociedad' },
-        { name: '¿Te Acordás Dolores?', path: '/categoria/Te-Acordas-Dolores' },
+        // "¿Te Acordás Dolores?" removed to move to Home
         { name: 'Zonales', path: '/categoria/Zonales' },
         { name: 'Provinciales', path: '/categoria/Provinciales' },
         { name: 'Nacionales', path: '/categoria/Nacionales' },
@@ -31,13 +31,13 @@ const Navbar = () => {
                 { name: 'Tecnología', path: '/categoria/Actualidad/Tecnologia' }
             ]
         },
-        { name: 'Admin', path: '/admin', icon: Settings },
+        // Admin moved to separate icon
     ];
 
     const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
     return (
-        <header className="sticky top-0 z-50 w-full flex flex-col shadow-xl shadow-black/5">
+        <header className="sticky top-0 z-[1000] w-full flex flex-col shadow-xl shadow-black/5">
             <div className="w-full backdrop-blur-md bg-white/80 dark:bg-[#111318]/90 border-b border-gray-200 dark:border-[#282e39]">
                 <div className="px-4 lg:px-8 max-w-[1440px] mx-auto h-16 md:h-20 flex items-center justify-between gap-4">
                     <Link to="/" className="flex items-center gap-3 cursor-pointer group">
@@ -49,29 +49,29 @@ const Navbar = () => {
                         </h1>
                     </Link>
 
-                    <nav className="hidden lg:flex items-center gap-1 bg-surface-dark/5 dark:bg-white/5 p-1.5 rounded-full border border-gray-200 dark:border-white/10">
+                    <nav className="hidden lg:flex items-center gap-1 bg-surface-dark/5 dark:bg-white/5 p-1 rounded-full border border-gray-200 dark:border-white/10">
                         {navLinks.map((link) => (
-                            <div key={link.name} className="relative group">
+                            <div key={link.name} className="relative group shrink-0">
                                 <Link
                                     to={link.path}
-                                    className={`px-4 py-2 text-sm font-bold rounded-full transition-all flex items-center gap-2 ${isActive(link.path)
+                                    className={`px-3 py-1.5 text-[11px] lg:text-xs font-black uppercase tracking-wide rounded-full transition-all flex items-center gap-1.5 ${isActive(link.path)
                                         ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl'
-                                        : 'text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white'
+                                        : 'text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white hover:bg-white dark:hover:bg-white/5'
                                         }`}
                                 >
-                                    {link.icon && <link.icon size={14} />}
-                                    {link.name}
-                                    {link.submenu && <ChevronDown size={14} className="opacity-70" />}
+                                    {link.icon && <link.icon size={12} />}
+                                    {link.name === '¿Te Acordás Dolores?' ? 'Memoria' : link.name}
+                                    {link.submenu && <ChevronDown size={12} className="opacity-70" />}
                                 </Link>
 
                                 {link.submenu && (
-                                    <div className="absolute top-full left-0 pt-2 w-48 hidden group-hover:block z-50">
-                                        <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-xl border border-gray-100 dark:border-white/10 overflow-hidden p-1.5">
+                                    <div className="absolute top-full left-0 pt-3 w-56 hidden group-hover:block z-[1001]">
+                                        <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden p-1.5 ring-1 ring-black/5">
                                             {link.submenu.map((subLink) => (
                                                 <Link
                                                     key={subLink.name}
                                                     to={subLink.path}
-                                                    className="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white rounded-lg transition-colors"
+                                                    className="block px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white rounded-lg transition-colors"
                                                 >
                                                     {subLink.name}
                                                 </Link>
@@ -83,7 +83,10 @@ const Navbar = () => {
                         ))}
                     </nav>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                        <Link to="/admin" className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300" title="Admin Panel">
+                            <Settings size={20} />
+                        </Link>
                         <button className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300">
                             <Search size={20} />
                         </button>
