@@ -42,7 +42,6 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Inicio', path: '/' },
-        { name: 'Tapa del día', path: '/tapa-de-hoy' },
         ...categories.map(cat => ({
             name: cat.name,
             path: `/categoria/${cat.name}`,
