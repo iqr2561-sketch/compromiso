@@ -8,11 +8,43 @@ export const NewsProvider = ({ children }) => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editionNumber, setEditionNumber] = useState('42891');
+    const [categories, setCategories] = useState([]);
+    const [flashTickers, setFlashTickers] = useState([
+        { id: 1, text: "Urgente: Nuevas medidas económicas anunciadas para el próximo mes", tag: "BREAKING NEWS", type: 'alert' },
+        { id: 2, text: "FINAL: Real Madrid 2 - 1 Barcelona (La Liga)", tag: "DEPORTES", type: 'score' },
+        { id: 5, text: "¡PUBLICIDAD! Adquiere tu nuevo Tesla con 0% de interés este mes", tag: "PUBLICIDAD", type: 'ad' }
+    ]);
+    const [scores, setScores] = useState([
+        { id: 1, home: "Social", away: "Ferro", homeScore: 0, awayScore: 1, homeLogo: "https://ui-avatars.com/api/?name=S&background=256af4&color=fff", awayLogo: "https://ui-avatars.com/api/?name=F&background=00d68f&color=fff", time: "Finalizado", date: "2026-01-01" },
+        { id: 2, home: "Rivadavia", away: "Huracan", homeScore: 2, awayScore: 2, homeLogo: "https://ui-avatars.com/api/?name=R&background=f4256a&color=fff", awayLogo: "https://ui-avatars.com/api/?name=H&background=ff6b00&color=fff", time: "85'", date: "2026-01-04" }
+    ]);
+    const [ads, setAds] = useState([
+        { id: 1, type: 'premium', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
+        { id: 2, type: 'square', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', link: '#', active: true },
+        { id: 3, type: 'horizontal', image: 'https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
+        { id: 4, type: 'horizontal', image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600', link: '#', active: true }
+    ]);
+    const [videos, setVideos] = useState([
+        { id: 1, title: "Crónica: El despertar de la IA en la industria local", views: "12k", duration: "3:45", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", category: "Tech & Futuro", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+    ]);
+    const [imageGallery, setImageGallery] = useState([
+        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400',
+        'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=400'
+    ]);
+    const [pharmacies, setPharmacies] = useState([
+        { id: 1, name: "Farmacia Central", address: "Av. Principal 123", phone: "555-0101", city: "Centro", location: { lat: 0, lng: 0 } },
+        { id: 2, name: "Farmacia Norte", address: "Calle Falsa 456", phone: "555-0202", city: "Norte", location: { lat: 0, lng: 0 } }
+    ]);
+    const [pharmacyDuty, setPharmacyDuty] = useState([
+        { date: "2026-01-04", pharmacyId: 1 },
+        { date: "2026-01-05", pharmacyId: 2 }
+    ]);
 
     // Initial fetch
     useEffect(() => {
         fetchNews();
         fetchSettings();
+        fetchCategories();
     }, []);
 
     const fetchNews = async () => {
@@ -46,6 +78,18 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch('/api/categories');
+            if (res.ok) {
+                const data = await res.json();
+                setCategories(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch categories:', err);
+        }
+    };
+
     const updateEdition = async (newVal) => {
         try {
             const res = await fetch('/api/settings', {
@@ -60,52 +104,6 @@ export const NewsProvider = ({ children }) => {
             console.error('Failed to update edition:', err);
         }
     };
-
-    const [flashTickers, setFlashTickers] = useState([
-        { id: 1, text: "Urgente: Nuevas medidas económicas anunciadas para el próximo mes", tag: "BREAKING NEWS", type: 'alert' },
-        { id: 2, text: "FINAL: Real Madrid 2 - 1 Barcelona (La Liga)", tag: "DEPORTES", type: 'score' },
-        { id: 5, text: "¡PUBLICIDAD! Adquiere tu nuevo Tesla con 0% de interés este mes", tag: "PUBLICIDAD", type: 'ad' }
-    ]);
-
-    const [scores, setScores] = useState([
-        { id: 1, home: "Social", away: "Ferro", homeScore: 0, awayScore: 1, homeLogo: "https://ui-avatars.com/api/?name=S&background=256af4&color=fff", awayLogo: "https://ui-avatars.com/api/?name=F&background=00d68f&color=fff", time: "Finalizado", date: "2026-01-01" },
-        { id: 2, home: "Rivadavia", away: "Huracan", homeScore: 2, awayScore: 2, homeLogo: "https://ui-avatars.com/api/?name=R&background=f4256a&color=fff", awayLogo: "https://ui-avatars.com/api/?name=H&background=ff6b00&color=fff", time: "85'", date: "2026-01-04" }
-    ]);
-
-    const [categories, setCategories] = useState([
-        { id: 1, name: "Locales", color: "primary", bgImage: "https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600" },
-        { id: 2, name: "Sociedad", color: "accent-orange", bgImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1600" },
-        { id: 3, name: "Zonales", color: "accent-green", bgImage: "https://images.unsplash.com/photo-1461891213817-5e204c71ef2e?auto=format&fit=crop&q=80&w=1600" },
-        { id: 4, name: "Provinciales", color: "accent-purple", bgImage: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1600" },
-        { id: 5, name: "Nacionales", color: "accent-pink", bgImage: "https://images.unsplash.com/photo-1611974714024-462cd9dc10c7?auto=format&fit=crop&q=80&w=1600" },
-        { id: 6, name: "Actualidad", color: "indigo-500", bgImage: "https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600" }
-    ]);
-
-    const [ads, setAds] = useState([
-        { id: 1, type: 'premium', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
-        { id: 2, type: 'square', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', link: '#', active: true },
-        { id: 3, type: 'horizontal', image: 'https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
-        { id: 4, type: 'horizontal', image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600', link: '#', active: true }
-    ]);
-
-    const [videos, setVideos] = useState([
-        { id: 1, title: "Crónica: El despertar de la IA en la industria local", views: "12k", duration: "3:45", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", category: "Tech & Futuro", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-    ]);
-
-    const [imageGallery, setImageGallery] = useState([
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=400'
-    ]);
-
-    const [pharmacies, setPharmacies] = useState([
-        { id: 1, name: "Farmacia Central", address: "Av. Principal 123", phone: "555-0101", city: "Centro", location: { lat: 0, lng: 0 } },
-        { id: 2, name: "Farmacia Norte", address: "Calle Falsa 456", phone: "555-0202", city: "Norte", location: { lat: 0, lng: 0 } }
-    ]);
-
-    const [pharmacyDuty, setPharmacyDuty] = useState([
-        { date: "2026-01-04", pharmacyId: 1 },
-        { date: "2026-01-05", pharmacyId: 2 }
-    ]);
 
     const addNews = async (item) => {
         try {
@@ -150,16 +148,61 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
-    // Other state handlers remain local for now as per minimal migration request
-    // These can be migrated similarly if needed.
+    const addCategory = async (cat) => {
+        try {
+            const res = await fetch('/api/categories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: cat.name,
+                    color: cat.color,
+                    bg_image: cat.bgImage || cat.bg_image
+                })
+            });
+            if (res.ok) {
+                const newCat = await res.json();
+                setCategories(prev => [...prev, newCat]);
+            }
+        } catch (err) {
+            console.error('Failed to add category:', err);
+        }
+    };
+
+    const deleteCategory = async (id) => {
+        try {
+            const res = await fetch(`/api/categories?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setCategories(prev => prev.filter(c => c.id !== id));
+            }
+        } catch (err) {
+            console.error('Failed to delete category:', err);
+        }
+    };
+
+    const updateCategory = async (id, cat) => {
+        try {
+            const res = await fetch('/api/categories', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id,
+                    name: cat.name,
+                    color: cat.color,
+                    bg_image: cat.bgImage || cat.bg_image
+                })
+            });
+            if (res.ok) {
+                const updatedCat = await res.json();
+                setCategories(prev => prev.map(c => c.id === id ? updatedCat : c));
+            }
+        } catch (err) {
+            console.error('Failed to update category:', err);
+        }
+    };
 
     const addTicker = (item) => setFlashTickers(prev => [...prev, { ...item, id: Date.now() }]);
     const deleteTicker = (id) => setFlashTickers(prev => prev.filter(t => t.id !== id));
     const updateTicker = (id, item) => setFlashTickers(prev => prev.map(t => t.id === id ? { ...t, ...item } : t));
-
-    const addCategory = (cat) => setCategories(prev => [...prev, { ...cat, id: Date.now() }]);
-    const deleteCategory = (id) => setCategories(prev => prev.filter(c => c.id !== id));
-    const updateCategory = (id, cat) => setCategories(prev => prev.map(c => c.id === id ? { ...c, ...cat } : c));
 
     const addAd = (ad) => setAds(prev => [...prev, { ...ad, id: Date.now() }]);
     const deleteAd = (id) => setAds(prev => prev.filter(a => a.id !== id));
@@ -196,4 +239,3 @@ export const NewsProvider = ({ children }) => {
         </NewsContext.Provider>
     );
 };
-

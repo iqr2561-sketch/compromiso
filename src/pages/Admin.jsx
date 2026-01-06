@@ -35,7 +35,7 @@ const Admin = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const [formData, setFormData] = useState({
-        title: '', category: 'Actualidad', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
+        title: '', category: 'Locales', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
         text: '', tag: 'DEPORTES', type: 'score', isHero: false, isFlash: false,
         home: '', away: '', homeScore: 0, awayScore: 0, homeLogo: '', awayLogo: '', time: 'Finalizado',
         name: '', color: 'primary', bgImage: '',
@@ -43,6 +43,12 @@ const Admin = () => {
         views: '0', duration: '0:00', url: '',
         address: '', phone: '', city: 'Central'
     });
+
+    useEffect(() => {
+        if (categories.length > 0 && !formData.category) {
+            setFormData(prev => ({ ...prev, category: categories[0].name }));
+        }
+    }, [categories]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

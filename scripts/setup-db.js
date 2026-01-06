@@ -67,7 +67,36 @@ async function setupDatabase() {
         );
       `);
 
+        // Categories Table
+        await client.query(`
+        CREATE TABLE IF NOT EXISTS categories (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL UNIQUE,
+          color TEXT,
+          bg_image TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
         console.log('✅ Tables created successfully.');
+
+        // Seed Categories
+        const catCheck = await client.query('SELECT COUNT(*) FROM categories');
+        if (parseInt(catCheck.rows[0].count) === 0) {
+            console.log('🌱 Seeding initial categories...');
+            const initialCats = [
+                { name: "Locales", color: "primary" },
+                { name: "Sociedad", color: "accent-orange" },
+                { name: "Zonales", color: "accent-green" },
+                { name: "Provinciales", color: "accent-purple" },
+                { name: "Nacionales", color: "accent-pink" },
+                { name: "Actualidad", color: "indigo-500" }
+            ];
+            for (const cat of initialCats) {
+                await client.query('INSERT INTO categories (name, color) VALUES ($1, $2)', [cat.name, cat.color]);
+            }
+            console.log('✅ Categories seeded.');
+        }
 
         // Seed Settings
         await client.query(`

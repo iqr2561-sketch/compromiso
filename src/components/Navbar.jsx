@@ -2,36 +2,31 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Newspaper, Search, Menu, X, Settings, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNews } from '../context/NewsContext';
 
 const Navbar = () => {
+    const { categories } = useNews();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
+    const staticSubmenus = {
+        'Locales': [
+            { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' }
+        ],
+        'Actualidad': [
+            { name: 'Interés General', path: '/categoria/Actualidad/Interes-General' },
+            { name: 'Cocina', path: '/categoria/Actualidad/Cocina' },
+            { name: 'Tecnología', path: '/categoria/Actualidad/Tecnologia' }
+        ]
+    };
+
     const navLinks = [
         { name: 'Inicio', path: '/' },
-        {
-            name: 'Locales',
-            path: '/categoria/Locales',
-            submenu: [
-                { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' }
-            ]
-        },
-        // Deportes removed
-        { name: 'Sociedad', path: '/categoria/Sociedad' },
-        // "¿Te Acordás Dolores?" removed to move to Home
-        { name: 'Zonales', path: '/categoria/Zonales' },
-        { name: 'Provinciales', path: '/categoria/Provinciales' },
-        { name: 'Nacionales', path: '/categoria/Nacionales' },
-        {
-            name: 'Actualidad',
-            path: '/categoria/Actualidad',
-            submenu: [
-                { name: 'Interés General', path: '/categoria/Actualidad/Interes-General' },
-                { name: 'Cocina', path: '/categoria/Actualidad/Cocina' },
-                { name: 'Tecnología', path: '/categoria/Actualidad/Tecnologia' }
-            ]
-        },
-        // Admin moved to separate icon
+        ...categories.map(cat => ({
+            name: cat.name,
+            path: `/categoria/${cat.name}`,
+            submenu: staticSubmenus[cat.name] || null
+        }))
     ];
 
     const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');

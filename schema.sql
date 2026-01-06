@@ -57,6 +57,15 @@ CREATE TABLE IF NOT EXISTS settings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CATEGORIES TABLE
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    color TEXT,
+    bg_image TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- INITIAL SETTINGS
 -- INSERT INTO settings (key, value) VALUES ('edition_number', '42891') ON CONFLICT DO NOTHING;
 -- INSERT INTO settings (key, value) VALUES ('last_increment_date', '2026-01-05') ON CONFLICT DO NOTHING;

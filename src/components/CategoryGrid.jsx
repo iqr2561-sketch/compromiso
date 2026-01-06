@@ -4,20 +4,23 @@ import { useNews } from '../context/NewsContext';
 import { Link } from 'react-router-dom';
 
 const CategoryGrid = () => {
-    const { news } = useNews();
+    const { news, categories } = useNews();
 
-    const categories = [
-        { name: 'Locales', color: 'bg-primary', accent: 'text-primary' },
-        { name: 'Sociedad', color: 'bg-accent-orange', accent: 'text-accent-orange' },
-        { name: 'Zonales', color: 'bg-accent-green', accent: 'text-accent-green' },
-        { name: 'Provinciales', color: 'bg-accent-purple', accent: 'text-accent-purple' },
-        { name: 'Nacionales', color: 'bg-accent-pink', accent: 'text-accent-pink' },
-        { name: 'Actualidad', color: 'bg-indigo-500', accent: 'text-indigo-500' },
-    ];
+    const getColorClass = (color) => {
+        if (!color) return 'bg-primary';
+        if (color.startsWith('bg-')) return color;
+        return `bg-${color}`;
+    };
 
-    const getNewsByCategory = (cat) => {
+    const getAccentClass = (color) => {
+        if (!color) return 'text-primary';
+        if (color.startsWith('text-')) return color;
+        return `text-${color}`;
+    };
+
+    const getNewsByCategory = (catName) => {
         // Relaxed filter: if no specific secondary news exist, show any news from category
-        const filtered = news.filter(n => n.category.toLowerCase().includes(cat.toLowerCase()));
+        const filtered = news.filter(n => n.category.toLowerCase() === catName.toLowerCase());
         const nonHeroes = filtered.filter(n => !n.isHero);
         return nonHeroes.length > 0 ? nonHeroes.slice(0, 3) : filtered.slice(0, 3);
     };
@@ -28,13 +31,13 @@ const CategoryGrid = () => {
                 <section key={cat.name} className="flex flex-col gap-6" id={cat.name.toLowerCase()}>
                     <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 pb-4">
                         <div className="flex items-center gap-3">
-                            <span className={`w-2.5 h-8 rounded-full ${cat.color} shadow-lg shadow-black/10`}></span>
+                            <span className={`w-2.5 h-8 rounded-full ${getColorClass(cat.color)} shadow-lg shadow-black/10`}></span>
                             <h2 className="text-2xl font-black tracking-tighter uppercase italic">
                                 {cat.name}
                             </h2>
                         </div>
                         <Link
-                            className={`text-[10px] font-black uppercase tracking-widest ${cat.accent} flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-all`}
+                            className={`text-[10px] font-black uppercase tracking-widest ${getAccentClass(cat.color)} flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-all`}
                             to={`/categoria/${cat.name}`}
                         >
                             Ver Todo
