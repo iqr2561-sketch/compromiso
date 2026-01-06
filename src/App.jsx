@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Category from './pages/Category';
 import Post from './pages/Post';
+import Search from './pages/Search';
 import Navbar from './components/Navbar';
 import HeaderTop from './components/HeaderTop';
 import TickerBar from './components/TickerBar';
@@ -41,6 +42,7 @@ function App() {
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/categoria/:categoryName" element={<Category />} />
                         <Route path="/noticia/:id" element={<Post />} />
+                        <Route path="/search" element={<Search />} />
                     </Routes>
                 </AppLayout>
             </Router>

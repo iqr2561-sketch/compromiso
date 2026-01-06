@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Newspaper, Search, Menu, X, Settings, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
@@ -7,7 +7,19 @@ import { useNews } from '../context/NewsContext';
 const Navbar = () => {
     const { categories } = useNews();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+            setIsSearchOpen(false);
+            setSearchQuery('');
+        }
+    };
 
     const staticSubmenus = {
         'Locales': [
@@ -82,9 +94,36 @@ const Navbar = () => {
                         <Link to="/admin" className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300" title="Admin Panel">
                             <Settings size={20} />
                         </Link>
-                        <button className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300">
-                            <Search size={20} />
-                        </button>
+
+                        <div className="relative flex items-center">
+                            <AnimatePresence>
+                                {isSearchOpen && (
+                                    <motion.form
+                                        initial={{ width: 0, opacity: 0 }}
+                                        animate={{ width: 200, opacity: 1 }}
+                                        exit={{ width: 0, opacity: 0 }}
+                                        onSubmit={handleSearch}
+                                        className="absolute right-0 top-0 h-10 overflow-hidden z-10"
+                                    >
+                                        <input
+                                            autoFocus
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Buscar historias..."
+                                            className="w-full h-full pr-12 pl-4 rounded-full bg-gray-100 dark:bg-white/10 text-xs font-bold outline-none border border-gray-200 dark:border-white/10 focus:border-primary transition-all"
+                                        />
+                                    </motion.form>
+                                )}
+                            </AnimatePresence>
+                            <button
+                                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                className={`relative z-20 flex items-center justify-center size-10 rounded-full transition-colors ${isSearchOpen ? 'text-primary' : 'text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                            >
+                                {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+                            </button>
+                        </div>
+
                         <button className="hidden sm:flex h-10 px-6 items-center justify-center rounded-full bg-primary text-white text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20">
                             Suscríbete
                         </button>
