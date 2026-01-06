@@ -9,7 +9,6 @@ import Search from './pages/Search';
 import TodayCover from './pages/TodayCover';
 import Navbar from './components/Navbar';
 import HeaderTop from './components/HeaderTop';
-import TickerBar from './components/TickerBar';
 import Footer from './components/Footer';
 
 const AppLayout = ({ children }) => {
@@ -29,7 +28,6 @@ const AppLayout = ({ children }) => {
         <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300 selection:bg-primary selection:text-white">
             <Navbar />
             <HeaderTop />
-            <TickerBar />
             <main className="max-w-[1440px] mx-auto px-4 lg:px-8 py-6">
                 {children}
             </main>
