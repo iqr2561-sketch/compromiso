@@ -34,6 +34,8 @@ const Admin = () => {
     const [showCalendar, setShowCalendar] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
+    const [showGallery, setShowGallery] = useState(false);
+
     const [formData, setFormData] = useState({
         title: '', category: 'Locales', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
         text: '', tag: 'DEPORTES', type: 'score', isHero: false, isFlash: false,
@@ -218,7 +220,10 @@ const Admin = () => {
                                             </div>
                                             <div className="flex gap-1 p-1 bg-[#0a0c10] rounded-xl border border-white/5">
                                                 {['url', 'pc', 'gallery'].map(src => (
-                                                    <button key={src} type="button" onClick={() => setImageSource(src)} className={`flex-1 py-2 rounded-lg text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white' : 'text-slate-500'}`}>{src}</button>
+                                                    <button key={src} type="button" onClick={() => {
+                                                        setImageSource(src);
+                                                        if (src === 'gallery') setShowGallery(true);
+                                                    }} className={`flex-1 py-2 rounded-lg text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white' : 'text-slate-500'}`}>{src}</button>
                                                 ))}
                                             </div>
                                             {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
@@ -247,8 +252,63 @@ const Admin = () => {
                                     </>
                                 )}
 
+                                {activeTab === 'categories' && (
+                                    <>
+                                        <div className="flex flex-col gap-5">
+                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-primary" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Nombre de la categoría..." required />
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} placeholder="Color (css class o hex)..." />
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.bgImage} onChange={e => setFormData({ ...formData, bgImage: e.target.value })} placeholder="URL Imagen de fondo..." />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col justify-end">
+                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Categoría</button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {activeTab === 'ads' && (
+                                    <>
+                                        <div className="flex flex-col gap-5">
+                                            <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                <option value="premium">Premium (Header)</option>
+                                                <option value="horizontal">Horizontal (Body)</option>
+                                                <option value="square">Cuadrada (Sidebar)</option>
+                                            </select>
+                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la imagen..." required />
+                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.link} onChange={e => setFormData({ ...formData, link: e.target.value })} placeholder="Link de destino..." />
+                                        </div>
+                                        <div className="flex flex-col gap-5">
+                                            <label className="flex items-center gap-2 cursor-pointer mt-4">
+                                                <input type="checkbox" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} className="size-4 accent-primary" />
+                                                <span className="text-[10px] font-black uppercase text-slate-500">Publicidad Activa</span>
+                                            </label>
+                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Publicidad</button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {activeTab === 'tickers' && (
+                                    <>
+                                        <div className="flex flex-col gap-5">
+                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.text} onChange={e => setFormData({ ...formData, text: e.target.value })} placeholder="Mensaje del ticker..." required />
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.tag} onChange={e => setFormData({ ...formData, tag: e.target.value })} placeholder="Etiqueta (ej: URGENTE)..." />
+                                                <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                    <option value="alert">Alerta (Rojo)</option>
+                                                    <option value="ad">Publicidad (Azul)</option>
+                                                    <option value="score">Deporte (Verde)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col justify-end">
+                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Ticker</button>
+                                        </div>
+                                    </>
+                                )}
+
                                 {/* Fallback for other tabs */}
-                                {!['news', 'pharmacies'].includes(activeTab) && (
+                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers'].includes(activeTab) && (
                                     <div className="col-span-2 text-center py-10 bg-white/5 rounded-2xl border border-dashed border-white/10">
                                         <Zap size={32} className="mx-auto text-primary/40 mb-3" />
                                         <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Configuración para {activeTab}</p>
@@ -572,6 +632,64 @@ const Admin = () => {
 
                 </div>
             </main>
+
+            <AnimatePresence>
+                {showGallery && (
+                    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowGallery(false)}
+                            className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-4xl bg-[#11141b] rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                        >
+                            <div className="p-8 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-primary/10 to-transparent">
+                                <div>
+                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Galería de Medios</h2>
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Selecciona una imagen almacenada</p>
+                                </div>
+                                <button onClick={() => setShowGallery(false)} className="size-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-primary transition-all">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="p-8 overflow-y-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {imageGallery.map((img, idx) => (
+                                    <div
+                                        key={idx}
+                                        onClick={() => {
+                                            setFormData({ ...formData, image: img });
+                                            setShowGallery(false);
+                                        }}
+                                        className="aspect-square rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative"
+                                    >
+                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+                                        <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform">Seleccionar</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {imageGallery.length === 0 && (
+                                    <div className="col-span-full py-20 text-center flex flex-col items-center gap-4">
+                                        <ImageIcon size={48} className="text-slate-800" />
+                                        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">La galería está vacía</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-6 bg-[#0a0c10] border-t border-white/5 flex justify-end">
+                                <button onClick={() => setShowGallery(false)} className="px-8 py-3 bg-white/5 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">Cerrar Galería</button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
