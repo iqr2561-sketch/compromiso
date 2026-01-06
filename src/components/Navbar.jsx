@@ -140,9 +140,7 @@ const Navbar = () => {
                             </button>
                         </div>
 
-                        <button className="hidden sm:flex h-10 px-6 items-center justify-center rounded-full bg-primary text-white text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20">
-                            Suscríbete
-                        </button>
+
                         <button
                             className="lg:hidden flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
