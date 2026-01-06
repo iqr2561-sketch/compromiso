@@ -5,9 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
 
 const HeaderTop = () => {
-    const { pharmacies, pharmacyDuty } = useNews();
+    const { pharmacies, pharmacyDuty, editionNumber } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
+
+    const formatEdition = (num) => {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
 
     const todayISO = new Date().toISOString().split('T')[0];
     const dutyToday = pharmacyDuty.find(d => d.date === todayISO);
@@ -35,7 +39,7 @@ const HeaderTop = () => {
                     <span className="opacity-60 hidden md:inline capitalize font-light">{todayDisplay}</span>
                     <div className="flex items-center gap-2 px-2 py-0.5 bg-white/5 rounded-full border border-white/5">
                         <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
-                        <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN <span className="text-primary">42.891</span></span>
+                        <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN <span className="text-primary">{formatEdition(editionNumber)}</span></span>
                     </div>
                 </div>
 

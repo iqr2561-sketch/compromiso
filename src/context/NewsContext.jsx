@@ -7,10 +7,12 @@ export const useNews = () => useContext(NewsContext);
 export const NewsProvider = ({ children }) => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [editionNumber, setEditionNumber] = useState('42891');
 
     // Initial fetch
     useEffect(() => {
         fetchNews();
+        fetchSettings();
     }, []);
 
     const fetchNews = async () => {
@@ -24,6 +26,38 @@ export const NewsProvider = ({ children }) => {
             console.error('Failed to fetch news:', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchSettings = async () => {
+        try {
+            const res = await fetch('/api/settings');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.edition_number) {
+                    setEditionNumber(data.edition_number);
+                }
+
+                // Trigger daily increment check on load
+                fetch('/api/cron-increment');
+            }
+        } catch (err) {
+            console.error('Failed to fetch settings:', err);
+        }
+    };
+
+    const updateEdition = async (newVal) => {
+        try {
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'edition_number', value: newVal })
+            });
+            if (res.ok) {
+                setEditionNumber(newVal.toString());
+            }
+        } catch (err) {
+            console.error('Failed to update edition:', err);
         }
     };
 
@@ -148,6 +182,7 @@ export const NewsProvider = ({ children }) => {
     return (
         <NewsContext.Provider value={{
             news, addNews, deleteNews, updateNews, loading,
+            editionNumber, updateEdition,
             flashTickers, addTicker, deleteTicker, updateTicker,
             scores, setScores,
             categories, addCategory, deleteCategory, updateCategory,

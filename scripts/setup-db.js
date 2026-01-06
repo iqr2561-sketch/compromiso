@@ -58,7 +58,24 @@ async function setupDatabase() {
         );
       `);
 
+        // Settings Table
+        await client.query(`
+        CREATE TABLE IF NOT EXISTS settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
         console.log('✅ Tables created successfully.');
+
+        // Seed Settings
+        await client.query(`
+            INSERT INTO settings (key, value) 
+            VALUES ('edition_number', '42891'), ('last_increment_date', $1) 
+            ON CONFLICT (key) DO NOTHING
+        `, [new Date().toISOString().split('T')[0]]);
+        console.log('✅ Settings initialized.');
 
         // Seed Data Check
         const { rows } = await client.query('SELECT COUNT(*) FROM news');

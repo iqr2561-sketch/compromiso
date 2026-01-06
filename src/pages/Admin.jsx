@@ -20,7 +20,8 @@ const Admin = () => {
         videos, addVideo, deleteVideo, updateVideo,
         imageGallery, addToGallery,
         pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
-        pharmacyDuty, setDuty
+        pharmacyDuty, setDuty,
+        editionNumber, updateEdition
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -104,6 +105,7 @@ const Admin = () => {
         { id: 'categories', label: 'Categorías', icon: Layers },
         { id: 'scores', label: 'Resultados', icon: Trophy },
         { id: 'tickers', label: 'Flash Tickers', icon: Zap },
+        { id: 'settings', label: 'Configuración', icon: Settings },
     ];
 
     const upcomingDuties = pharmacyDuty
@@ -372,10 +374,10 @@ const Admin = () => {
                                                                     key={day}
                                                                     onClick={() => setDisplayDate(dateStr)}
                                                                     className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
-                                                                            ? 'bg-primary text-white shadow-lg scale-110'
-                                                                            : hasAssignment
-                                                                                ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                                                                                : 'text-slate-400 hover:bg-white/5'
+                                                                        ? 'bg-primary text-white shadow-lg scale-110'
+                                                                        : hasAssignment
+                                                                            ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                                                                            : 'text-slate-400 hover:bg-white/5'
                                                                         } ${isToday ? 'ring-1 ring-primary/50' : ''}`}
                                                                 >
                                                                     {day}
@@ -461,7 +463,7 @@ const Admin = () => {
                     )}
 
                     {/* Generic Table View (for News, Ads, etc.) */}
-                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && (
+                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && (
                         <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
                             <table className="w-full text-left">
                                 <thead className="bg-[#14171d]">
@@ -514,6 +516,54 @@ const Admin = () => {
                             </table>
                         </div>
                     )}
+
+                    {/* Settings Tab */}
+                    {activeTab === 'settings' && (
+                        <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <Layers size={14} className="text-primary" /> Edición del Diario
+                                    </h3>
+                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona el número de edición que se muestra en la cabecera. Se incrementará automáticamente cada día.</p>
+
+                                    <div className="flex items-center gap-4">
+                                        <button
+                                            onClick={() => updateEdition(parseInt(editionNumber) - 1)}
+                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                                        >-</button>
+                                        <div className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic">
+                                            {editionNumber}
+                                        </div>
+                                        <button
+                                            onClick={() => updateEdition(parseInt(editionNumber) + 1)}
+                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                                        >+</button>
+                                    </div>
+
+                                    <div className="mt-6 pt-6 border-t border-white/5">
+                                        <button
+                                            onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
+                                            className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                        >
+                                            Forzar Incremento Diario
+                                        </button>
+                                    </div>
+                                </section>
+
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 opacity-50">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <Bell size={14} className="text-accent-pink" /> Notificaciones
+                                    </h3>
+                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Configura el envío de alertas y noticias flash a los suscriptores.</p>
+                                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <div className="w-1/3 h-full bg-emerald-500"></div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </main>
         </div>
