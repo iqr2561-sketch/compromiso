@@ -44,6 +44,12 @@ const Navbar = () => {
         { name: 'Inicio', path: '/' },
         ...categories
             .filter(cat => !['¿Te Acordás Dolores?', 'Memoria', 'Te Acordás Dolores'].includes(cat.name))
+            .sort((a, b) => {
+                const priority = { 'Locales': 1, 'Deportes': 2 };
+                const pA = priority[a.name] || 99;
+                const pB = priority[b.name] || 99;
+                return pA - pB;
+            })
             .map(cat => ({
                 name: cat.name,
                 path: `/categoria/${cat.name}`,

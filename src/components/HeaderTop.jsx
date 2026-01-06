@@ -46,9 +46,9 @@ const HeaderTop = () => {
             <div className="px-4 lg:px-8 max-w-[1440px] mx-auto min-h-[40px] py-1 flex flex-wrap items-center justify-between gap-y-1">
                 <div className="flex items-center gap-3">
                     <span className="opacity-60 hidden md:inline font-light">{todayDisplay}</span>
-                    <div className="flex items-center gap-2 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/5">
-                        <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
-                        <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN N<sup className="text-[6px]">o</sup> <span className="text-primary">{formatEdition(editionNumber)}</span></span>
+                    <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/5">
+                        <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
+                        <span className="tracking-widest text-[10px] font-black text-slate-700 dark:text-white">Edición N<sup className="text-[7px]">o</sup> <span className="text-primary">{formatEdition(editionNumber)}</span></span>
                     </div>
                 </div>
 

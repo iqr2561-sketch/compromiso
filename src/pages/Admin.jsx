@@ -894,21 +894,21 @@ const Admin = () => {
 
                     {/* Categories Reorder View */}
                     {activeTab === 'categories' && (
-                        <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                            <div className="px-8 py-5 flex items-center justify-between border-b border-white/5 bg-[#14171d]">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Categorías (Arrastrar para ordenar)</span>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 text-right">Acciones</span>
+                        <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                            <div className="px-8 py-5 flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600">Categorías (Arrastrar para ordenar)</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 text-right">Acciones</span>
                             </div>
-                            <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-white/5 list-none m-0 p-0">
+                            <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
                                 {categories.map(cat => (
-                                    <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-[#11141b] group relative">
+                                    <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-white dark:bg-[#11141b] group relative">
                                         <div className="flex items-center gap-4">
-                                            <div className="p-2 rounded-lg bg-white/5 text-slate-600 group-hover:text-white transition-colors">
+                                            <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                                                 <Grid size={16} />
                                             </div>
-                                            {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-white/10" alt="" />}
+                                            {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-gray-200 dark:border-white/10" alt="" />}
                                             <div className="flex flex-col">
-                                                <span className="font-black text-sm text-white uppercase italic tracking-tighter">{cat.name}</span>
+                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{cat.name}</span>
                                                 <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
                                             </div>
                                         </div>
@@ -926,7 +926,7 @@ const Admin = () => {
                     {activeTab === 'gallery' && (
                         <div className="flex flex-col gap-8">
                             {/* Mass Upload Area */}
-                            <div className="bg-[#11141b] rounded-2xl border-2 border-dashed border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-white/5 transition-colors group cursor-pointer relative">
+                            <div className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative">
                                 <input
                                     type="file"
                                     multiple
@@ -938,7 +938,7 @@ const Admin = () => {
                                     <Upload size={32} className="text-primary" />
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
+                                    <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
                                     <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
                                 </div>
                             </div>
@@ -946,7 +946,7 @@ const Admin = () => {
                             {/* Gallery Grid */}
                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                                 {imageGallery.map((img, idx) => (
-                                    <div key={idx} className="aspect-square bg-[#11141b] rounded-xl border border-white/10 overflow-hidden relative group">
+                                    <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
                                         <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
                                         <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform">
                                             <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? img.substring(0, 30) + '...' : img}</p>
@@ -959,30 +959,30 @@ const Admin = () => {
 
                     {/* Generic Table View (for News, Ads, etc.) */}
                     {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
-                        <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+                        <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
                             <table className="w-full text-left">
-                                <thead className="bg-[#14171d]">
+                                <thead className="bg-slate-50 dark:bg-[#14171d]">
                                     <tr>
-                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-600 border-b border-white/5">Detalles</th>
-                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-600 border-b border-white/5">Config</th>
-                                        <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-600 border-b border-white/5">Aciones</th>
+                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Detalles</th>
+                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Config</th>
+                                        <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Aciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody className="divide-y divide-gray-200 dark:divide-white/5">
                                     {(activeTab === 'news' ? filteredNews :
                                         activeTab === 'scores' ? scores :
                                             activeTab === 'ads' ? ads :
                                                 activeTab === 'videos' ? videos :
                                                     activeTab === 'categories' ? categories :
                                                         flashTickers).map(item => (
-                                                            <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
                                                                 <td className="px-8 py-6">
                                                                     <div className="flex items-center gap-4">
-                                                                        {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-white/10" alt="" />}
+                                                                        {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
                                                                         <div className="flex flex-col">
-                                                                            <span className="font-black text-sm text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
+                                                                            <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
                                                                             <div className="flex gap-2 items-center mt-1">
-                                                                                <span className="text-[9px] text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
+                                                                                <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
                                                                                 {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
                                                                                 {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
                                                                             </div>
@@ -994,7 +994,7 @@ const Admin = () => {
                                                                 </td>
                                                                 <td className="px-8 py-6 text-right">
                                                                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                                        <button onClick={() => handleEdit(item)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
+                                                                        <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
                                                                         <button onClick={() => {
                                                                             if (activeTab === 'news') deleteNews(item.id);
                                                                             if (activeTab === 'ads') deleteAd(item.id);
@@ -1046,8 +1046,8 @@ const Admin = () => {
                                     </div>
                                 </section>
 
-                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
+                                    <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                                         <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
                                     </h3>
                                     <p className="text-[10px] text-slate-500 font-bold mb-6">Conecta un modelo (Gemini/OpenAI) para redacción automática de noticias y sugerencias de formato.</p>
@@ -1060,13 +1060,13 @@ const Admin = () => {
 
                                         <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center justify-between">
-                                                <label className="text-[9px] font-black uppercase text-slate-600 ml-1">API Key</label>
+                                                <label className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-600 ml-1">API Key</label>
                                                 {aiConfig.apiKey && <span className="text-[8px] font-bold text-emerald-500">Guardado</span>}
                                             </div>
                                             <div className="flex gap-2">
                                                 <input
                                                     type="password"
-                                                    className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500/50"
+                                                    className="flex-1 bg-white dark:bg-[#11141b] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500/50 shadow-inner"
                                                     placeholder="Pegar API Key aquí..."
                                                     defaultValue={aiConfig.apiKey}
                                                     onBlur={(e) => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
@@ -1093,8 +1093,8 @@ const Admin = () => {
                                     </div>
                                 </section>
 
-                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 opacity-50">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5 opacity-50">
+                                    <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                                         <Wand2 size={14} className="text-accent-pink" /> Generación Automática
                                     </h3>
                                     <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Diseña portadas completas y diagramación de notas con un solo clic.</p>
