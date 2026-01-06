@@ -32,15 +32,28 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
             image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200',
             button: 'Más Información',
             link: '#'
+        },
+        // Generic fallback for hero/other types
+        default: {
+            title: 'ANUNCIATE AQUÍ',
+            content: 'Espacio Disponible',
+            subContent: '',
+            image: '',
+            button: 'Contactar',
+            link: '#'
         }
     };
 
+    const adData = defaultAds[type] || defaultAds.default;
+
     const ad = dynamicAd ? {
-        ...defaultAds[type],
-        image: dynamicAd.image,
-        link: dynamicAd.link,
-        content: dynamicAd.content || defaultAds[type].content
-    } : defaultAds[type] || defaultAds.horizontal;
+        ...adData,
+        image: dynamicAd.image || adData.image,
+        link: dynamicAd.link || adData.link,
+        content: dynamicAd.content || adData.content,
+        title: dynamicAd.title || adData.title, // Ensure title is used if available
+        button: dynamicAd.button || adData.button
+    } : adData;
 
     if (type === 'horizontal' || type === 'premium') {
         return (

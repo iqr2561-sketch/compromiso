@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
 import { ChevronLeft, ChevronRight, Trophy, PlayCircle, Star, LayoutDashboard, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import AdSection from './AdSection';
 
 const HeroSection = () => {
     const { news, scores, coverPage } = useNews();
@@ -58,7 +59,18 @@ const HeroSection = () => {
                                         {heroNews.title}
                                     </h1>
                                     <p className="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
-                                        {heroNews.content}
+                                        {(() => {
+                                            try {
+                                                if (heroNews.content.startsWith('[')) {
+                                                    const blocks = JSON.parse(heroNews.content);
+                                                    const textBlock = blocks.find(b => b.type === 'text');
+                                                    return textBlock ? textBlock.content : '';
+                                                }
+                                                return heroNews.content;
+                                            } catch (e) {
+                                                return heroNews.content;
+                                            }
+                                        })()}
                                     </p>
                                     {/* Removed by user request */}
                                 </div>
@@ -145,6 +157,13 @@ const HeroSection = () => {
                             </Link>
                         </motion.div>
                     ))}
+                </div>
+
+                {/* Hero Ads Section - 3 Mini Boxes */}
+                <div className="grid grid-cols-3 gap-2">
+                    <AdSection type="hero_1" className="!aspect-square !p-0 !rounded-xl" />
+                    <AdSection type="hero_2" className="!aspect-square !p-0 !rounded-xl" />
+                    <AdSection type="hero_3" className="!aspect-square !p-0 !rounded-xl" />
                 </div>
 
                 {/* Cover Page Section */}

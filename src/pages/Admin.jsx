@@ -5,13 +5,13 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.2");
+    console.log("Admin Component Loaded - Version 4.3");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -24,7 +24,8 @@ const Admin = () => {
         pharmacyDuty, setDuty,
         editionNumber, updateEdition,
         coverPage, updateCoverPage,
-        aiConfig, updateAiConfig
+        aiConfig, updateAiConfig,
+        reorderCategories
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -152,12 +153,24 @@ const Admin = () => {
         }
     };
 
+    const handleGalleryUpload = (e) => {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                addToGallery(reader.result);
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'news', label: 'Noticias', icon: Newspaper },
         { id: 'pharmacies', label: 'Farmacias', icon: Crosshair },
         { id: 'ads', label: 'Publicidad', icon: Megaphone },
         { id: 'videos', label: 'Videos', icon: Video },
+        { id: 'gallery', label: 'Galería', icon: ImageIcon },
         { id: 'categories', label: 'Categorías', icon: Layers },
         { id: 'cover', label: 'Tapa Diaria', icon: LayoutDashboard },
         { id: 'tickers', label: 'Flash Tickers', icon: Zap },
@@ -185,7 +198,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ADMIN V4.2 - DEBUG</span>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ADMIN V4.3 - RELEASE</span>
                     </div>
                 </div>
 
@@ -476,11 +489,23 @@ const Admin = () => {
                                 {activeTab === 'cover' && (
                                     <>
                                         <div className="flex flex-col gap-5">
-                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de la Tapa</label>
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la tapa digital..." required />
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de la Tapa</label>
+                                                <div className="flex gap-2 p-1 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                                    {['url', 'pc', 'gallery'].map(src => (
+                                                        <button key={src} type="button" onClick={() => {
+                                                            setImageSource(src);
+                                                            if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
+                                                        }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>{src}</button>
+                                                    ))}
+                                                </div>
+                                                {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la tapa digital..." />}
+                                                {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
+                                            </div>
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Fecha de Portada</label>
                                             <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
                                         </div>
-                                        <div className="flex flex-col justify-end">
+                                        <div className="flex flex-col justify-end mt-4">
                                             <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Actualizar Tapa</button>
                                         </div>
                                     </>
@@ -709,6 +734,67 @@ const Admin = () => {
 
                     {activeTab === 'ads' && (
                         <div className="flex flex-col gap-10">
+                            {/* Hero Ads - 3 Specific Slots */}
+                            <div>
+                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                    <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {[1, 2, 3].map(num => {
+                                        const adType = `hero_${num}`;
+                                        const existingAd = ads.find(a => a.type === adType);
+                                        return (
+                                            <div key={num} className="relative group">
+                                                <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
+                                                    {existingAd?.image ? (
+                                                        <>
+                                                            <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        if (confirm('¿Eliminar este anuncio?')) {
+                                                                            if (existingAd.id) deleteAd(existingAd.id);
+                                                                        }
+                                                                    }}
+                                                                    className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setEditingId(existingAd.id);
+                                                                        setFormData({ ...existingAd });
+                                                                        setIsAdding(true);
+                                                                    }}
+                                                                    className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"
+                                                                >
+                                                                    <Edit3 size={16} />
+                                                                </button>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <div className="text-center p-4">
+                                                            <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
+                                                            <p className="text-[10px] text-slate-500 font-bold uppercase">Espacio Vacío</p>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setFormData({ ...formData, type: adType, active: true });
+                                                                    setIsAdding(true);
+                                                                }}
+                                                                className="mt-2 px-3 py-1 bg-purple-500/20 text-purple-500 rounded-lg text-[9px] font-black uppercase hover:bg-purple-500 hover:text-white transition-colors"
+                                                            >
+                                                                Crear
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
                             {/* Premium Header Ads */}
                             <div>
                                 <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
@@ -790,8 +876,73 @@ const Admin = () => {
                         </div>
                     )}
 
+                    {/* Categories Reorder View */}
+                    {activeTab === 'categories' && (
+                        <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+                            <div className="px-8 py-5 flex items-center justify-between border-b border-white/5 bg-[#14171d]">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Categorías (Arrastrar para ordenar)</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 text-right">Acciones</span>
+                            </div>
+                            <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-white/5 list-none m-0 p-0">
+                                {categories.map(cat => (
+                                    <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-[#11141b] group relative">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-2 rounded-lg bg-white/5 text-slate-600 group-hover:text-white transition-colors">
+                                                <Grid size={16} />
+                                            </div>
+                                            {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-white/10" alt="" />}
+                                            <div className="flex flex-col">
+                                                <span className="font-black text-sm text-white uppercase italic tracking-tighter">{cat.name}</span>
+                                                <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all">
+                                            <button onClick={() => handleEdit(cat)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
+                                            <button onClick={() => deleteCategory(cat.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                        </div>
+                                    </Reorder.Item>
+                                ))}
+                            </Reorder.Group>
+                        </div>
+                    )}
+
+                    {/* Gallery Tab */}
+                    {activeTab === 'gallery' && (
+                        <div className="flex flex-col gap-8">
+                            {/* Mass Upload Area */}
+                            <div className="bg-[#11141b] rounded-2xl border-2 border-dashed border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-white/5 transition-colors group cursor-pointer relative">
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    onChange={handleGalleryUpload}
+                                    accept="image/*"
+                                />
+                                <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <Upload size={32} className="text-primary" />
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
+                                    <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
+                                </div>
+                            </div>
+
+                            {/* Gallery Grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                {imageGallery.map((img, idx) => (
+                                    <div key={idx} className="aspect-square bg-[#11141b] rounded-xl border border-white/10 overflow-hidden relative group">
+                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                                            <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? img.substring(0, 30) + '...' : img}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Generic Table View (for News, Ads, etc.) */}
-                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && (
+                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
                         <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
                             <table className="w-full text-left">
                                 <thead className="bg-[#14171d]">

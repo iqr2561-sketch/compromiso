@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CloudSun, Activity, Phone, MapPin, X, Navigation } from 'lucide-react';
+import { CloudSun, Activity, Phone, MapPin, X, Navigation, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
 
@@ -8,6 +8,15 @@ const HeaderTop = () => {
     const { pharmacies, pharmacyDuty, editionNumber } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
+
+    React.useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
 
     const formatEdition = (num) => {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -33,17 +42,26 @@ const HeaderTop = () => {
     };
 
     return (
-        <div className="bg-[#0f172a] text-white text-[11px] font-medium border-b border-white/5 relative z-[100]">
+        <div className="bg-white dark:bg-[#0f172a] text-slate-800 dark:text-white text-[11px] font-medium border-b border-gray-200 dark:border-white/5 relative z-[100] transition-colors duration-300">
             <div className="px-4 lg:px-8 max-w-[1440px] mx-auto min-h-[40px] py-1 flex flex-wrap items-center justify-between gap-y-1">
                 <div className="flex items-center gap-3">
                     <span className="opacity-60 hidden md:inline font-light">{todayDisplay}</span>
-                    <div className="flex items-center gap-2 px-2 py-0.5 bg-white/5 rounded-full border border-white/5">
+                    <div className="flex items-center gap-2 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/5">
                         <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
-                        <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN <span className="text-primary">{formatEdition(editionNumber)}</span></span>
+                        <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN N<sup className="text-[6px]">o</sup> <span className="text-primary">{formatEdition(editionNumber)}</span></span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4 md:gap-8">
+                    {/* Theme Toggle */}
+                    <button
+                        onClick={() => setIsDarkMode(!isDarkMode)}
+                        className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+                        title={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+                    >
+                        {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                    </button>
+
                     {/* Weather Button with Modal */}
                     <div className="relative">
                         <motion.div

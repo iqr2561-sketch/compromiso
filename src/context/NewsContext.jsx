@@ -31,7 +31,10 @@ export const NewsProvider = ({ children }) => {
         { id: 1, type: 'premium', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
         { id: 2, type: 'square', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', link: '#', active: true },
         { id: 3, type: 'horizontal', image: 'https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
-        { id: 4, type: 'horizontal', image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600', link: '#', active: true }
+        { id: 4, type: 'horizontal', image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600', link: '#', active: true },
+        { id: 5, type: 'hero_1', image: '', link: '#', active: false },
+        { id: 6, type: 'hero_2', image: '', link: '#', active: false },
+        { id: 7, type: 'hero_3', image: '', link: '#', active: false }
     ]);
     const [videos, setVideos] = useState([
         { id: 1, title: "Crónica: El despertar de la IA en la industria local", views: "12k", duration: "3:45", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", category: "Tech & Futuro", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
@@ -300,7 +303,8 @@ export const NewsProvider = ({ children }) => {
             imageGallery, addToGallery,
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
             pharmacyDuty, setDuty,
-            aiConfig, updateAiConfig
+            aiConfig, updateAiConfig,
+            reorderCategories: setCategories
         }}>
             {children}
         </NewsContext.Provider>
