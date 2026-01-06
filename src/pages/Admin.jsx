@@ -707,6 +707,89 @@ const Admin = () => {
                         </div>
                     )}
 
+                    {activeTab === 'ads' && (
+                        <div className="flex flex-col gap-10">
+                            {/* Premium Header Ads */}
+                            <div>
+                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                    <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {ads.filter(a => a.type === 'premium').map(ad => (
+                                        <div key={ad.id} className="bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-primary/50 transition-colors">
+                                            <div className="h-32 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${ad.image})` }}></div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 flex flex-col justify-end">
+                                                <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
+                                                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                    <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button onClick={() => { setFormData({ ...formData, type: 'premium', active: true }); setIsAdding(true); }} className="h-32 rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                        <Plus size={24} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Nueva Premium</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Horizontal Body Ads */}
+                            <div>
+                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                    <LayoutDashboard size={14} className="text-blue-400" /> Publicidad Horizontal (Entre contenido)
+                                </h3>
+                                <div className="grid grid-cols-1 gap-4">
+                                    {ads.filter(a => a.type === 'horizontal').map(ad => (
+                                        <div key={ad.id} className="relative group bg-[#11141b] rounded-2xl border border-white/10 p-1 flex items-center hover:border-blue-400/50 transition-all">
+                                            <img src={ad.image} className="w-32 h-20 object-cover rounded-xl" alt="" />
+                                            <div className="flex-1 px-4">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                </div>
+                                                <p className="text-xs text-slate-400 truncate max-w-md">{ad.link}</p>
+                                            </div>
+                                            <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button onClick={() => { setFormData({ ...formData, type: 'horizontal', active: true }); setIsAdding(true); }} className="w-full py-4 rounded-xl border border-dashed border-white/10 flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                        <Plus size={16} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Añadir Tira Horizontal</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Sidebar Ads */}
+                            <div>
+                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                    <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
+                                </h3>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    {ads.filter(a => a.type === 'square').map(ad => (
+                                        <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
+                                            <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
+                                            <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
+                                                <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
+                                            </div>
+                                            <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                                <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
+                                                <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                        <Plus size={24} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Generic Table View (for News, Ads, etc.) */}
                     {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && (
                         <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
@@ -809,14 +892,20 @@ const Admin = () => {
                                         </label>
 
                                         <div className="flex flex-col gap-1.5">
-                                            <label className="text-[9px] font-black uppercase text-slate-600 ml-1">API Key</label>
-                                            <input
-                                                type="password"
-                                                className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500/50"
-                                                placeholder="API Key (Gemini, OpenAI...)"
-                                                value={aiConfig.apiKey}
-                                                onChange={e => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
-                                            />
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[9px] font-black uppercase text-slate-600 ml-1">API Key</label>
+                                                {aiConfig.apiKey && <span className="text-[8px] font-bold text-emerald-500">Guardado</span>}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="password"
+                                                    className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500/50"
+                                                    placeholder="Pegar API Key aquí..."
+                                                    defaultValue={aiConfig.apiKey}
+                                                    onBlur={(e) => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
+                                                />
+                                            </div>
+                                            <p className="text-[8px] text-slate-600 ml-1">Se guarda automáticamente al salir del campo.</p>
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
@@ -826,8 +915,9 @@ const Admin = () => {
                                                 value={aiConfig.model}
                                                 onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
                                             >
-                                                <option value="llama3-70b-8192">Groq - Llama 3 70B (Rápido)</option>
+                                                <option value="llama3-70b-8192">Groq - Llama 3 70B (Recomendado)</option>
                                                 <option value="mixtral-8x7b-32768">Groq - Mixtral 8x7b</option>
+                                                <option value="gemma-7b-it">Groq - Gemma 7B</option>
                                                 <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
                                                 <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
                                                 <option value="gpt-4o">OpenAI GPT-4o</option>
@@ -849,7 +939,7 @@ const Admin = () => {
                         </div>
                     )}
 
-                </div>
+                </div >
             </main >
 
             <AnimatePresence>
@@ -968,7 +1058,7 @@ const Admin = () => {
                     </div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };
 

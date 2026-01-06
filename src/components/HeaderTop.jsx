@@ -155,7 +155,7 @@ const HeaderTop = () => {
                                     : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 shadow-emerald-500/5'
                                     }`}
                             >
-                                <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 translate-x-[-150%] ${!showPharmacyInfo ? 'animate-[shimmer_3s_infinite]' : ''}`} />
+                                <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 translate-x-[-150%] ${!showPharmacyInfo ? 'animate-[shimmer_2.5s_infinite]' : ''}`} />
                                 <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse text-emerald-300'} />
                                 <div className="flex flex-col items-start leading-none gap-0.5 relative z-10">
                                     <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>

@@ -69,18 +69,34 @@ const HeroSection = () => {
                     )}
                 </AnimatePresence>
 
+                {/* Bottom 3 News Strip */}
+                <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-md border-t border-white/10 p-4 z-30 hidden md:grid grid-cols-3 divide-x divide-white/10">
+                    {otherNews.slice(0, 3).map((item, i) => (
+                        <Link to={`/noticia/${item.id}`} key={item.id} className="px-4 flex flex-col gap-1 group/item hover:bg-white/5 transition-colors rounded-lg py-2">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
+                                <span className="text-[8px] text-gray-500 font-bold">{item.time_read || '2 min'}</span>
+                            </div>
+                            <h4 className="text-xs font-bold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
+                                {item.title}
+                            </h4>
+                        </Link>
+                    ))}
+                </div>
+
                 {heroNewsList.length > 1 && (
                     <>
-                        <div className="absolute bottom-6 right-6 flex gap-2 z-20">
+                        {/* Navigation Buttons - Adjusted position */}
+                        <div className="absolute bottom-32 right-6 flex gap-2 z-20">
                             <button
-                                onClick={() => setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length)}
-                                className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                                onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length); }}
+                                className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
                             >
                                 <ChevronLeft size={20} />
                             </button>
                             <button
-                                onClick={() => setCurrentIndex((prev) => (prev + 1) % heroNewsList.length)}
-                                className="size-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                                onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % heroNewsList.length); }}
+                                className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
                             >
                                 <ChevronRight size={20} />
                             </button>

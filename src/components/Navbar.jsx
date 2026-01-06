@@ -42,11 +42,13 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Inicio', path: '/' },
-        ...categories.map(cat => ({
-            name: cat.name,
-            path: `/categoria/${cat.name}`,
-            submenu: staticSubmenus[cat.name] || null
-        }))
+        ...categories
+            .filter(cat => !['¿Te Acordás Dolores?', 'Memoria', 'Te Acordás Dolores'].includes(cat.name))
+            .map(cat => ({
+                name: cat.name,
+                path: `/categoria/${cat.name}`,
+                submenu: staticSubmenus[cat.name] || null
+            }))
     ];
 
     const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
