@@ -253,13 +253,22 @@ const Admin = () => {
                                                 <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>Previsualizar</button>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                {aiConfig.enabled && (
+                                                {aiConfig.enabled && previewMode && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {/* TODO: Implement Enhance Style */ alert("Mejora de estilo próximamente") }}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-500/20"
+                                                    >
+                                                        <Sparkles size={14} /> Mejorar Estilo
+                                                    </button>
+                                                )}
+                                                {aiConfig.enabled && !previewMode && (
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowAiModal(true)}
                                                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20"
                                                     >
-                                                        <Sparkles size={14} /> Redactar con IA
+                                                        <Cpu size={14} /> Redactar con IA
                                                     </button>
                                                 )}
                                                 <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest px-4">Estado: Borrador</span>

@@ -36,7 +36,7 @@ const HeaderTop = () => {
         <div className="bg-[#0f172a] text-white text-[11px] font-medium border-b border-white/5 relative z-[100]">
             <div className="px-4 lg:px-8 max-w-[1440px] mx-auto min-h-[40px] py-1 flex flex-wrap items-center justify-between gap-y-1">
                 <div className="flex items-center gap-3">
-                    <span className="opacity-60 hidden md:inline capitalize font-light">{todayDisplay}</span>
+                    <span className="opacity-60 hidden md:inline font-light">{todayDisplay}</span>
                     <div className="flex items-center gap-2 px-2 py-0.5 bg-white/5 rounded-full border border-white/5">
                         <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
                         <span className="tracking-widest text-[9px] uppercase font-black">EDICIÓN <span className="text-primary">{formatEdition(editionNumber)}</span></span>
@@ -150,13 +150,14 @@ const HeaderTop = () => {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => setShowPharmacyInfo(!showPharmacyInfo)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg shadow-emerald-500/5 ${showPharmacyInfo
-                                    ? 'bg-emerald-500 border-emerald-400 text-white'
-                                    : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20'
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-lg relative overflow-hidden ${showPharmacyInfo
+                                    ? 'bg-emerald-500 border-emerald-400 text-white shadow-emerald-500/20'
+                                    : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 shadow-emerald-500/5'
                                     }`}
                             >
-                                <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse'} />
-                                <div className="flex flex-col items-start leading-none gap-0.5">
+                                <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 translate-x-[-150%] ${!showPharmacyInfo ? 'animate-[shimmer_3s_infinite]' : ''}`} />
+                                <Activity size={14} className={showPharmacyInfo ? '' : 'animate-pulse text-emerald-300'} />
+                                <div className="flex flex-col items-start leading-none gap-0.5 relative z-10">
                                     <span className="font-black tracking-widest text-[8px] uppercase">FARMACIAS DE TURNO</span>
                                     <span className={`text-[9px] font-bold truncate max-w-[120px] ${showPharmacyInfo ? 'text-white' : 'text-emerald-300'}`}>
                                         {pharmacyOnDuty ? pharmacyOnDuty.name : 'Consultar'}

@@ -70,7 +70,7 @@ const Navbar = () => {
                             <div key={link.name} className="relative group shrink-0">
                                 <Link
                                     to={link.path}
-                                    className={`px-3 py-1.5 text-[11px] lg:text-xs font-black uppercase tracking-wide rounded-full transition-all flex items-center gap-1.5 ${isActive(link.path)
+                                    className={`px-3 py-1.5 text-[11px] lg:text-xs font-black tracking-wide rounded-full transition-all flex items-center gap-1.5 ${link.name === 'Tapa del día' ? 'normal-case' : 'uppercase'} ${isActive(link.path)
                                         ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl'
                                         : 'text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white hover:bg-white dark:hover:bg-white/5'
                                         }`}

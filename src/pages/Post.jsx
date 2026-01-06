@@ -82,7 +82,26 @@ const Post = () => {
                         <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-10">
                             {(() => {
                                 try {
-                                    const blocks = JSON.parse(post.content);
+                                    let blocks = post.content;
+
+                                    // Handle stringified JSON
+                                    if (typeof blocks === 'string') {
+                                        // If it looks like JSON, try to parse
+                                        if (blocks.trim().startsWith('[') || blocks.trim().startsWith('{')) {
+                                            try {
+                                                blocks = JSON.parse(blocks);
+                                                // Handle double stringification
+                                                if (typeof blocks === 'string') {
+                                                    blocks = JSON.parse(blocks);
+                                                }
+                                            } catch (e) {
+                                                // If parsing fails but it starts with brackets, it might be raw text that just looks like JSON or malformed. 
+                                                // Fallback to text rendering.
+                                                throw e;
+                                            }
+                                        }
+                                    }
+
                                     if (Array.isArray(blocks)) {
                                         return blocks.map((block, i) => (
                                             block.type === 'text' ? (
@@ -97,12 +116,19 @@ const Post = () => {
                                                 </div>
                                             )
                                         ));
+                                    } else {
+                                        // It's a string content (legacy)
+                                        return (
+                                            <p className="text-xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
+                                                {typeof post.content === 'string' ? post.content : "Contenido no disponible"}
+                                            </p>
+                                        );
                                     }
                                 } catch (e) {
-                                    // Fallback for legacy text content
+                                    // Fallback for legacy text content or parse error
                                     return (
                                         <p className="text-xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
-                                            {post.content || "En una jornada histórica para el país..."}
+                                            {typeof post.content === 'string' ? post.content : "Error al cargar contenido"}
                                         </p>
                                     );
                                 }
