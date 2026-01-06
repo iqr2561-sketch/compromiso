@@ -62,9 +62,8 @@ const Home = () => {
                     <CategoryGrid />
 
 
-                    {/* Featured Section: ¿Te Acordás Dolores? */}
                     <div className="relative group">
-                        <Link to="/categoria/Te-Acordas-Dolores" className="block relative h-64 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20">
+                        <Link to="/categoria/¿Te Acordás Dolores?" className="block relative h-64 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20">
                             <img
                                 src="https://images.unsplash.com/photo-1544253109-c88ce53cc9d0?auto=format&fit=crop&q=80&w=1600"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter sepia-[0.3]"
