@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNews } from '../context/NewsContext';
 import {
     Plus, Trash2, Edit3, Save, X, Image as ImageIcon, Zap, Trophy,

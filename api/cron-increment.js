@@ -1,4 +1,4 @@
-import pool from '../lib/db.js';
+import pool from './lib/db.js';
 
 export default async function handler(req, res) {
     // Optional: Add secret token check if called from Vercel Cron
