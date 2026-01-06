@@ -56,7 +56,7 @@ const HeroSection = () => {
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-white">Destacado</span>
                                             </div>
                                         </div>
-                                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
+                                        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
                                             {heroNews.title}
                                         </h1>
                                         <p className="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
@@ -90,7 +90,7 @@ const HeroSection = () => {
                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
                                     <span className="text-[8px] text-gray-500 font-bold">{item.time_read || '2 min'}</span>
                                 </div>
-                                <h4 className="text-xs font-bold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
+                                <h4 className="text-xs font-semibold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
                                     {item.title}
                                 </h4>
                             </Link>
@@ -153,13 +153,13 @@ const HeroSection = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                 <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-primary text-[9px] font-black uppercase tracking-widest mb-1">
+                                        <span className="text-primary text-[9px] font-bold uppercase tracking-widest mb-1">
                                             {item.category}
                                         </span>
-                                        <h3 className={`text-lg font-black text-white group-hover:text-primary transition-colors leading-tight uppercase italic tracking-tighter`}>
+                                        <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors leading-snug">
                                             {item.title}
                                         </h3>
-                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">{item.date}</span>
+                                        <span className="text-[9px] text-gray-500 font-medium mt-1">{item.date}</span>
                                     </div>
                                 </div>
                             </Link>

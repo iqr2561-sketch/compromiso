@@ -59,15 +59,15 @@ const CategoryGrid = () => {
                                     <div className="w-full h-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
                                 </div>
                                 <div className="flex flex-col justify-between py-1">
-                                    <h3 className="font-bold text-md leading-snug group-hover:text-primary transition-colors line-clamp-2 uppercase italic tracking-tighter">
+                                    <h3 className="font-semibold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">
                                         {item.title}
                                     </h3>
                                     <div className="flex items-center gap-3">
-                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
                                             <Clock size={12} className="text-primary" />
                                             <span>{item.date}</span>
                                         </div>
-                                        <span className="text-[10px] font-black italic text-slate-400 group-hover:text-primary transition-colors">Leer Crónica</span>
+                                        <span className="text-[10px] font-bold text-slate-400 group-hover:text-primary transition-colors">Leer más</span>
                                     </div>
                                 </div>
                             </Link>
