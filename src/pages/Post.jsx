@@ -77,25 +77,36 @@ const Post = () => {
                         </div>
                     </div>
 
-                    {/* Article Text */}
+                    {/* Article Text - Block Renderer */}
                     <div className="prose dark:prose-invert max-w-none">
-                        <p className="text-xl font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
-                            {post.content || "En una jornada histórica para el país, los acontecimientos se desarrollan con una rapidez que desafía los análisis convencionales. Compromiso Diario ha estado en el lugar de los hechos para traer la verdad a nuestros lectores."}
-                        </p>
-
-                        <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-6">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-
-                            <AdSection type="horizontal" className="my-8 h-40" />
-
-                            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-
-                            <blockquote className="p-8 bg-slate-50 dark:bg-white/5 rounded-[2.5rem] my-10 border border-gray-100 dark:border-white/5">
-                                <p className="text-2xl font-black italic text-slate-900 dark:text-white leading-snug">"La información no solo debe ser rápida, debe ser veraz y comprometerse con el lector por encima de todo interés comercial."</p>
-                                <cite className="mt-4 block text-[10px] font-black uppercase tracking-widest text-primary">— Director Editorial CD</cite>
-                            </blockquote>
-
-                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                        <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-10">
+                            {(() => {
+                                try {
+                                    const blocks = JSON.parse(post.content);
+                                    if (Array.isArray(blocks)) {
+                                        return blocks.map((block, i) => (
+                                            block.type === 'text' ? (
+                                                <p key={i} className="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                    {block.content}
+                                                </p>
+                                            ) : (
+                                                <div key={i} className="flex flex-col gap-4">
+                                                    <div className="rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
+                                                        <img src={block.content} className="w-full" alt="" />
+                                                    </div>
+                                                </div>
+                                            )
+                                        ));
+                                    }
+                                } catch (e) {
+                                    // Fallback for legacy text content
+                                    return (
+                                        <p className="text-xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
+                                            {post.content || "En una jornada histórica para el país..."}
+                                        </p>
+                                    );
+                                }
+                            })()}
                         </div>
                     </div>
 

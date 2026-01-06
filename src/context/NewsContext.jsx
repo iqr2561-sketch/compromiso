@@ -8,6 +8,15 @@ export const NewsProvider = ({ children }) => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editionNumber, setEditionNumber] = useState('42891');
+    const [coverPage, setCoverPage] = useState({
+        image: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800',
+        date: new Date().toISOString().split('T')[0]
+    });
+    const [aiConfig, setAiConfig] = useState({
+        enabled: false,
+        apiKey: '',
+        model: 'gemini-1.5-flash'
+    });
     const [categories, setCategories] = useState([]);
     const [flashTickers, setFlashTickers] = useState([
         { id: 1, text: "Urgente: Nuevas medidas económicas anunciadas para el próximo mes", tag: "BREAKING NEWS", type: 'alert' },
@@ -69,6 +78,21 @@ export const NewsProvider = ({ children }) => {
                 if (data.edition_number) {
                     setEditionNumber(data.edition_number);
                 }
+                if (data.cover_page_image) {
+                    setCoverPage(prev => ({ ...prev, image: data.cover_page_image }));
+                }
+                if (data.cover_page_date) {
+                    setCoverPage(prev => ({ ...prev, date: data.cover_page_date }));
+                }
+                if (data.ai_enabled) {
+                    setAiConfig(prev => ({ ...prev, enabled: data.ai_enabled === 'true' }));
+                }
+                if (data.ai_api_key) {
+                    setAiConfig(prev => ({ ...prev, apiKey: data.ai_api_key }));
+                }
+                if (data.ai_model) {
+                    setAiConfig(prev => ({ ...prev, model: data.ai_model }));
+                }
 
                 // Trigger daily increment check on load
                 fetch('/api/cron-increment');
@@ -102,6 +126,47 @@ export const NewsProvider = ({ children }) => {
             }
         } catch (err) {
             console.error('Failed to update edition:', err);
+        }
+    };
+
+    const updateCoverPage = async (image, date) => {
+        try {
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'cover_page_image', value: image })
+            });
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'cover_page_date', value: date })
+            });
+            setCoverPage({ image, date });
+        } catch (err) {
+            console.error('Failed to update cover page:', err);
+        }
+    };
+
+    const updateAiConfig = async (config) => {
+        try {
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'ai_enabled', value: config.enabled.toString() })
+            });
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'ai_api_key', value: config.apiKey })
+            });
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'ai_model', value: config.model })
+            });
+            setAiConfig(config);
+        } catch (err) {
+            console.error('Failed to update AI config:', err);
         }
     };
 
@@ -226,6 +291,7 @@ export const NewsProvider = ({ children }) => {
         <NewsContext.Provider value={{
             news, addNews, deleteNews, updateNews, loading,
             editionNumber, updateEdition,
+            coverPage, updateCoverPage,
             flashTickers, addTicker, deleteTicker, updateTicker,
             scores, setScores,
             categories, addCategory, deleteCategory, updateCategory,
@@ -233,7 +299,8 @@ export const NewsProvider = ({ children }) => {
             videos, addVideo, deleteVideo, updateVideo,
             imageGallery, addToGallery,
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
-            pharmacyDuty, setDuty
+            pharmacyDuty, setDuty,
+            aiConfig, updateAiConfig
         }}>
             {children}
         </NewsContext.Provider>

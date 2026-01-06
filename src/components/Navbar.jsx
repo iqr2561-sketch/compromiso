@@ -23,7 +23,15 @@ const Navbar = () => {
 
     const staticSubmenus = {
         'Locales': [
-            { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' }
+            { name: 'Diario de Sesión', path: '/categoria/Locales/Sesion' },
+            { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' },
+            { name: 'Policiales', path: '/categoria/Locales/Policiales' },
+            { name: 'Judiciales', path: '/categoria/Locales/Judiciales' }
+        ],
+        '¿Te Acordás Dolores?': [
+            { name: 'Galería Histórica', path: '/categoria/Te-Acordas/Galeria' },
+            { name: 'Personajes', path: '/categoria/Te-Acordas/Personajes' },
+            { name: 'Arquitectura', path: '/categoria/Te-Acordas/Arquitectura' }
         ],
         'Actualidad': [
             { name: 'Interés General', path: '/categoria/Actualidad/Interes-General' },
@@ -34,6 +42,7 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Inicio', path: '/' },
+        { name: 'Tapa del día', path: '/tapa-de-hoy' },
         ...categories.map(cat => ({
             name: cat.name,
             path: `/categoria/${cat.name}`,

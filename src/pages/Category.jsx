@@ -44,9 +44,8 @@ const Category = () => {
 
     return (
         <div className="flex flex-col gap-10">
-            {/* Category Header - Tighter padding (p-6/md:p-10) and adjusted height */}
-            <div className={`relative h-60 md:h-72 rounded-3xl overflow-hidden flex items-end p-6 md:p-10 border border-white/5 shadow-2xl shadow-black/40`}>
-
+            {/* Category Header */}
+            <div className="relative h-60 md:h-72 rounded-3xl overflow-hidden flex items-end p-6 md:p-10 border border-white/5 shadow-2xl shadow-black/40">
                 {/* Background Layer: Sharp image - Increased opacity for visibility */}
                 <motion.div
                     initial={{ scale: 1.1 }}
@@ -111,21 +110,19 @@ const Category = () => {
                                 <Link to={`/noticia/${item.id}`} className="flex flex-col md:flex-row">
                                     <div className="md:w-[280px] h-[220px] md:h-full overflow-hidden relative shrink-0">
                                         <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.title} />
-                                        <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-full text-[9px] font-black text-white uppercase tracking-widest bg-black/60 backdrop-blur-md border border-white/10`}>
+                                        <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[9px] font-black text-white uppercase tracking-widest bg-black/60 backdrop-blur-md border border-white/10">
                                             {item.category}
                                         </div>
                                     </div>
                                     <div className="p-6 md:p-8 flex flex-col gap-4 flex-1">
-                                        <div className="flex items-center gap-4 text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 py-1.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 self-start">
-                                            <div className="flex items-center gap-2 italic"><Calendar size={12} className="text-primary" /> {item.date}</div>
-                                            <div className="w-px h-3 bg-gray-200 dark:bg-white/10 mx-1"></div>
-                                            <div className="flex items-center gap-2 italic"><Clock size={12} className="text-primary" /> {item.timeRead || '5 MIN'}</div>
+                                        <div className="flex items-center gap-2 italic text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 py-1.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 self-start">
+                                            <Calendar size={12} className="text-primary" /> {item.date}
                                         </div>
                                         <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-[1.1] group-hover:text-primary transition-colors tracking-tighter uppercase italic">
                                             {item.title}
                                         </h2>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
-                                            {item.content || "Análisis profundo sobre los eventos que marcan la agenda en la sección de " + categoryName + "."}
+                                            {item.content?.length > 150 ? item.content.substring(0, 150) + "..." : item.content || "Análisis profundo sobre los eventos que marcan la agenda en la sección de " + categoryName + "."}
                                         </p>
                                         <div className="flex items-center justify-between border-t border-gray-100 dark:border-white/10 pt-4 mt-2">
                                             <span className="text-[9px] font-black italic tracking-widest text-primary uppercase flex items-center gap-2 group-hover:translate-x-2 transition-transform">
@@ -140,7 +137,7 @@ const Category = () => {
                             </motion.div>
                         ))
                     ) : (
-                        <div className="flex flex-col items-center justify-center py-20 text-center gap-6 bg-[#0a0c10] rounded-3xl border border-white/5 shadow-2xl">
+                        <div className="flex flex-col items-center justify-center py-20 text-center gap-6 bg-[#11141b] rounded-3xl border border-white/5 shadow-2xl">
                             <Zap size={32} className="text-primary opacity-20" />
                             <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Nuevas crónicas en camino</h3>
                             <p className="text-slate-500 font-bold uppercase text-[9px] tracking-widest">Validando contenidos para {categoryName}.</p>
@@ -192,7 +189,6 @@ const Category = () => {
                                     <span className="text-3xl font-black text-white/5 group-hover/item:text-primary transition-colors italic leading-none">0{i}</span>
                                     <div className="flex flex-col gap-1">
                                         <h5 className="text-xs font-black italic leading-tight group-hover/item:text-primary transition-colors uppercase tracking-widest">Especial: {categoryName} al Día</h5>
-                                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{i * 5} Min lectura</span>
                                     </div>
                                 </div>
                             ))}

@@ -5,12 +5,13 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
+    console.log("Admin Component Loaded - Version 4.2");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -21,7 +22,9 @@ const Admin = () => {
         imageGallery, addToGallery,
         pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
         pharmacyDuty, setDuty,
-        editionNumber, updateEdition
+        editionNumber, updateEdition,
+        coverPage, updateCoverPage,
+        aiConfig, updateAiConfig
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -35,6 +38,12 @@ const Admin = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const [showGallery, setShowGallery] = useState(false);
+    const [galleryTarget, setGalleryTarget] = useState('cover'); // 'cover' or block index
+    const [editorBlocks, setEditorBlocks] = useState([{ type: 'text', content: '' }]);
+    const [previewMode, setPreviewMode] = useState(false);
+    const [showAiModal, setShowAiModal] = useState(false);
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '', category: 'Locales', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
@@ -52,23 +61,20 @@ const Admin = () => {
         }
     }, [categories]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const actions = {
-            news: () => editingId ? updateNews(editingId, formData) : addNews(formData),
-            tickers: () => editingId ? updateTicker(editingId, { text: formData.text, tag: formData.tag, type: formData.type }) : addTicker({ text: formData.text, tag: formData.tag, type: formData.type }),
-            categories: () => editingId ? updateCategory(editingId, { name: formData.name, color: formData.color, bgImage: formData.bgImage }) : addCategory({ name: formData.name, color: formData.color, bgImage: formData.bgImage }),
-            ads: () => editingId ? updateAd(editingId, formData) : addAd(formData),
-            videos: () => editingId ? updateVideo(editingId, formData) : addVideo(formData),
-            pharmacies: () => editingId ? updatePharmacy(editingId, formData) : addPharmacy(formData),
-            scores: () => {
-                const sData = { home: formData.home, away: formData.away, homeScore: formData.homeScore, awayScore: formData.awayScore, homeLogo: formData.homeLogo, awayLogo: formData.awayLogo, time: formData.time, date: formData.date };
-                editingId ? setScores(prev => prev.map(s => s.id === editingId ? { ...s, ...sData } : s)) : setScores(prev => [...prev, { ...sData, id: Date.now() }]);
-            }
-        };
+    const addBlock = (type) => {
+        setEditorBlocks([...editorBlocks, { type, content: type === 'text' ? '' : 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b' }]);
+    };
 
-        if (actions[activeTab]) actions[activeTab]();
-        resetForms();
+    const updateBlock = (index, value) => {
+        const newBlocks = [...editorBlocks];
+        newBlocks[index].content = value;
+        setEditorBlocks(newBlocks);
+    };
+
+    const removeBlock = (index) => {
+        if (editorBlocks.length > 1) {
+            setEditorBlocks(editorBlocks.filter((_, i) => i !== index));
+        }
     };
 
     const resetForms = () => {
@@ -83,11 +89,53 @@ const Admin = () => {
             views: '0', duration: '0:00', url: '',
             address: '', phone: '', city: 'Central'
         });
+        setEditorBlocks([{ type: 'text', content: '' }]);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (activeTab === 'news') {
+            const newItem = {
+                ...formData,
+                content: JSON.stringify(editorBlocks),
+                // Ensure date is valid, fallback to today
+                date: formData.date || new Date().toISOString().split('T')[0]
+            };
+            if (editingId) {
+                await updateNews(editingId, newItem);
+            } else {
+                await addNews(newItem);
+            }
+        } else if (activeTab === 'pharmacies') {
+            editingId ? updatePharmacy(editingId, formData) : addPharmacy(formData);
+        } else if (activeTab === 'categories') {
+            editingId ? updateCategory(editingId, formData) : addCategory(formData);
+        } else if (activeTab === 'ads') {
+            editingId ? updateAd(editingId, formData) : addAd(formData);
+        } else if (activeTab === 'cover') {
+            updateCoverPage(formData.image, formData.date);
+        } else if (activeTab === 'tickers') {
+            editingId ? updateTicker(editingId, formData) : addTicker(formData);
+        }
+
+        resetForms();
     };
 
     const handleEdit = (item) => {
         setEditingId(item.id);
-        setFormData({ ...formData, ...item, name: item.name || item.title || '', text: item.text || item.title || '' });
+        const editData = { ...item, name: item.name || item.title || '', text: item.text || item.title || '' };
+        setFormData(editData);
+
+        if (activeTab === 'news' && item.content) {
+            try {
+                const parsed = JSON.parse(item.content);
+                if (Array.isArray(parsed)) setEditorBlocks(parsed);
+                else setEditorBlocks([{ type: 'text', content: item.content }]);
+            } catch (e) {
+                setEditorBlocks([{ type: 'text', content: item.content }]);
+            }
+        }
         setIsAdding(true);
     };
 
@@ -111,7 +159,7 @@ const Admin = () => {
         { id: 'ads', label: 'Publicidad', icon: Megaphone },
         { id: 'videos', label: 'Videos', icon: Video },
         { id: 'categories', label: 'Categorías', icon: Layers },
-        { id: 'scores', label: 'Resultados', icon: Trophy },
+        { id: 'cover', label: 'Tapa Diaria', icon: LayoutDashboard },
         { id: 'tickers', label: 'Flash Tickers', icon: Zap },
         { id: 'settings', label: 'Configuración', icon: Settings },
     ];
@@ -123,7 +171,6 @@ const Admin = () => {
 
     const onDutyToday = pharmacies.find(p => p.id === pharmacyDuty.find(d => d.date === displayDate)?.pharmacyId);
 
-    // Filter display news based on search and category
     const filteredNews = news.filter(n =>
         n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         n.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -138,7 +185,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ADMIN V4.1</span>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ADMIN V4.2 - DEBUG</span>
                     </div>
                 </div>
 
@@ -196,44 +243,154 @@ const Admin = () => {
 
                 <AnimatePresence mode="wait">
                     {isAdding && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-[#11141b] p-8 rounded-2xl border border-white/5 mb-10 shadow-2xl">
-                            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-[#11141b] p-8 rounded-2xl border border-white/5 mb-10 shadow-2xl overflow-hidden">
+                            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
                                 {activeTab === 'news' && (
-                                    <>
-                                        <div className="flex flex-col gap-5">
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-primary" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título de la noticia..." required />
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
-                                                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                                                </select>
-                                                <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                                    <div className="flex flex-col gap-8">
+                                        <div className="flex items-center justify-between bg-[#0a0c10] p-4 rounded-2xl border border-white/5">
+                                            <div className="flex items-center gap-4">
+                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>Editor</button>
+                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>Previsualizar</button>
                                             </div>
-                                            <div className="flex gap-4">
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input type="checkbox" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} className="size-4 accent-primary" />
-                                                    <span className="text-[10px] font-black uppercase text-slate-500">Destacada Portada</span>
-                                                </label>
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input type="checkbox" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} className="size-4 accent-primary" />
-                                                    <span className="text-[10px] font-black uppercase text-slate-500">Noticia Flash</span>
-                                                </label>
+                                            <div className="flex items-center gap-2">
+                                                {aiConfig.enabled && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowAiModal(true)}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20"
+                                                    >
+                                                        <Sparkles size={14} /> Redactar con IA
+                                                    </button>
+                                                )}
+                                                <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest px-4">Estado: Borrador</span>
                                             </div>
-                                            <div className="flex gap-1 p-1 bg-[#0a0c10] rounded-xl border border-white/5">
-                                                {['url', 'pc', 'gallery'].map(src => (
-                                                    <button key={src} type="button" onClick={() => {
-                                                        setImageSource(src);
-                                                        if (src === 'gallery') setShowGallery(true);
-                                                    }} className={`flex-1 py-2 rounded-lg text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white' : 'text-slate-500'}`}>{src}</button>
-                                                ))}
-                                            </div>
-                                            {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
-                                            {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="text-xs" />}
                                         </div>
-                                        <div className="flex flex-col gap-5">
-                                            <textarea className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none h-32 resize-none" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })} placeholder="Cuerpo de la noticia..." />
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20">Guardar Publicación</button>
-                                        </div>
-                                    </>
+
+                                        {!previewMode ? (
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                                <div className="flex flex-col gap-6">
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Cabecera de Noticia</label>
+                                                        <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
+                                                            <select className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                                                                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                                                            </select>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
+                                                            <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white font-bold" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de Portada</label>
+                                                        <div className="flex gap-2 p-1 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                                            {['url', 'pc', 'gallery'].map(src => (
+                                                                <button key={src} type="button" onClick={() => {
+                                                                    setImageSource(src);
+                                                                    if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
+                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>{src}</button>
+                                                            ))}
+                                                        </div>
+                                                        {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
+                                                        {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
+                                                    </div>
+
+                                                    <div className="flex gap-6 p-6 bg-[#0a0c10] rounded-3xl border border-white/5">
+                                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                                            <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                                                {formData.isHero && <Zap size={12} className="text-white" />}
+                                                            </div>
+                                                            <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
+                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-white transition-colors">Destacar en Portada</span>
+                                                        </label>
+                                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                                            <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'}`}>
+                                                                {formData.isFlash && <Zap size={12} className="text-white" />}
+                                                            </div>
+                                                            <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
+                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-white transition-colors">Flash Noticia</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-6">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Cuerpo de la Noticia (Bloques)</label>
+                                                        <div className="flex gap-2">
+                                                            <button type="button" onClick={() => addBlock('text')} className="p-2 bg-white/5 hover:bg-primary/20 text-white rounded-lg transition-colors" title="Añadir Texto"><LayoutDashboard size={14} /></button>
+                                                            <button type="button" onClick={() => addBlock('image')} className="p-2 bg-white/5 hover:bg-accent-purple/20 text-white rounded-lg transition-colors" title="Añadir Imagen"><ImageIcon size={14} /></button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                                        {editorBlocks.map((block, idx) => (
+                                                            <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="relative group">
+                                                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
+                                                                {block.type === 'text' ? (
+                                                                    <textarea
+                                                                        className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed"
+                                                                        value={block.content}
+                                                                        onChange={e => updateBlock(idx, e.target.value)}
+                                                                        placeholder="Escribe el contenido de este párrafo..."
+                                                                    />
+                                                                ) : (
+                                                                    <div className="flex flex-col gap-3 p-4 bg-[#0a0c10] border border-white/5 rounded-2xl">
+                                                                        <div className="aspect-video rounded-xl overflow-hidden border border-white/5 bg-black/40 relative group/img">
+                                                                            <img src={block.content} className="w-full h-full object-cover" alt="" />
+                                                                            <button type="button" onClick={() => { setGalleryTarget(idx); setShowGallery(true); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-black uppercase text-[10px] tracking-widest">
+                                                                                <ImageIcon size={16} /> Cambiar Imagen
+                                                                            </button>
+                                                                        </div>
+                                                                        <input className="bg-transparent border-none text-[10px] text-slate-500 outline-none" value={block.content} onChange={e => updateBlock(idx, e.target.value)} placeholder="URL de la imagen..." />
+                                                                    </div>
+                                                                )}
+                                                                <button type="button" onClick={() => removeBlock(idx)} className="absolute -right-3 -top-3 size-8 bg-black/80 text-slate-500 hover:text-accent-pink rounded-full flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl">
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            </motion.div>
+                                                        ))}
+                                                    </div>
+
+                                                    <button type="submit" className="mt-4 h-14 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+                                                        {editingId ? 'Actualizar Crónica' : 'Publicar Noticia'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="max-w-4xl mx-auto w-full bg-[#11141b] rounded-[3rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden text-left">
+                                                <div className="relative aspect-video rounded-3xl overflow-hidden mb-8">
+                                                    <img src={formData.image || 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b'} className="w-full h-full object-cover" alt="" />
+                                                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
+                                                        {formData.category}
+                                                    </div>
+                                                </div>
+                                                <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-none mb-8">
+                                                    {formData.title || 'Título de ejemplo'}
+                                                </h1>
+                                                <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest mb-10 pb-6 border-b border-white/5">
+                                                    <CalendarIcon size={14} className="text-primary" /> {formData.date}
+                                                    <div className="flex items-center gap-1 ml-4"><Zap size={14} className="text-primary" /> {formData.author}</div>
+                                                </div>
+                                                <div className="flex flex-col gap-8">
+                                                    {editorBlocks.map((block, i) => (
+                                                        block.type === 'text' ? (
+                                                            <p key={i} className="text-lg text-slate-300 leading-relaxed font-medium">{block.content || 'Escribe contenido para verlo aquí...'}</p>
+                                                        ) : (
+                                                            <div key={i} className="flex flex-col gap-3">
+                                                                <img src={block.content} className="w-full rounded-[2rem] shadow-2xl border border-white/5" alt="" />
+                                                            </div>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
 
                                 {activeTab === 'pharmacies' && (
@@ -307,8 +464,21 @@ const Admin = () => {
                                     </>
                                 )}
 
+                                {activeTab === 'cover' && (
+                                    <>
+                                        <div className="flex flex-col gap-5">
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de la Tapa</label>
+                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la tapa digital..." required />
+                                            <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                                        </div>
+                                        <div className="flex flex-col justify-end">
+                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Actualizar Tapa</button>
+                                        </div>
+                                    </>
+                                )}
+
                                 {/* Fallback for other tabs */}
-                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers'].includes(activeTab) && (
+                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers', 'cover'].includes(activeTab) && (
                                     <div className="col-span-2 text-center py-10 bg-white/5 rounded-2xl border border-dashed border-white/10">
                                         <Zap size={32} className="mx-auto text-primary/40 mb-3" />
                                         <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Configuración para {activeTab}</p>
@@ -327,7 +497,7 @@ const Admin = () => {
                             {[
                                 { label: 'Noticias', value: news.length, icon: Newspaper, color: 'text-primary' },
                                 { label: 'Farmacias', value: pharmacies.length, icon: Crosshair, color: 'text-accent-pink' },
-                                { label: 'Resultados', value: scores.length, icon: Trophy, color: 'text-accent-orange' },
+                                { label: 'Tapa Diaria', value: coverPage.date, icon: LayoutDashboard, color: 'text-primary' },
                                 { label: 'Guardia Hoy', value: onDutyToday?.name || '---', icon: CalendarIcon, color: 'text-accent-purple' },
                             ].map((stat, i) => (
                                 <div key={i} className="bg-[#11141b] p-6 rounded-2xl border border-white/5 shadow-xl select-none group hover:border-primary/20 transition-all">
@@ -617,13 +787,53 @@ const Admin = () => {
                                     </div>
                                 </section>
 
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
+                                    </h3>
+                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Conecta un modelo (Gemini/OpenAI) para redacción automática de noticias y sugerencias de formato.</p>
+
+                                    <div className="flex flex-col gap-4">
+                                        <label className="flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
+                                            <span className="text-[10px] font-black uppercase text-slate-400">Habilitar Asistente IA</span>
+                                        </label>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[9px] font-black uppercase text-slate-600 ml-1">API Key</label>
+                                            <input
+                                                type="password"
+                                                className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500/50"
+                                                placeholder="API Key (Gemini, OpenAI...)"
+                                                value={aiConfig.apiKey}
+                                                onChange={e => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[9px] font-black uppercase text-slate-600 ml-1">Modelo Seleccionado</label>
+                                            <select
+                                                className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none font-bold"
+                                                value={aiConfig.model}
+                                                onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
+                                            >
+                                                <option value="llama3-70b-8192">Groq - Llama 3 70B (Rápido)</option>
+                                                <option value="mixtral-8x7b-32768">Groq - Mixtral 8x7b</option>
+                                                <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                                                <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                                                <option value="gpt-4o">OpenAI GPT-4o</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </section>
+
                                 <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 opacity-50">
                                     <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <Bell size={14} className="text-accent-pink" /> Notificaciones
+                                        <Wand2 size={14} className="text-accent-pink" /> Generación Automática
                                     </h3>
-                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Configura el envío de alertas y noticias flash a los suscriptores.</p>
+                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Diseña portadas completas y diagramación de notas con un solo clic.</p>
                                     <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div className="w-1/3 h-full bg-emerald-500"></div>
+                                        <div className="w-1/2 h-full bg-primary/40 animate-pulse"></div>
                                     </div>
                                 </section>
                             </div>
@@ -631,7 +841,7 @@ const Admin = () => {
                     )}
 
                 </div>
-            </main>
+            </main >
 
             <AnimatePresence>
                 {showGallery && (
@@ -664,7 +874,11 @@ const Admin = () => {
                                     <div
                                         key={idx}
                                         onClick={() => {
-                                            setFormData({ ...formData, image: img });
+                                            if (galleryTarget === 'cover') {
+                                                setFormData({ ...formData, image: img });
+                                            } else {
+                                                updateBlock(galleryTarget, img);
+                                            }
                                             setShowGallery(false);
                                         }}
                                         className="aspect-square rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative"
@@ -686,6 +900,61 @@ const Admin = () => {
                             <div className="p-6 bg-[#0a0c10] border-t border-white/5 flex justify-end">
                                 <button onClick={() => setShowGallery(false)} className="px-8 py-3 bg-white/5 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">Cerrar Galería</button>
                             </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showAiModal && (
+                    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAiModal(false)} className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-lg bg-[#11141b] rounded-[2.5rem] border border-white/10 shadow-2xl p-8 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-black text-white flex items-center gap-2 uppercase italic tracking-tighter"><Cpu size={24} className="text-emerald-500" /> Asistente de Redacción</h3>
+                                <button onClick={() => setShowAiModal(false)} className="size-8 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10"><X size={16} /></button>
+                            </div>
+                            <p className="text-xs text-slate-400 font-bold leading-relaxed">Pega el cable de noticias, un enlace o tus apuntes. La IA generará el título, la categoría y el cuerpo de la noticia con el formato correcto.</p>
+
+                            <textarea
+                                className="w-full h-40 bg-[#0a0c10] border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-emerald-500/50 resize-none font-medium"
+                                placeholder="Ej: Hubo un accidente en la ruta 2..."
+                                value={aiPrompt}
+                                onChange={e => setAiPrompt(e.target.value)}
+                            ></textarea>
+
+                            <button
+                                onClick={async () => {
+                                    setIsGenerating(true);
+                                    try {
+                                        const res = await fetch('/api/generate-news', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ prompt: aiPrompt })
+                                        });
+                                        if (res.ok) {
+                                            const data = await res.json();
+                                            // Auto-fill form
+                                            if (data.title) setFormData(prev => ({ ...prev, title: data.title }));
+                                            if (data.category && categories.some(c => c.name === data.category)) setFormData(prev => ({ ...prev, category: data.category }));
+                                            if (data.blocks) setEditorBlocks(data.blocks);
+                                            setShowAiModal(false);
+                                            setAiPrompt('');
+                                        } else {
+                                            alert('Error al generar. Verifica tu API Key.');
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert('Error de conexión.');
+                                    } finally {
+                                        setIsGenerating(false);
+                                    }
+                                }}
+                                disabled={isGenerating || !aiPrompt.trim()}
+                                className="h-12 w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+                            >
+                                {isGenerating ? <><div className="size-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Generando...</> : <><Wand2 size={16} /> Generar Noticia</>}
+                            </button>
                         </motion.div>
                     </div>
                 )}

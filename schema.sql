@@ -67,6 +67,11 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- INITIAL SETTINGS
--- INSERT INTO settings (key, value) VALUES ('edition_number', '42891') ON CONFLICT DO NOTHING;
--- INSERT INTO settings (key, value) VALUES ('last_increment_date', '2026-01-05') ON CONFLICT DO NOTHING;
+INSERT INTO settings (key, value) VALUES ('edition_number', '42891') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('last_increment_date', '2026-01-05') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('cover_page_image', 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('cover_page_date', '2026-01-06') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('ai_enabled', 'true') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('ai_api_key', 'YOUR_GROQ_API_KEY_HERE') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO settings (key, value) VALUES ('ai_model', 'llama3-70b-8192') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 

@@ -12,11 +12,26 @@ const Search = () => {
 
     useEffect(() => {
         if (query.trim()) {
-            const filtered = news.filter(item =>
-                item.title.toLowerCase().includes(query.toLowerCase()) ||
-                item.content?.toLowerCase().includes(query.toLowerCase()) ||
-                item.category.toLowerCase().includes(query.toLowerCase())
-            );
+            const filtered = news.filter(item => {
+                const titleMatch = item.title.toLowerCase().includes(query.toLowerCase());
+                const categoryMatch = item.category.toLowerCase().includes(query.toLowerCase());
+
+                let contentMatch = false;
+                try {
+                    const blocks = JSON.parse(item.content);
+                    if (Array.isArray(blocks)) {
+                        contentMatch = blocks.some(b =>
+                            b.type === 'text' && b.content.toLowerCase().includes(query.toLowerCase())
+                        );
+                    } else {
+                        contentMatch = item.content?.toLowerCase().includes(query.toLowerCase());
+                    }
+                } catch (e) {
+                    contentMatch = item.content?.toLowerCase().includes(query.toLowerCase());
+                }
+
+                return titleMatch || categoryMatch || contentMatch;
+            });
             setResults(filtered);
         } else {
             setResults([]);
@@ -73,7 +88,15 @@ const Search = () => {
                                                     {item.title}
                                                 </h2>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
-                                                    {item.content || "Sin descripción disponible."}
+                                                    {(() => {
+                                                        try {
+                                                            const blocks = JSON.parse(item.content);
+                                                            if (Array.isArray(blocks)) {
+                                                                return blocks.find(b => b.type === 'text')?.content || "Sin descripción disponible.";
+                                                            }
+                                                        } catch (e) { }
+                                                        return item.content || "Sin descripción disponible.";
+                                                    })()}
                                                 </p>
                                                 <div className="flex items-center justify-between border-t border-gray-50 dark:border-white/5 pt-3 mt-1">
                                                     <span className="text-[9px] font-black italic tracking-widest text-primary uppercase flex items-center gap-2 group-hover:translate-x-2 transition-transform">

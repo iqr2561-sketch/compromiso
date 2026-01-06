@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNews } from '../context/NewsContext';
-import { ChevronLeft, ChevronRight, Trophy, PlayCircle, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trophy, PlayCircle, Star, LayoutDashboard, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
-    const { news, scores } = useNews();
+    const { news, scores, coverPage } = useNews();
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Improved logic: Heroes are the ones specifically marked as such
@@ -60,10 +60,7 @@ const HeroSection = () => {
                                     <p className="text-gray-300 text-sm md:text-lg max-w-2xl line-clamp-2 md:line-clamp-3 font-light">
                                         {heroNews.content}
                                     </p>
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <span className="text-sm text-white font-black uppercase tracking-widest bg-primary/20 px-3 py-1 rounded-md border border-primary/30">Por {heroNews.author || 'Redacción'}</span>
-                                        <span className="text-xs text-gray-400 font-bold">• {heroNews.timeRead || '3 min'} de lectura</span>
-                                    </div>
+                                    {/* Removed by user request */}
                                 </div>
                             </Link>
                         </motion.div>
@@ -134,44 +131,37 @@ const HeroSection = () => {
                     ))}
                 </div>
 
-                {/* Local Scores Section */}
+                {/* Cover Page Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl"
+                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl group cursor-pointer"
                 >
-                    <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Trophy size={16} className="text-yellow-500" />
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Marcadores en vivo</h4>
-                        </div>
-                        <span className="flex items-center gap-1">
-                            <span className="size-1.5 rounded-full bg-accent-pink animate-pulse"></span>
-                            <span className="text-[8px] font-black text-accent-pink uppercase tracking-widest">LIVE</span>
-                        </span>
-                    </div>
-                    <div className="p-3 flex flex-col gap-2">
-                        {scores.slice(0, 3).map(score => (
-                            <div key={score.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5 group transition-all hover:border-primary/20">
-                                <div className="flex items-center gap-2 flex-1">
-                                    <img src={score.homeLogo} alt="" className="size-5 rounded-full" />
-                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase truncate w-16">{score.home}</span>
-                                </div>
-                                <div className="flex flex-col items-center bg-white dark:bg-black/20 px-3 py-1 rounded-xl shadow-inner border border-gray-100 dark:border-white/5">
-                                    <span className="text-sm font-black text-slate-900 dark:text-white italic">{score.homeScore} - {score.awayScore}</span>
-                                    <span className="text-[7px] font-black text-primary uppercase">{score.time}</span>
-                                </div>
-                                <div className="flex items-center gap-2 flex-1 justify-end text-right">
-                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase truncate w-16">{score.away}</span>
-                                    <img src={score.awayLogo} alt="" className="size-5 rounded-full" />
-                                </div>
+                    <Link to="/tapa-de-hoy" className="flex flex-col h-full">
+                        <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <LayoutDashboard size={16} className="text-primary" />
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Tapa de Portada</h4>
                             </div>
-                        ))}
-                    </div>
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
+                        </div>
+                        <div className="relative flex-1 bg-black/5 overflow-hidden">
+                            <img
+                                src={coverPage.image}
+                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 aspect-[3/4]"
+                                alt="Tapa del día"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+                                <p className="text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                    Ver edición de hoy <ArrowRight size={14} />
+                                </p>
+                            </div>
+                        </div>
+                    </Link>
                 </motion.div>
             </div>
-        </section>
+        </section >
     );
 };
 
