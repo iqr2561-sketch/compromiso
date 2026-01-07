@@ -54,11 +54,11 @@ const TodayCover = () => {
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="sticky top-24 bg-white dark:bg-surface-dark p-4 rounded-[3rem] shadow-2xl border border-gray-100 dark:border-white/5"
+                            className="sticky top-24 bg-white dark:bg-surface-dark p-4 rounded-3xl shadow-2xl border border-gray-100 dark:border-white/5"
                         >
                             <img
                                 src={coverPage.image}
-                                className="w-full rounded-[2.5rem] shadow-lg"
+                                className="w-full rounded-xl shadow-lg"
                                 alt="Tapa del día"
                             />
                         </motion.div>

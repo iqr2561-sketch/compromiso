@@ -64,14 +64,15 @@ const Post = () => {
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic uppercase">
+                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
                             {post.title}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-6 border-y border-gray-100 dark:border-white/5 py-6">
                             <div className="flex items-center gap-6">
                                 <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                    <Calendar size={14} className="text-primary" /> {post.date}
+                                    <Calendar size={14} className="text-primary" />
+                                    {new Date(post.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                 </div>
                             </div>
                         </div>
@@ -79,7 +80,7 @@ const Post = () => {
 
                     {/* Article Text - Block Renderer */}
                     <div className="prose dark:prose-invert max-w-none">
-                        <div className="text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-10">
+                        <div className="text-base md:text-lg text-slate-700 dark:text-slate-400 leading-loose flex flex-col gap-10 text-justify">
                             {(() => {
                                 try {
                                     let blocks = post.content;
@@ -105,7 +106,7 @@ const Post = () => {
                                     if (Array.isArray(blocks)) {
                                         return blocks.map((block, i) => (
                                             block.type === 'text' ? (
-                                                <p key={i} className="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                <p key={i} className="text-base md:text-lg font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-justify">
                                                     {block.content}
                                                 </p>
                                             ) : (
@@ -119,7 +120,7 @@ const Post = () => {
                                     } else {
                                         // It's a string content (legacy)
                                         return (
-                                            <p className="text-xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
+                                            <p className="text-lg font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2 text-justify">
                                                 {typeof post.content === 'string' ? post.content : "Contenido no disponible"}
                                             </p>
                                         );
@@ -127,7 +128,7 @@ const Post = () => {
                                 } catch (e) {
                                     // Fallback for legacy text content or parse error
                                     return (
-                                        <p className="text-xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2">
+                                        <p className="text-lg font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic mb-8 border-l-4 border-primary pl-6 py-2 text-justify">
                                             {typeof post.content === 'string' ? post.content : "Error al cargar contenido"}
                                         </p>
                                     );
