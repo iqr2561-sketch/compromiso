@@ -35,6 +35,7 @@ const Admin = () => {
     const [imageSource, setImageSource] = useState('url');
     const [displayDate, setDisplayDate] = useState(new Date().toISOString().split('T')[0]);
     const [pharmacyMode, setPharmacyMode] = useState('list'); // 'list' or 'schedule'
+    const [pharmacyViewType, setPharmacyViewType] = useState('grid');
     const [showCalendar, setShowCalendar] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -585,579 +586,664 @@ const Admin = () => {
                         <div className="flex flex-col gap-6">
                             {pharmacyMode === 'list' ? (
                                 <>
-                                    <div className="flex flex-wrap items-center gap-4 bg-[#11141b] px-6 py-4 rounded-xl border border-white/5">
-                                        <div className="relative flex-1 min-w-[200px]">
-                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
-                                            <input className="w-full bg-[#0a0c10] border border-white/5 rounded-xl pl-12 pr-6 py-3 text-sm font-bold text-white outline-none" placeholder={`Buscar farmacia...`} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {pharmacies.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(phi => (
-                                            <div key={phi.id} className="bg-[#11141b] p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500"><Crosshair size={20} /></div>
-                                                    <div className="flex gap-2">
-                                                        <button onClick={() => handleEdit(phi)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
-                                                        <button onClick={() => deletePharmacy(phi.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
-                                                    </div>
-                                                </div>
-                                                <h4 className="text-lg font-black text-white italic uppercase tracking-tighter mb-4">{phi.name}</h4>
-                                                <div className="text-[10px] text-slate-500 font-bold flex flex-col gap-2 mb-6">
-                                                    <span className="flex items-center gap-2"><MapPin size={14} className="text-primary/50" /> {phi.address}</span>
-                                                    <span className="flex items-center gap-2"><Phone size={14} className="text-primary/50" /> {phi.phone}</span>
-                                                </div>
+                                    <div className="flex flex-col gap-6">
+                                        <div className="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-[#11141b] px-6 py-4 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm">
+                                            <div className="relative flex-1 min-w-[200px]">
+                                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                                <input
+                                                    className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl pl-12 pr-6 py-3 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-colors"
+                                                    placeholder="Buscar farmacia..."
+                                                    value={searchTerm}
+                                                    onChange={e => setSearchTerm(e.target.value)}
+                                                />
                                             </div>
-                                        ))}
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    <div className="lg:col-span-1 flex flex-col gap-6">
-                                        <div className="bg-[#11141b] p-6 rounded-2xl border border-primary/20 bg-primary/5">
-                                            <h4 className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-4">Programador Automático</h4>
-                                            <p className="text-[11px] text-slate-400 font-bold leading-relaxed mb-6">Selecciona una fecha y asigna el establecimiento que estará de turno ese día.</p>
-
-                                            {/* Calendar Component */}
-                                            <div className="bg-[#0a0c10] border border-white/5 rounded-2xl p-4 mb-4">
-                                                {/* Calendar Header */}
-                                                <div className="flex items-center justify-between mb-4">
-                                                    <button
-                                                        onClick={() => {
-                                                            const newMonth = new Date(currentMonth);
-                                                            newMonth.setMonth(newMonth.getMonth() - 1);
-                                                            setCurrentMonth(newMonth);
-                                                        }}
-                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                                                    >
-                                                        <ChevronLeft size={16} className="text-slate-400" />
-                                                    </button>
-                                                    <span className="text-xs font-black uppercase text-white tracking-widest">
-                                                        {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
-                                                    </span>
-                                                    <button
-                                                        onClick={() => {
-                                                            const newMonth = new Date(currentMonth);
-                                                            newMonth.setMonth(newMonth.getMonth() + 1);
-                                                            setCurrentMonth(newMonth);
-                                                        }}
-                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                                                    >
-                                                        <ChevronRight size={16} className="text-slate-400" />
-                                                    </button>
-                                                </div>
-
-                                                {/* Days of Week */}
-                                                <div className="grid grid-cols-7 gap-1 mb-2">
-                                                    {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
-                                                        <div key={i} className="text-center text-[9px] font-black text-slate-600 uppercase py-1">
-                                                            {day}
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                {/* Calendar Days */}
-                                                <div className="grid grid-cols-7 gap-1">
-                                                    {(() => {
-                                                        const year = currentMonth.getFullYear();
-                                                        const month = currentMonth.getMonth();
-                                                        const firstDay = new Date(year, month, 1).getDay();
-                                                        const daysInMonth = new Date(year, month + 1, 0).getDate();
-                                                        const days = [];
-
-                                                        // Empty cells for days before month starts
-                                                        for (let i = 0; i < firstDay; i++) {
-                                                            days.push(<div key={`empty-${i}`} className="aspect-square" />);
-                                                        }
-
-                                                        // Actual days
-                                                        for (let day = 1; day <= daysInMonth; day++) {
-                                                            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                                                            const isSelected = dateStr === displayDate;
-                                                            const hasAssignment = pharmacyDuty.some(d => d.date === dateStr);
-                                                            const isToday = dateStr === new Date().toISOString().split('T')[0];
-
-                                                            days.push(
-                                                                <button
-                                                                    key={day}
-                                                                    onClick={() => setDisplayDate(dateStr)}
-                                                                    className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
-                                                                        ? 'bg-primary text-white shadow-lg scale-110'
-                                                                        : hasAssignment
-                                                                            ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                                                                            : 'text-slate-400 hover:bg-white/5'
-                                                                        } ${isToday ? 'ring-1 ring-primary/50' : ''}`}
-                                                                >
-                                                                    {day}
-                                                                    {hasAssignment && !isSelected && (
-                                                                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400" />
-                                                                    )}
-                                                                </button>
-                                                            );
-                                                        }
-
-                                                        return days;
-                                                    })()}
-                                                </div>
-
-                                                {/* Selected Date Display */}
-                                                <div className="mt-4 pt-4 border-t border-white/5">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Fecha Seleccionada</span>
-                                                        <span className="text-xs font-black text-primary">
-                                                            {new Date(displayDate + 'T00:00:00').toLocaleDateString('es-ES', {
-                                                                day: '2-digit',
-                                                                month: 'short',
-                                                                year: 'numeric'
-                                                            })}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
-                                                {pharmacies.map(phi => (
-                                                    <button
-                                                        key={phi.id}
-                                                        onClick={() => setDuty(displayDate, phi.id)}
-                                                        className={`w-full text-left px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id) ? 'bg-primary text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
-                                                    >
-                                                        {phi.name}
-                                                    </button>
-                                                ))}
+                                            <div className="flex gap-2 p-1 bg-slate-100 dark:bg-black/20 rounded-lg border border-gray-200 dark:border-white/5">
+                                                <button
+                                                    onClick={() => setPharmacyViewType('grid')}
+                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'grid' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                                                    title="Vista Cuadrícula"
+                                                >
+                                                    <Grid size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => setPharmacyViewType('list')}
+                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'list' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                                                    title="Vista Lista"
+                                                >
+                                                    <Layers size={18} />
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="lg:col-span-2">
-                                        <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden">
-                                            <div className="bg-white/5 px-8 py-5 border-b border-white/5 flex items-center justify-between">
-                                                <h4 className="text-[10px] font-black uppercase text-white tracking-[0.2em]">Calendario de Turnos</h4>
-                                                <Zap size={14} className="text-yellow-500" />
-                                            </div>
-                                            <div className="p-2">
-                                                {upcomingDuties.length > 0 ? (
-                                                    <table className="w-full text-left">
-                                                        <tbody className="divide-y divide-white/5">
-                                                            {upcomingDuties.map((duty, idx) => (
-                                                                <tr key={idx} className="group hover:bg-white/[0.02]">
-                                                                    <td className="px-6 py-4">
-                                                                        <div className="flex items-center gap-3">
-                                                                            <CalendarIcon size={14} className="text-primary" />
-                                                                            <span className="text-[11px] font-black text-white italic">{duty.date}</span>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="px-6 py-4">
-                                                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{duty.pharmacy?.name}</span>
-                                                                    </td>
-                                                                    <td className="px-6 py-4 text-right">
-                                                                        <button onClick={() => setDuty(duty.date, null)} className="p-2 text-slate-600 hover:text-accent-pink"><X size={14} /></button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <div className="py-20 text-center">
-                                                        <Clock size={32} className="mx-auto text-slate-800 mb-4" />
-                                                        <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest">No hay turnos programados a futuro</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
 
-                    {activeTab === 'ads' && (
-                        <div className="flex flex-col gap-10">
-                            {/* Hero Ads - 3 Specific Slots */}
-                            <div>
-                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {[1, 2, 3].map(num => {
-                                        const adType = `hero_${num}`;
-                                        const existingAd = ads.find(a => a.type === adType);
-                                        return (
-                                            <div key={num} className="relative group">
-                                                <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
-                                                    {existingAd?.image ? (
-                                                        <>
-                                                            <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
-                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                                                                <button
-                                                                    onClick={() => {
-                                                                        if (confirm('¿Eliminar este anuncio?')) {
-                                                                            if (existingAd.id) deleteAd(existingAd.id);
-                                                                        }
-                                                                    }}
-                                                                    className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
-                                                                >
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        setEditingId(existingAd.id);
-                                                                        setFormData({ ...existingAd });
-                                                                        setIsAdding(true);
-                                                                    }}
-                                                                    className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"
-                                                                >
+                                        {pharmacyViewType === 'grid' ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                {pharmacies.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(phi => (
+                                                    <div key={phi.id} className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-lg group">
+                                                        <div className="flex justify-between items-start mb-6">
+                                                            <div className="size-12 rounded-xl bg-primary/10 dark:bg-white/5 flex items-center justify-center text-primary dark:text-white">
+                                                                <Crosshair size={24} />
+                                                            </div>
+                                                            <div className="flex gap-2 opacity-100 transition-opacity">
+                                                                <button onClick={() => handleEdit(phi)} className="size-9 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm" title="Editar">
                                                                     <Edit3 size={16} />
                                                                 </button>
+                                                                <button onClick={() => deletePharmacy(phi.id)} className="size-9 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Eliminar">
+                                                                    <Trash2 size={16} />
+                                                                </button>
                                                             </div>
-                                                        </>
-                                                    ) : (
-                                                        <div className="text-center p-4">
-                                                            <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
-                                                            <p className="text-[10px] text-slate-500 font-bold uppercase">Espacio Vacío</p>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setFormData({ ...formData, type: adType, active: true });
-                                                                    setIsAdding(true);
-                                                                }}
-                                                                className="mt-2 px-3 py-1 bg-purple-500/20 text-purple-500 rounded-lg text-[9px] font-black uppercase hover:bg-purple-500 hover:text-white transition-colors"
-                                                            >
-                                                                Crear
-                                                            </button>
                                                         </div>
-                                                    )}
-                                                </div>
-                                                <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
+                                                        <h4 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight mb-4 leading-tight">{phi.name}</h4>
+                                                        <div className="flex flex-col gap-3">
+                                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                                                <MapPin size={18} className="text-primary shrink-0" />
+                                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 truncate">{phi.address}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                                                <Phone size={18} className="text-accent-green shrink-0" />
+                                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">{phi.phone}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Premium Header Ads */}
-                            <div>
-                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {ads.filter(a => a.type === 'premium').map(ad => (
-                                        <div key={ad.id} className="bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-primary/50 transition-colors">
-                                            <div className="h-32 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${ad.image})` }}></div>
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 flex flex-col justify-end">
-                                                <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
-                                                <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
-                                                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                    <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => { setFormData({ ...formData, type: 'premium', active: true }); setIsAdding(true); }} className="h-32 rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                        <Plus size={24} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Nueva Premium</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Horizontal Body Ads */}
-                            <div>
-                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <LayoutDashboard size={14} className="text-blue-400" /> Publicidad Horizontal (Entre contenido)
-                                </h3>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {ads.filter(a => a.type === 'horizontal').map(ad => (
-                                        <div key={ad.id} className="relative group bg-[#11141b] rounded-2xl border border-white/10 p-1 flex items-center hover:border-blue-400/50 transition-all">
-                                            <img src={ad.image} className="w-32 h-20 object-cover rounded-xl" alt="" />
-                                            <div className="flex-1 px-4">
-                                                <div className="flex justify-between items-center mb-1">
-                                                    <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
-                                                </div>
-                                                <p className="text-xs text-slate-400 truncate max-w-md">{ad.link}</p>
-                                            </div>
-                                            <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => { setFormData({ ...formData, type: 'horizontal', active: true }); setIsAdding(true); }} className="w-full py-4 rounded-xl border border-dashed border-white/10 flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                        <Plus size={16} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Añadir Tira Horizontal</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Sidebar Ads */}
-                            <div>
-                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
-                                </h3>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                    {ads.filter(a => a.type === 'square').map(ad => (
-                                        <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
-                                            <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
-                                            <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
-                                                <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
-                                            </div>
-                                            <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
-                                                <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
-                                                <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                        <Plus size={24} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Categories Reorder View */}
-                    {activeTab === 'categories' && (
-                        <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
-                            <div className="px-8 py-5 flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600">Categorías (Arrastrar para ordenar)</span>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 text-right">Acciones</span>
-                            </div>
-                            <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
-                                {categories.map(cat => (
-                                    <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-white dark:bg-[#11141b] group relative">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                                                <Grid size={16} />
-                                            </div>
-                                            {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                            <div className="flex flex-col">
-                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{cat.name}</span>
-                                                <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all">
-                                            <button onClick={() => handleEdit(cat)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
-                                            <button onClick={() => deleteCategory(cat.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
-                                        </div>
-                                    </Reorder.Item>
-                                ))}
-                            </Reorder.Group>
-                        </div>
-                    )}
-
-                    {/* Gallery Tab */}
-                    {activeTab === 'gallery' && (
-                        <div className="flex flex-col gap-8">
-                            {/* Mass Upload Area */}
-                            <div
-                                className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    multiple
-                                    className="hidden"
-                                    onChange={handleGalleryUpload}
-                                    accept="image/*"
-                                />
-                                <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <Upload size={32} className="text-primary" />
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
-                                    <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
-                                </div>
-                            </div>
-
-                            {/* Gallery Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                {imageGallery.map((img, idx) => (
-                                    <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
-                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
-
-                                        {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigator.clipboard.writeText(img);
-                                                    alert('URL copiada al portapapeles');
-                                                }}
-                                                className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
-                                            >
-                                                Copiar URL
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
-                                                }}
-                                                className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-
-                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
-                                            <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Generic Table View (for News, Ads, etc.) */}
-                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
-                        <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
-                            <table className="w-full text-left">
-                                <thead className="bg-slate-50 dark:bg-[#14171d]">
-                                    <tr>
-                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Detalles</th>
-                                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Config</th>
-                                        <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Aciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-white/5">
-                                    {(activeTab === 'news' ? filteredNews :
-                                        activeTab === 'scores' ? scores :
-                                            activeTab === 'ads' ? ads :
-                                                activeTab === 'videos' ? videos :
-                                                    activeTab === 'categories' ? categories :
-                                                        flashTickers).map(item => (
-                                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                                                                <td className="px-8 py-6">
+                                        ) : (
+                                            <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-xl">
+                                                <table className="w-full text-left border-collapse">
+                                                    <thead className="bg-slate-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/5">
+                                                        <tr>
+                                                            <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Nombre</th>
+                                                            <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 hidden md:table-cell">Dirección</th>
+                                                            <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 hidden md:table-cell">Teléfono</th>
+                                                            <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                                                        {pharmacies.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(phi => (
+                                                            <tr key={phi.id} className="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                                                                <td className="px-6 py-5">
                                                                     <div className="flex items-center gap-4">
-                                                                        {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                                                        <div className="flex flex-col">
-                                                                            <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
-                                                                            <div className="flex gap-2 items-center mt-1">
-                                                                                <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
-                                                                                {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
-                                                                                {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
-                                                                            </div>
+                                                                        <div className="size-10 rounded-lg bg-primary/10 dark:bg-white/5 flex items-center justify-center text-primary dark:text-white shrink-0">
+                                                                            <Crosshair size={18} />
                                                                         </div>
+                                                                        <span className="text-sm font-black text-slate-900 dark:text-white uppercase italic">{phi.name}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td className="px-8 py-6">
-                                                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
+                                                                <td className="px-6 py-5 hidden md:table-cell">
+                                                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
+                                                                        <MapPin size={14} className="text-primary/70" /> {phi.address}
+                                                                    </div>
                                                                 </td>
-                                                                <td className="px-8 py-6 text-right">
-                                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                                        <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
-                                                                        <button onClick={() => {
-                                                                            if (activeTab === 'news') deleteNews(item.id);
-                                                                            if (activeTab === 'ads') deleteAd(item.id);
-                                                                            if (activeTab === 'videos') deleteVideo(item.id);
-                                                                            if (activeTab === 'categories') deleteCategory(item.id);
-                                                                            if (activeTab === 'tickers') deleteTicker(item.id);
-                                                                            if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
-                                                                        }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                                <td className="px-6 py-5 hidden md:table-cell">
+                                                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
+                                                                        <Phone size={14} className="text-accent-green/70" /> {phi.phone}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-5 text-right">
+                                                                    <div className="flex items-center justify-end gap-2">
+                                                                        <button onClick={() => handleEdit(phi)} className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-all shadow-sm" title="Editar">
+                                                                            <Edit3 size={16} />
+                                                                        </button>
+                                                                        <button onClick={() => deletePharmacy(phi.id)} className="p-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Eliminar">
+                                                                            <Trash2 size={16} />
+                                                                        </button>
                                                                     </div>
                                                                 </td>
                                                             </tr>
                                                         ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
+
+                                    </>
+                                    ) : (
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <div className="lg:col-span-1 flex flex-col gap-6">
+                                            <div className="bg-[#11141b] p-6 rounded-2xl border border-primary/20 bg-primary/5">
+                                                <h4 className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-4">Programador Automático</h4>
+                                                <p className="text-[11px] text-slate-400 font-bold leading-relaxed mb-6">Selecciona una fecha y asigna el establecimiento que estará de turno ese día.</p>
+
+                                                {/* Calendar Component */}
+                                                <div className="bg-[#0a0c10] border border-white/5 rounded-2xl p-4 mb-4">
+                                                    {/* Calendar Header */}
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <button
+                                                            onClick={() => {
+                                                                const newMonth = new Date(currentMonth);
+                                                                newMonth.setMonth(newMonth.getMonth() - 1);
+                                                                setCurrentMonth(newMonth);
+                                                            }}
+                                                            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                                        >
+                                                            <ChevronLeft size={16} className="text-slate-400" />
+                                                        </button>
+                                                        <span className="text-xs font-black uppercase text-white tracking-widest">
+                                                            {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => {
+                                                                const newMonth = new Date(currentMonth);
+                                                                newMonth.setMonth(newMonth.getMonth() + 1);
+                                                                setCurrentMonth(newMonth);
+                                                            }}
+                                                            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                                        >
+                                                            <ChevronRight size={16} className="text-slate-400" />
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Days of Week */}
+                                                    <div className="grid grid-cols-7 gap-1 mb-2">
+                                                        {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
+                                                            <div key={i} className="text-center text-[9px] font-black text-slate-600 uppercase py-1">
+                                                                {day}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Calendar Days */}
+                                                    <div className="grid grid-cols-7 gap-1">
+                                                        {(() => {
+                                                            const year = currentMonth.getFullYear();
+                                                            const month = currentMonth.getMonth();
+                                                            const firstDay = new Date(year, month, 1).getDay();
+                                                            const daysInMonth = new Date(year, month + 1, 0).getDate();
+                                                            const days = [];
+
+                                                            // Empty cells for days before month starts
+                                                            for (let i = 0; i < firstDay; i++) {
+                                                                days.push(<div key={`empty-${i}`} className="aspect-square" />);
+                                                            }
+
+                                                            // Actual days
+                                                            for (let day = 1; day <= daysInMonth; day++) {
+                                                                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                                                const isSelected = dateStr === displayDate;
+                                                                const hasAssignment = pharmacyDuty.some(d => d.date === dateStr);
+                                                                const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+                                                                days.push(
+                                                                    <button
+                                                                        key={day}
+                                                                        onClick={() => setDisplayDate(dateStr)}
+                                                                        className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
+                                                                            ? 'bg-primary text-white shadow-lg scale-110'
+                                                                            : hasAssignment
+                                                                                ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                                                                                : 'text-slate-400 hover:bg-white/5'
+                                                                            } ${isToday ? 'ring-1 ring-primary/50' : ''}`}
+                                                                    >
+                                                                        {day}
+                                                                        {hasAssignment && !isSelected && (
+                                                                            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400" />
+                                                                        )}
+                                                                    </button>
+                                                                );
+                                                            }
+
+                                                            return days;
+                                                        })()}
+                                                    </div>
+
+                                                    {/* Selected Date Display */}
+                                                    <div className="mt-4 pt-4 border-t border-white/5">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Fecha Seleccionada</span>
+                                                            <span className="text-xs font-black text-primary">
+                                                                {new Date(displayDate + 'T00:00:00').toLocaleDateString('es-ES', {
+                                                                    day: '2-digit',
+                                                                    month: 'short',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
+                                                    {pharmacies.map(phi => (
+                                                        <button
+                                                            key={phi.id}
+                                                            onClick={() => setDuty(displayDate, phi.id)}
+                                                            className={`w-full text-left px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id) ? 'bg-primary text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                                                        >
+                                                            {phi.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="lg:col-span-2">
+                                            <div className="bg-[#11141b] rounded-2xl border border-white/5 overflow-hidden">
+                                                <div className="bg-white/5 px-8 py-5 border-b border-white/5 flex items-center justify-between">
+                                                    <h4 className="text-[10px] font-black uppercase text-white tracking-[0.2em]">Calendario de Turnos</h4>
+                                                    <Zap size={14} className="text-yellow-500" />
+                                                </div>
+                                                <div className="p-2">
+                                                    {upcomingDuties.length > 0 ? (
+                                                        <table className="w-full text-left">
+                                                            <tbody className="divide-y divide-white/5">
+                                                                {upcomingDuties.map((duty, idx) => (
+                                                                    <tr key={idx} className="group hover:bg-white/[0.02]">
+                                                                        <td className="px-6 py-4">
+                                                                            <div className="flex items-center gap-3">
+                                                                                <CalendarIcon size={14} className="text-primary" />
+                                                                                <span className="text-[11px] font-black text-white italic">{duty.date}</span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td className="px-6 py-4">
+                                                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{duty.pharmacy?.name}</span>
+                                                                        </td>
+                                                                        <td className="px-6 py-4 text-right">
+                                                                            <button onClick={() => setDuty(duty.date, null)} className="p-2 text-slate-600 hover:text-accent-pink"><X size={14} /></button>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    ) : (
+                                                        <div className="py-20 text-center">
+                                                            <Clock size={32} className="mx-auto text-slate-800 mb-4" />
+                                                            <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest">No hay turnos programados a futuro</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            )}
+                                </div>
                     )}
 
-                    {/* Settings Tab */}
-                    {activeTab === 'settings' && (
-                        <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <Layers size={14} className="text-primary" /> Edición del Diario
-                                    </h3>
-                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona el número de edición que se muestra en la cabecera. Se incrementará automáticamente cada día.</p>
-
-                                    <div className="flex items-center gap-4">
-                                        <button
-                                            onClick={() => updateEdition(parseInt(editionNumber) - 1)}
-                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                                        >-</button>
-                                        <div className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic">
-                                            {editionNumber}
+                            {activeTab === 'ads' && (
+                                <div className="flex flex-col gap-10">
+                                    {/* Hero Ads - 3 Specific Slots */}
+                                    <div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                            <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {[1, 2, 3].map(num => {
+                                                const adType = `hero_${num}`;
+                                                const existingAd = ads.find(a => a.type === adType);
+                                                return (
+                                                    <div key={num} className="relative group">
+                                                        <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
+                                                            {existingAd?.image ? (
+                                                                <>
+                                                                    <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                if (confirm('¿Eliminar este anuncio?')) {
+                                                                                    if (existingAd.id) deleteAd(existingAd.id);
+                                                                                }
+                                                                            }}
+                                                                            className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
+                                                                        >
+                                                                            <Trash2 size={16} />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                setEditingId(existingAd.id);
+                                                                                setFormData({ ...existingAd });
+                                                                                setIsAdding(true);
+                                                                            }}
+                                                                            className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"
+                                                                        >
+                                                                            <Edit3 size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <div className="text-center p-4">
+                                                                    <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
+                                                                    <p className="text-[10px] text-slate-500 font-bold uppercase">Espacio Vacío</p>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setFormData({ ...formData, type: adType, active: true });
+                                                                            setIsAdding(true);
+                                                                        }}
+                                                                        className="mt-2 px-3 py-1 bg-purple-500/20 text-purple-500 rounded-lg text-[9px] font-black uppercase hover:bg-purple-500 hover:text-white transition-colors"
+                                                                    >
+                                                                        Crear
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                        <button
-                                            onClick={() => updateEdition(parseInt(editionNumber) + 1)}
-                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                                        >+</button>
                                     </div>
 
-                                    <div className="mt-6 pt-6 border-t border-white/5">
-                                        <button
-                                            onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
-                                            className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
-                                        >
-                                            Forzar Incremento Diario
-                                        </button>
+                                    {/* Premium Header Ads */}
+                                    <div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                            <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {ads.filter(a => a.type === 'premium').map(ad => (
+                                                <div key={ad.id} className="bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-primary/50 transition-colors">
+                                                    <div className="h-32 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${ad.image})` }}></div>
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 flex flex-col justify-end">
+                                                        <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                        <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
+                                                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                            <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <button onClick={() => { setFormData({ ...formData, type: 'premium', active: true }); setIsAdding(true); }} className="h-32 rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                <Plus size={24} />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Nueva Premium</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </section>
 
-                                <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
-                                    <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
-                                    </h3>
-                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Conecta un modelo (Gemini/OpenAI) para redacción automática de noticias y sugerencias de formato.</p>
+                                    {/* Horizontal Body Ads */}
+                                    <div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                            <LayoutDashboard size={14} className="text-blue-400" /> Publicidad Horizontal (Entre contenido)
+                                        </h3>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {ads.filter(a => a.type === 'horizontal').map(ad => (
+                                                <div key={ad.id} className="relative group bg-[#11141b] rounded-2xl border border-white/10 p-1 flex items-center hover:border-blue-400/50 transition-all">
+                                                    <img src={ad.image} className="w-32 h-20 object-cover rounded-xl" alt="" />
+                                                    <div className="flex-1 px-4">
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                        </div>
+                                                        <p className="text-xs text-slate-400 truncate max-w-md">{ad.link}</p>
+                                                    </div>
+                                                    <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <button onClick={() => { setFormData({ ...formData, type: 'horizontal', active: true }); setIsAdding(true); }} className="w-full py-4 rounded-xl border border-dashed border-white/10 flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                <Plus size={16} />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Añadir Tira Horizontal</span>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                                    <div className="flex flex-col gap-4">
-                                        <label className="flex items-center gap-3 cursor-pointer">
-                                            <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
-                                            <span className="text-[10px] font-black uppercase text-slate-400">Habilitar Asistente IA</span>
-                                        </label>
+                                    {/* Sidebar Ads */}
+                                    <div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                            <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
+                                        </h3>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                            {ads.filter(a => a.type === 'square').map(ad => (
+                                                <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
+                                                    <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
+                                                    <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
+                                                        <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
+                                                    </div>
+                                                    <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                                        <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
+                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                <Plus size={24} />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
-                                        <div className="flex flex-col gap-1.5">
-                                            <div className="flex items-center justify-between">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-600 ml-1">API Key</label>
-                                                {aiConfig.apiKey && <span className="text-[8px] font-bold text-emerald-500">Guardado</span>}
+                            {/* Categories Reorder View */}
+                            {activeTab === 'categories' && (
+                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                    <div className="px-8 py-5 flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600">Categorías (Arrastrar para ordenar)</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 text-right">Acciones</span>
+                                    </div>
+                                    <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
+                                        {categories.map(cat => (
+                                            <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-white dark:bg-[#11141b] group relative">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                                        <Grid size={16} />
+                                                    </div>
+                                                    {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-gray-200 dark:border-white/10" alt="" />}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{cat.name}</span>
+                                                        <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all">
+                                                    <button onClick={() => handleEdit(cat)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
+                                                    <button onClick={() => deleteCategory(cat.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                </div>
+                                            </Reorder.Item>
+                                        ))}
+                                    </Reorder.Group>
+                                </div>
+                            )}
+
+                            {/* Gallery Tab */}
+                            {activeTab === 'gallery' && (
+                                <div className="flex flex-col gap-8">
+                                    {/* Mass Upload Area */}
+                                    <div
+                                        className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
+                                        onDrop={handleDrop}
+                                        onDragOver={handleDragOver}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            className="hidden"
+                                            onChange={handleGalleryUpload}
+                                            accept="image/*"
+                                        />
+                                        <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <Upload size={32} className="text-primary" />
+                                        </div>
+                                        <div className="text-center">
+                                            <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
+                                            <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Gallery Grid */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                        {imageGallery.map((img, idx) => (
+                                            <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
+                                                <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+
+                                                {/* Overlay Actions */}
+                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigator.clipboard.writeText(img);
+                                                            alert('URL copiada al portapapeles');
+                                                        }}
+                                                        className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
+                                                    >
+                                                        Copiar URL
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
+                                                        }}
+                                                        className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+
+                                                <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
+                                                    <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
+                                                </div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="password"
-                                                    className="flex-1 bg-white dark:bg-[#11141b] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500/50 shadow-inner"
-                                                    placeholder="Pegar API Key aquí..."
-                                                    defaultValue={aiConfig.apiKey}
-                                                    onBlur={(e) => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
-                                                />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Generic Table View (for News, Ads, etc.) */}
+                            {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
+                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-slate-50 dark:bg-[#14171d]">
+                                            <tr>
+                                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Detalles</th>
+                                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Config</th>
+                                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Aciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 dark:divide-white/5">
+                                            {(activeTab === 'news' ? filteredNews :
+                                                activeTab === 'scores' ? scores :
+                                                    activeTab === 'ads' ? ads :
+                                                        activeTab === 'videos' ? videos :
+                                                            activeTab === 'categories' ? categories :
+                                                                flashTickers).map(item => (
+                                                                    <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                                                        <td className="px-8 py-6">
+                                                                            <div className="flex items-center gap-4">
+                                                                                {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
+                                                                                <div className="flex flex-col">
+                                                                                    <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
+                                                                                    <div className="flex gap-2 items-center mt-1">
+                                                                                        <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
+                                                                                        {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
+                                                                                        {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td className="px-8 py-6">
+                                                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
+                                                                        </td>
+                                                                        <td className="px-8 py-6 text-right">
+                                                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                                                <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
+                                                                                <button onClick={() => {
+                                                                                    if (activeTab === 'news') deleteNews(item.id);
+                                                                                    if (activeTab === 'ads') deleteAd(item.id);
+                                                                                    if (activeTab === 'videos') deleteVideo(item.id);
+                                                                                    if (activeTab === 'categories') deleteCategory(item.id);
+                                                                                    if (activeTab === 'tickers') deleteTicker(item.id);
+                                                                                    if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
+                                                                                }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+
+                            {/* Settings Tab */}
+                            {activeTab === 'settings' && (
+                                <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                            <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <Layers size={14} className="text-primary" /> Edición del Diario
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona el número de edición que se muestra en la cabecera. Se incrementará automáticamente cada día.</p>
+
+                                            <div className="flex items-center gap-4">
+                                                <button
+                                                    onClick={() => updateEdition(parseInt(editionNumber) - 1)}
+                                                    className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                                                >-</button>
+                                                <div className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic">
+                                                    {editionNumber}
+                                                </div>
+                                                <button
+                                                    onClick={() => updateEdition(parseInt(editionNumber) + 1)}
+                                                    className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                                                >+</button>
                                             </div>
-                                            <p className="text-[8px] text-slate-600 ml-1">Se guarda automáticamente al salir del campo.</p>
-                                        </div>
 
-                                        <div className="flex flex-col gap-1.5">
-                                            <label className="text-[9px] font-black uppercase text-slate-600 ml-1">Modelo Seleccionado</label>
-                                            <select
-                                                className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none font-bold"
-                                                value={aiConfig.model}
-                                                onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
-                                            >
-                                                <option value="llama3-70b-8192">Groq - Llama 3 70B (Recomendado)</option>
-                                                <option value="mixtral-8x7b-32768">Groq - Mixtral 8x7b</option>
-                                                <option value="gemma-7b-it">Groq - Gemma 7B</option>
-                                                <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
-                                                <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
-                                                <option value="gpt-4o">OpenAI GPT-4o</option>
-                                            </select>
-                                        </div>
+                                            <div className="mt-6 pt-6 border-t border-white/5">
+                                                <button
+                                                    onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
+                                                    className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                                >
+                                                    Forzar Incremento Diario
+                                                </button>
+                                            </div>
+                                        </section>
+
+                                        <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
+                                            <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold mb-6">Conecta un modelo (Gemini/OpenAI) para redacción automática de noticias y sugerencias de formato.</p>
+
+                                            <div className="flex flex-col gap-4">
+                                                <label className="flex items-center gap-3 cursor-pointer">
+                                                    <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
+                                                    <span className="text-[10px] font-black uppercase text-slate-400">Habilitar Asistente IA</span>
+                                                </label>
+
+                                                <div className="flex flex-col gap-1.5">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-600 ml-1">API Key</label>
+                                                        {aiConfig.apiKey && <span className="text-[8px] font-bold text-emerald-500">Guardado</span>}
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="password"
+                                                            className="flex-1 bg-white dark:bg-[#11141b] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500/50 shadow-inner"
+                                                            placeholder="Pegar API Key aquí..."
+                                                            defaultValue={aiConfig.apiKey}
+                                                            onBlur={(e) => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <p className="text-[8px] text-slate-600 ml-1">Se guarda automáticamente al salir del campo.</p>
+                                                </div>
+
+                                                <div className="flex flex-col gap-1.5">
+                                                    <label className="text-[9px] font-black uppercase text-slate-600 ml-1">Modelo Seleccionado</label>
+                                                    <select
+                                                        className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none font-bold"
+                                                        value={aiConfig.model}
+                                                        onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
+                                                    >
+                                                        <option value="llama3-70b-8192">Groq - Llama 3 70B (Recomendado)</option>
+                                                        <option value="mixtral-8x7b-32768">Groq - Mixtral 8x7b</option>
+                                                        <option value="gemma-7b-it">Groq - Gemma 7B</option>
+                                                        <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                                                        <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                                                        <option value="gpt-4o">OpenAI GPT-4o</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5 opacity-50">
+                                            <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <Wand2 size={14} className="text-accent-pink" /> Generación Automática
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Diseña portadas completas y diagramación de notas con un solo clic.</p>
+                                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <div className="w-1/2 h-full bg-primary/40 animate-pulse"></div>
+                                            </div>
+                                        </section>
                                     </div>
-                                </section>
+                                </div>
+                            )}
 
-                                <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5 opacity-50">
-                                    <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <Wand2 size={14} className="text-accent-pink" /> Generación Automática
-                                    </h3>
-                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Diseña portadas completas y diagramación de notas con un solo clic.</p>
-                                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div className="w-1/2 h-full bg-primary/40 animate-pulse"></div>
-                                    </div>
-                                </section>
-                            </div>
-                        </div>
-                    )}
-
-                </div >
+                        </div >
             </main >
 
             <AnimatePresence>
