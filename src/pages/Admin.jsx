@@ -859,306 +859,304 @@ const Admin = () => {
                                             </div>
                                         </div>
                                 )}
-                                    </div>
-                                </div>
-                    )}
 
-                            {activeTab === 'ads' && (
-                                <div className="flex flex-col gap-10">
-                                    {/* Hero Ads - 3 Specific Slots */}
-                                    <div>
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                            <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            {[1, 2, 3].map(num => {
-                                                const adType = `hero_${num}`;
-                                                const existingAd = ads.find(a => a.type === adType);
-                                                return (
-                                                    <div key={num} className="relative group">
-                                                        <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
-                                                            {existingAd?.image ? (
-                                                                <>
-                                                                    <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
-                                                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                                                                        <button
-                                                                            onClick={() => {
-                                                                                if (confirm('¿Eliminar este anuncio?')) {
-                                                                                    if (existingAd.id) deleteAd(existingAd.id);
-                                                                                }
-                                                                            }}
-                                                                            className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
-                                                                        >
-                                                                            <Trash2 size={16} />
-                                                                        </button>
-                                                                        <button
-                                                                            onClick={() => {
-                                                                                setEditingId(existingAd.id);
-                                                                                setFormData({ ...existingAd });
-                                                                                setIsAdding(true);
-                                                                            }}
-                                                                            className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"
-                                                                        >
-                                                                            <Edit3 size={16} />
-                                                                        </button>
+
+                                        {activeTab === 'ads' && (
+                                            <div className="flex flex-col gap-10">
+                                                {/* Hero Ads - 3 Specific Slots */}
+                                                <div>
+                                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                                        <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
+                                                    </h3>
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                        {[1, 2, 3].map(num => {
+                                                            const adType = `hero_${num}`;
+                                                            const existingAd = ads.find(a => a.type === adType);
+                                                            return (
+                                                                <div key={num} className="relative group">
+                                                                    <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
+                                                                        {existingAd?.image ? (
+                                                                            <>
+                                                                                <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                                                    <button
+                                                                                        onClick={() => {
+                                                                                            if (confirm('¿Eliminar este anuncio?')) {
+                                                                                                if (existingAd.id) deleteAd(existingAd.id);
+                                                                                            }
+                                                                                        }}
+                                                                                        className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
+                                                                                    >
+                                                                                        <Trash2 size={16} />
+                                                                                    </button>
+                                                                                    <button
+                                                                                        onClick={() => {
+                                                                                            setEditingId(existingAd.id);
+                                                                                            setFormData({ ...existingAd });
+                                                                                            setIsAdding(true);
+                                                                                        }}
+                                                                                        className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"
+                                                                                    >
+                                                                                        <Edit3 size={16} />
+                                                                                    </button>
+                                                                                </div>
+                                                                            </>
+                                                                        ) : (
+                                                                            <div className="text-center p-4">
+                                                                                <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
+                                                                                <p className="text-[10px] text-slate-500 font-bold uppercase">Espacio Vacío</p>
+                                                                                <button
+                                                                                    onClick={() => {
+                                                                                        setFormData({ ...formData, type: adType, active: true });
+                                                                                        setIsAdding(true);
+                                                                                    }}
+                                                                                    className="mt-2 px-3 py-1 bg-purple-500/20 text-purple-500 rounded-lg text-[9px] font-black uppercase hover:bg-purple-500 hover:text-white transition-colors"
+                                                                                >
+                                                                                    Crear
+                                                                                </button>
+                                                                            </div>
+                                                                        )}
                                                                     </div>
-                                                                </>
-                                                            ) : (
-                                                                <div className="text-center p-4">
-                                                                    <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
-                                                                    <p className="text-[10px] text-slate-500 font-bold uppercase">Espacio Vacío</p>
-                                                                    <button
-                                                                        onClick={() => {
-                                                                            setFormData({ ...formData, type: adType, active: true });
-                                                                            setIsAdding(true);
-                                                                        }}
-                                                                        className="mt-2 px-3 py-1 bg-purple-500/20 text-purple-500 rounded-lg text-[9px] font-black uppercase hover:bg-purple-500 hover:text-white transition-colors"
-                                                                    >
-                                                                        Crear
-                                                                    </button>
+                                                                    <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
                                                                 </div>
-                                                            )}
-                                                        </div>
-                                                        <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    {/* Premium Header Ads */}
-                                    <div>
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                            <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            {ads.filter(a => a.type === 'premium').map(ad => (
-                                                <div key={ad.id} className="bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-primary/50 transition-colors">
-                                                    <div className="h-32 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${ad.image})` }}></div>
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 flex flex-col justify-end">
-                                                        <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
-                                                        <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
-                                                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                            <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
-                                                        </div>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
-                                            ))}
-                                            <button onClick={() => { setFormData({ ...formData, type: 'premium', active: true }); setIsAdding(true); }} className="h-32 rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                                <Plus size={24} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Nueva Premium</span>
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    {/* Horizontal Body Ads */}
-                                    <div>
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                            <LayoutDashboard size={14} className="text-blue-400" /> Publicidad Horizontal (Entre contenido)
-                                        </h3>
-                                        <div className="grid grid-cols-1 gap-4">
-                                            {ads.filter(a => a.type === 'horizontal').map(ad => (
-                                                <div key={ad.id} className="relative group bg-[#11141b] rounded-2xl border border-white/10 p-1 flex items-center hover:border-blue-400/50 transition-all">
-                                                    <img src={ad.image} className="w-32 h-20 object-cover rounded-xl" alt="" />
-                                                    <div className="flex-1 px-4">
-                                                        <div className="flex justify-between items-center mb-1">
-                                                            <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
-                                                        </div>
-                                                        <p className="text-xs text-slate-400 truncate max-w-md">{ad.link}</p>
-                                                    </div>
-                                                    <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                {/* Premium Header Ads */}
+                                                <div>
+                                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                                        <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
+                                                    </h3>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                        {ads.filter(a => a.type === 'premium').map(ad => (
+                                                            <div key={ad.id} className="bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-primary/50 transition-colors">
+                                                                <div className="h-32 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${ad.image})` }}></div>
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 flex flex-col justify-end">
+                                                                    <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                                    <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
+                                                                    <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                        <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        <button onClick={() => { setFormData({ ...formData, type: 'premium', active: true }); setIsAdding(true); }} className="h-32 rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                            <Plus size={24} />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">Nueva Premium</span>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                            ))}
-                                            <button onClick={() => { setFormData({ ...formData, type: 'horizontal', active: true }); setIsAdding(true); }} className="w-full py-4 rounded-xl border border-dashed border-white/10 flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                                <Plus size={16} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Añadir Tira Horizontal</span>
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    {/* Sidebar Ads */}
-                                    <div>
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                            <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
-                                        </h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            {ads.filter(a => a.type === 'square').map(ad => (
-                                                <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
-                                                    <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
-                                                    <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
-                                                        <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
-                                                    </div>
-                                                    <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
-                                                        <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
-                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                                <Plus size={24} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Categories Reorder View */}
-                            {activeTab === 'categories' && (
-                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
-                                    <div className="px-8 py-5 flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600">Categorías (Arrastrar para ordenar)</span>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 text-right">Acciones</span>
-                                    </div>
-                                    <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
-                                        {categories.map(cat => (
-                                            <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-white dark:bg-[#11141b] group relative">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                                                        <Grid size={16} />
-                                                    </div>
-                                                    {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                                    <div className="flex flex-col">
-                                                        <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{cat.name}</span>
-                                                        <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
+                                                {/* Horizontal Body Ads */}
+                                                <div>
+                                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                                        <LayoutDashboard size={14} className="text-blue-400" /> Publicidad Horizontal (Entre contenido)
+                                                    </h3>
+                                                    <div className="grid grid-cols-1 gap-4">
+                                                        {ads.filter(a => a.type === 'horizontal').map(ad => (
+                                                            <div key={ad.id} className="relative group bg-[#11141b] rounded-2xl border border-white/10 p-1 flex items-center hover:border-blue-400/50 transition-all">
+                                                                <img src={ad.image} className="w-32 h-20 object-cover rounded-xl" alt="" />
+                                                                <div className="flex-1 px-4">
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <span className="text-[10px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢 Activa' : '🔴 Inactiva'}</span>
+                                                                    </div>
+                                                                    <p className="text-xs text-slate-400 truncate max-w-md">{ad.link}</p>
+                                                                </div>
+                                                                <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
+                                                                    <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        <button onClick={() => { setFormData({ ...formData, type: 'horizontal', active: true }); setIsAdding(true); }} className="w-full py-4 rounded-xl border border-dashed border-white/10 flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                            <Plus size={16} />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">Añadir Tira Horizontal</span>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all">
-                                                    <button onClick={() => handleEdit(cat)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
-                                                    <button onClick={() => deleteCategory(cat.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
-                                                </div>
-                                            </Reorder.Item>
-                                        ))}
-                                    </Reorder.Group>
-                                </div>
-                            )}
 
-                            {/* Gallery Tab */}
-                            {activeTab === 'gallery' && (
-                                <div className="flex flex-col gap-8">
-                                    {/* Mass Upload Area */}
-                                    <div
-                                        className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
-                                        onDrop={handleDrop}
-                                        onDragOver={handleDragOver}
-                                        onClick={() => fileInputRef.current?.click()}
-                                    >
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            multiple
-                                            className="hidden"
-                                            onChange={handleGalleryUpload}
-                                            accept="image/*"
-                                        />
-                                        <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <Upload size={32} className="text-primary" />
-                                        </div>
-                                        <div className="text-center">
-                                            <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
-                                            <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Gallery Grid */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                        {imageGallery.map((img, idx) => (
-                                            <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
-                                                <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
-
-                                                {/* Overlay Actions */}
-                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigator.clipboard.writeText(img);
-                                                            alert('URL copiada al portapapeles');
-                                                        }}
-                                                        className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
-                                                    >
-                                                        Copiar URL
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
-                                                        }}
-                                                        className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-
-                                                <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
-                                                    <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
+                                                {/* Sidebar Ads */}
+                                                <div>
+                                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                                        <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                                        {ads.filter(a => a.type === 'square').map(ad => (
+                                                            <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
+                                                                <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
+                                                                <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
+                                                                    <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
+                                                                </div>
+                                                                <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                                                    <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
+                                                                    <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
+                                                            <Plus size={24} />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                        )}
 
-                            {/* Generic Table View (for News, Ads, etc.) */}
-                            {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
-                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
-                                    <table className="w-full text-left">
-                                        <thead className="bg-slate-50 dark:bg-[#14171d]">
-                                            <tr>
-                                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Detalles</th>
-                                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Config</th>
-                                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Aciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 dark:divide-white/5">
-                                            {(activeTab === 'news' ? filteredNews :
-                                                activeTab === 'scores' ? scores :
-                                                    activeTab === 'ads' ? ads :
-                                                        activeTab === 'videos' ? videos :
-                                                            activeTab === 'categories' ? categories :
-                                                                flashTickers).map(item => (
-                                                                    <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                                                                        <td className="px-8 py-6">
-                                                                            <div className="flex items-center gap-4">
-                                                                                {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                                                                <div className="flex flex-col">
-                                                                                    <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
-                                                                                    <div className="flex gap-2 items-center mt-1">
-                                                                                        <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
-                                                                                        {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
-                                                                                        {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td className="px-8 py-6">
-                                                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
-                                                                        </td>
-                                                                        <td className="px-8 py-6 text-right">
-                                                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                                                <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
-                                                                                <button onClick={() => {
-                                                                                    if (activeTab === 'news') deleteNews(item.id);
-                                                                                    if (activeTab === 'ads') deleteAd(item.id);
-                                                                                    if (activeTab === 'videos') deleteVideo(item.id);
-                                                                                    if (activeTab === 'categories') deleteCategory(item.id);
-                                                                                    if (activeTab === 'tickers') deleteTicker(item.id);
-                                                                                    if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
-                                                                                }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
+                                        {/* Categories Reorder View */}
+                                        {activeTab === 'categories' && (
+                                            <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                                <div className="px-8 py-5 flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600">Categorías (Arrastrar para ordenar)</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 text-right">Acciones</span>
+                                                </div>
+                                                <Reorder.Group axis="y" values={categories} onReorder={reorderCategories} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
+                                                    {categories.map(cat => (
+                                                        <Reorder.Item key={cat.id} value={cat} className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-grab active:cursor-grabbing bg-white dark:bg-[#11141b] group relative">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                                                    <Grid size={16} />
+                                                                </div>
+                                                                {cat.bg_image && <img src={cat.bg_image} className="size-10 rounded-lg object-cover border border-gray-200 dark:border-white/10" alt="" />}
+                                                                <div className="flex flex-col">
+                                                                    <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{cat.name}</span>
+                                                                    <span className="text-[9px] font-bold" style={{ color: cat.color }}>{cat.color}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all">
+                                                                <button onClick={() => handleEdit(cat)} className="p-2 text-slate-600 hover:text-white"><Edit3 size={16} /></button>
+                                                                <button onClick={() => deleteCategory(cat.id)} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                            </div>
+                                                        </Reorder.Item>
+                                                    ))}
+                                                </Reorder.Group>
+                                            </div>
+                                        )}
 
-                            {/* Settings Tab */}
-                            {activeTab === 'settings' && (
+                                        {/* Gallery Tab */}
+                                        {activeTab === 'gallery' && (
+                                            <div className="flex flex-col gap-8">
+                                                {/* Mass Upload Area */}
+                                                <div
+                                                    className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
+                                                    onDrop={handleDrop}
+                                                    onDragOver={handleDragOver}
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                >
+                                                    <input
+                                                        ref={fileInputRef}
+                                                        type="file"
+                                                        multiple
+                                                        className="hidden"
+                                                        onChange={handleGalleryUpload}
+                                                        accept="image/*"
+                                                    />
+                                                    <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                        <Upload size={32} className="text-primary" />
+                                                    </div>
+                                                    <div className="text-center">
+                                                        <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Subir Imágenes Masivamente</h3>
+                                                        <p className="text-slate-500 font-bold text-xs mt-1">Arrastra tus archivos aquí o haz clic para explorar</p>
+                                                    </div>
+                                                </div>
+
+                                                {/* Gallery Grid */}
+                                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                                    {imageGallery.map((img, idx) => (
+                                                        <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
+                                                            <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+
+                                                            {/* Overlay Actions */}
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigator.clipboard.writeText(img);
+                                                                        alert('URL copiada al portapapeles');
+                                                                    }}
+                                                                    className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
+                                                                >
+                                                                    Copiar URL
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
+                                                                    }}
+                                                                    className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
+                                                            </div>
+
+                                                            <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
+                                                                <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Generic Table View (for News, Ads, etc.) */}
+                                        {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
+                                            <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                                <table className="w-full text-left">
+                                                    <thead className="bg-slate-50 dark:bg-[#14171d]">
+                                                        <tr>
+                                                            <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Detalles</th>
+                                                            <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Config</th>
+                                                            <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 border-b border-gray-200 dark:border-white/5">Aciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-gray-200 dark:divide-white/5">
+                                                        {(activeTab === 'news' ? filteredNews :
+                                                            activeTab === 'scores' ? scores :
+                                                                activeTab === 'ads' ? ads :
+                                                                    activeTab === 'videos' ? videos :
+                                                                        activeTab === 'categories' ? categories :
+                                                                            flashTickers).map(item => (
+                                                                                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                                                                    <td className="px-8 py-6">
+                                                                                        <div className="flex items-center gap-4">
+                                                                                            {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
+                                                                                            <div className="flex flex-col">
+                                                                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
+                                                                                                <div className="flex gap-2 items-center mt-1">
+                                                                                                    <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
+                                                                                                    {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
+                                                                                                    {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td className="px-8 py-6">
+                                                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
+                                                                                    </td>
+                                                                                    <td className="px-8 py-6 text-right">
+                                                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                                                            <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
+                                                                                            <button onClick={() => {
+                                                                                                if (activeTab === 'news') deleteNews(item.id);
+                                                                                                if (activeTab === 'ads') deleteAd(item.id);
+                                                                                                if (activeTab === 'videos') deleteVideo(item.id);
+                                                                                                if (activeTab === 'categories') deleteCategory(item.id);
+                                                                                                if (activeTab === 'tickers') deleteTicker(item.id);
+                                                                                                if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
+                                                                                            }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
+
+                                        {/* Settings Tab */}
+                                        {activeTab === 'settings' && (
                                 <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
@@ -1167,18 +1165,31 @@ const Admin = () => {
                                             </h3>
                                             <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona el número de edición que se muestra en la cabecera. Se incrementará automáticamente cada día.</p>
 
-                                            <div className="flex items-center gap-4">
                                                 <button
                                                     onClick={() => updateEdition(parseInt(editionNumber) - 1)}
                                                     className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
                                                 >-</button>
-                                                <div className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic">
-                                                    {editionNumber}
-                                                </div>
+                                                <input
+                                                    type="number"
+                                                    className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic outline-none focus:border-primary transition-colors"
+                                                    value={editionNumber}
+                                                    onChange={(e) => updateEdition(e.target.value)}
+                                                />
                                                 <button
                                                     onClick={() => updateEdition(parseInt(editionNumber) + 1)}
                                                     className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
                                                 >+</button>
+                                            </div>
+
+                                            <div className="mt-6">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-widest">Fecha de Publicación</label>
+                                                <input
+                                                    type="date"
+                                                    className="w-full bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors"
+                                                    value={coverPage.date || ''}
+                                                    onChange={(e) => updateCoverPage(coverPage.image, e.target.value)}
+                                                    style={{ colorScheme: 'dark' }}
+                                                />
                                             </div>
 
                                             <div className="mt-6 pt-6 border-t border-white/5">
