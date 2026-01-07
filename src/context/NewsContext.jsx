@@ -43,14 +43,8 @@ export const NewsProvider = ({ children }) => {
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400',
         'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=400'
     ]);
-    const [pharmacies, setPharmacies] = useState([
-        { id: 1, name: "Farmacia Central", address: "Av. Principal 123", phone: "555-0101", city: "Centro", location: { lat: 0, lng: 0 } },
-        { id: 2, name: "Farmacia Norte", address: "Calle Falsa 456", phone: "555-0202", city: "Norte", location: { lat: 0, lng: 0 } }
-    ]);
-    const [pharmacyDuty, setPharmacyDuty] = useState([
-        { date: "2026-01-04", pharmacyId: 1 },
-        { date: "2026-01-05", pharmacyId: 2 }
-    ]);
+    const [pharmacies, setPharmacies] = useState([]);
+    const [pharmacyDuty, setPharmacyDuty] = useState([]);
 
     // Initial fetch
     useEffect(() => {
@@ -58,6 +52,8 @@ export const NewsProvider = ({ children }) => {
         fetchSettings();
         fetchCategories();
         fetchGallery();
+        fetchPharmacies();
+        fetchDuties();
     }, []);
 
     const fetchNews = async () => {
@@ -135,6 +131,30 @@ export const NewsProvider = ({ children }) => {
         } catch (err) {
             // Silent fail - keep the default gallery images
             console.warn('Failed to fetch gallery, using defaults:', err.message);
+        }
+    };
+
+    const fetchPharmacies = async () => {
+        try {
+            const res = await fetch('/api/pharmacies');
+            if (res.ok) {
+                const data = await res.json();
+                setPharmacies(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch pharmacies:', err);
+        }
+    };
+
+    const fetchDuties = async () => {
+        try {
+            const res = await fetch('/api/pharmacy-duties');
+            if (res.ok) {
+                const data = await res.json();
+                setPharmacyDuty(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch duties:', err);
         }
     };
 
@@ -323,13 +343,66 @@ export const NewsProvider = ({ children }) => {
     const deleteVideo = (id) => setVideos(prev => prev.filter(v => v.id !== id));
     const updateVideo = (id, item) => setVideos(prev => prev.map(v => v.id === id ? { ...v, ...item } : v));
 
-    const addPharmacy = (p) => setPharmacies(prev => [...prev, { ...p, id: Date.now() }]);
-    const deletePharmacy = (id) => setPharmacies(prev => prev.filter(p => p.id !== id));
-    const updatePharmacy = (id, p) => setPharmacies(prev => prev.map(phi => phi.id === id ? { ...phi, ...p } : phi));
-    const setDuty = (date, pharmacyId) => setPharmacyDuty(prev => {
-        const others = prev.filter(d => d.date !== date);
-        return [...others, { date, pharmacyId }];
-    });
+    const addPharmacy = async (p) => {
+        try {
+            const res = await fetch('/api/pharmacies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(p)
+            });
+            if (res.ok) {
+                const newP = await res.json();
+                setPharmacies(prev => [...prev, newP]);
+            }
+        } catch (err) {
+            console.error('Failed to add pharmacy:', err);
+        }
+    };
+
+    const deletePharmacy = async (id) => {
+        try {
+            await fetch(`/api/pharmacies?id=${id}`, { method: 'DELETE' });
+            setPharmacies(prev => prev.filter(p => p.id !== id));
+        } catch (err) {
+            console.error('Failed to delete pharmacy:', err);
+        }
+    };
+
+    const updatePharmacy = async (id, p) => {
+        try {
+            const res = await fetch('/api/pharmacies', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, ...p })
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                setPharmacies(prev => prev.map(phi => phi.id === id ? updated : phi));
+            }
+        } catch (err) {
+            console.error('Failed to update pharmacy:', err);
+        }
+    };
+
+    const setDuty = async (date, pharmacyId) => {
+        try {
+            const res = await fetch('/api/pharmacy-duties', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date, pharmacyId })
+            });
+
+            if (res.ok) {
+                setPharmacyDuty(prev => {
+                    const others = prev.filter(d => d.date !== date);
+                    if (pharmacyId === null) return others;
+                    return [...others, { date, pharmacyId }];
+                });
+            }
+        } catch (err) {
+            console.error('Failed to set duty:', err);
+        }
+    };
 
     return (
         <NewsContext.Provider value={{
