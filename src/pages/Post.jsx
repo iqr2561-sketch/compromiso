@@ -64,7 +64,7 @@ const Post = () => {
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
+                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic lowercase first-letter:uppercase">
                             {post.title}
                         </h1>
 

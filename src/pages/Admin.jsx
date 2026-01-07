@@ -337,44 +337,44 @@ const Admin = () => {
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="flex flex-col gap-2">
                                                             <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
-                                                            <select className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                                                            <select className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                                                                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                                                             </select>
                                                         </div>
                                                         <div className="flex flex-col gap-2">
                                                             <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
-                                                            <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white font-bold" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: 'dark' }} />
+                                                            <input type="date" className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: isDarkMode ? 'dark' : 'light' }} />
                                                         </div>
                                                     </div>
 
                                                     <div className="flex flex-col gap-2">
                                                         <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de Portada</label>
-                                                        <div className="flex gap-2 p-1 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                                        <div className="flex gap-2 p-1 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
                                                             {['url', 'pc', 'gallery'].map(src => (
                                                                 <button key={src} type="button" onClick={() => {
                                                                     setImageSource(src);
                                                                     if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
-                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>{src}</button>
+                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>{src}</button>
                                                             ))}
                                                         </div>
-                                                        {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
+                                                        {imageSource === 'url' && <input className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
                                                         {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
                                                     </div>
 
-                                                    <div className="flex gap-6 p-6 bg-[#0a0c10] rounded-3xl border border-white/5">
+                                                    <div className="flex gap-6 p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
                                                                 {formData.isHero && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
-                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-white transition-colors">Destacar en Portada</span>
+                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
                                                         </label>
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'}`}>
+                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'}`}>
                                                                 {formData.isFlash && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
-                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-white transition-colors">Flash Noticia</span>
+                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Flash Noticia</span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -383,25 +383,25 @@ const Admin = () => {
                                                     <div className="flex items-center justify-between mb-2">
                                                         <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Cuerpo de la Noticia (Bloques)</label>
                                                         <div className="flex gap-2">
-                                                            <button type="button" onClick={() => addBlock('text')} className="p-2 bg-white/5 hover:bg-primary/20 text-white rounded-lg transition-colors" title="Añadir Texto"><LayoutDashboard size={14} /></button>
-                                                            <button type="button" onClick={() => addBlock('image')} className="p-2 bg-white/5 hover:bg-accent-purple/20 text-white rounded-lg transition-colors" title="Añadir Imagen"><ImageIcon size={14} /></button>
+                                                            <button type="button" onClick={() => addBlock('text')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-primary/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Texto"><LayoutDashboard size={14} /></button>
+                                                            <button type="button" onClick={() => addBlock('image')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-accent-purple/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Imagen"><ImageIcon size={14} /></button>
                                                         </div>
                                                     </div>
 
                                                     <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                                                         {editorBlocks.map((block, idx) => (
                                                             <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="relative group">
-                                                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
+                                                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gray-200 dark:bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
                                                                 {block.type === 'text' ? (
                                                                     <textarea
-                                                                        className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed"
+                                                                        className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed shadow-inner"
                                                                         value={block.content}
                                                                         onChange={e => updateBlock(idx, e.target.value)}
                                                                         placeholder="Escribe el contenido de este párrafo..."
                                                                     />
                                                                 ) : (
-                                                                    <div className="flex flex-col gap-3 p-4 bg-[#0a0c10] border border-white/5 rounded-2xl">
-                                                                        <div className="aspect-video rounded-xl overflow-hidden border border-white/5 bg-black/40 relative group/img">
+                                                                    <div className="flex flex-col gap-3 p-4 bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl shadow-inner">
+                                                                        <div className="aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-black/40 relative group/img">
                                                                             <img src={block.content} className="w-full h-full object-cover" alt="" />
                                                                             <button type="button" onClick={() => { setGalleryTarget(idx); setShowGallery(true); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-black uppercase text-[10px] tracking-widest">
                                                                                 <ImageIcon size={16} /> Cambiar Imagen
@@ -430,7 +430,7 @@ const Admin = () => {
                                                         {formData.category}
                                                     </div>
                                                 </div>
-                                                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8">
+                                                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8 lowercase first-letter:uppercase">
                                                     {formData.title || 'Título de ejemplo'}
                                                 </h1>
                                                 <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest mb-10 pb-6 border-b border-white/5">
@@ -852,9 +852,9 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                         </div>
+                                )}
                                     </div>
-                            )}
-                                </div >
+                                </div>
                     )}
 
                             {activeTab === 'ads' && (
