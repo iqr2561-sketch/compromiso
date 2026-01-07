@@ -975,8 +975,32 @@ const Admin = () => {
                                 {imageGallery.map((img, idx) => (
                                     <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
                                         <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
-                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform">
-                                            <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? img.substring(0, 30) + '...' : img}</p>
+
+                                        {/* Overlay Actions */}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigator.clipboard.writeText(img);
+                                                    alert('URL copiada al portapapeles');
+                                                }}
+                                                className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
+                                            >
+                                                Copiar URL
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
+                                                }}
+                                                className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+
+                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
+                                            <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
                                         </div>
                                     </div>
                                 ))}

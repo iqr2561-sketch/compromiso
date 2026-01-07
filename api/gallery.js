@@ -1,4 +1,4 @@
-import { sql } from './lib/db.js';
+import pool from './lib/db.js';
 
 export default async function handler(req, res) {
     // Set CORS headers
@@ -12,45 +12,57 @@ export default async function handler(req, res) {
     }
 
     try {
-        // GET - Fetch all gallery images
-        if (req.method === 'GET') {
-            const result = await sql`SELECT * FROM gallery ORDER BY created_at DESC`;
-            return res.status(200).json(result);
-        }
+        const client = await pool.connect();
 
-        // POST - Add new image to gallery
-        if (req.method === 'POST') {
-            const { url, filename, alt_text } = req.body;
-
-            if (!url) {
-                return res.status(400).json({ error: 'URL is required' });
+        try {
+            // GET - Fetch all gallery images
+            if (req.method === 'GET') {
+                const { rows } = await client.query('SELECT * FROM gallery ORDER BY created_at DESC');
+                res.status(200).json(rows);
+                return;
             }
 
-            const result = await sql`
-                INSERT INTO gallery (url, filename, alt_text)
-                VALUES (${url}, ${filename || null}, ${alt_text || null})
-                RETURNING *
-            `;
+            // POST - Add new image to gallery
+            if (req.method === 'POST') {
+                const { url, filename, alt_text } = req.body;
 
-            return res.status(201).json(result[0]);
-        }
+                if (!url) {
+                    res.status(400).json({ error: 'URL is required' });
+                    return;
+                }
 
-        // DELETE - Remove image from gallery
-        if (req.method === 'DELETE') {
-            const { id } = req.query;
+                const { rows } = await client.query(
+                    'INSERT INTO gallery (url, filename, alt_text) VALUES ($1, $2, $3) RETURNING *',
+                    [url, filename || null, alt_text || null]
+                );
 
-            if (!id) {
-                return res.status(400).json({ error: 'ID is required' });
+                res.status(201).json(rows[0]);
+                return;
             }
 
-            await sql`DELETE FROM gallery WHERE id = ${id}`;
-            return res.status(200).json({ message: 'Image deleted successfully' });
-        }
+            // DELETE - Remove image from gallery
+            if (req.method === 'DELETE') {
+                const { id } = req.query;
 
-        return res.status(405).json({ error: 'Method not allowed' });
+                if (!id) {
+                    res.status(400).json({ error: 'ID is required' });
+                    return;
+                }
+
+                await client.query('DELETE FROM gallery WHERE id = $1', [id]);
+                res.status(200).json({ message: 'Image deleted successfully' });
+                return;
+            }
+
+            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+            res.status(405).json({ error: 'Method not allowed' });
+
+        } finally {
+            client.release();
+        }
 
     } catch (error) {
         console.error('Gallery API Error:', error);
-        return res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 }
