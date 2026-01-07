@@ -64,8 +64,8 @@ const Post = () => {
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic lowercase first-letter:uppercase">
-                            {post.title}
+                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
+                            {post.title ? post.title.charAt(0).toUpperCase() + post.title.slice(1).toLowerCase() : ''}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-6 border-y border-gray-100 dark:border-white/5 py-6">
@@ -106,7 +106,7 @@ const Post = () => {
                                     if (Array.isArray(blocks)) {
                                         return blocks.map((block, i) => (
                                             block.type === 'text' ? (
-                                                <p key={i} className="text-base md:text-lg font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-justify">
+                                                <p key={i} className="text-base md:text-lg font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line text-justify">
                                                     {block.content}
                                                 </p>
                                             ) : (

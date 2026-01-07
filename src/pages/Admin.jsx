@@ -136,7 +136,13 @@ const Admin = () => {
 
     const handleEdit = (item) => {
         setEditingId(item.id);
-        const editData = { ...item, name: item.name || item.title || '', text: item.text || item.title || '' };
+        const editData = {
+            ...item,
+            name: item.name || item.title || '',
+            text: item.text || item.title || '',
+            isHero: !!item.isHero,
+            isFlash: !!item.isFlash
+        };
         setFormData(editData);
 
         if (activeTab === 'news' && item.content) {
@@ -331,25 +337,25 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-6">
                                                     <div className="flex flex-col gap-2">
                                                         <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Cabecera de Noticia</label>
-                                                        <input className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
+                                                        <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
                                                     </div>
 
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="flex flex-col gap-2">
                                                             <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
-                                                            <select className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                                                            <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                                                                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                                                             </select>
                                                         </div>
                                                         <div className="flex flex-col gap-2">
                                                             <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
-                                                            <input type="date" className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: isDarkMode ? 'dark' : 'light' }} />
+                                                            <input type="date" className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: isDarkMode ? 'dark' : 'light' }} />
                                                         </div>
                                                     </div>
 
                                                     <div className="flex flex-col gap-2">
                                                         <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de Portada</label>
-                                                        <div className="flex gap-2 p-1 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
+                                                        <div className="flex gap-2 p-1 bg-white dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
                                                             {['url', 'pc', 'gallery'].map(src => (
                                                                 <button key={src} type="button" onClick={() => {
                                                                     setImageSource(src);
@@ -357,11 +363,11 @@ const Admin = () => {
                                                                 }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>{src}</button>
                                                             ))}
                                                         </div>
-                                                        {imageSource === 'url' && <input className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
+                                                        {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
                                                         {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
                                                     </div>
 
-                                                    <div className="flex gap-6 p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
+                                                    <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
                                                         <label className="flex items-center gap-3 cursor-pointer group">
                                                             <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
                                                                 {formData.isHero && <Zap size={12} className="text-white" />}
@@ -394,13 +400,13 @@ const Admin = () => {
                                                                 <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gray-200 dark:bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
                                                                 {block.type === 'text' ? (
                                                                     <textarea
-                                                                        className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed shadow-inner"
+                                                                        className="w-full bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed shadow-inner"
                                                                         value={block.content}
                                                                         onChange={e => updateBlock(idx, e.target.value)}
                                                                         placeholder="Escribe el contenido de este párrafo..."
                                                                     />
                                                                 ) : (
-                                                                    <div className="flex flex-col gap-3 p-4 bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl shadow-inner">
+                                                                    <div className="flex flex-col gap-3 p-4 bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl shadow-inner">
                                                                         <div className="aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-black/40 relative group/img">
                                                                             <img src={block.content} className="w-full h-full object-cover" alt="" />
                                                                             <button type="button" onClick={() => { setGalleryTarget(idx); setShowGallery(true); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-black uppercase text-[10px] tracking-widest">
@@ -430,8 +436,8 @@ const Admin = () => {
                                                         {formData.category}
                                                     </div>
                                                 </div>
-                                                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8 lowercase first-letter:uppercase">
-                                                    {formData.title || 'Título de ejemplo'}
+                                                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8">
+                                                    {formData.title ? formData.title.charAt(0).toUpperCase() + formData.title.slice(1).toLowerCase() : 'Título de ejemplo'}
                                                 </h1>
                                                 <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest mb-10 pb-6 border-b border-white/5">
                                                     <CalendarIcon size={14} className="text-primary" />
@@ -441,7 +447,7 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-8">
                                                     {editorBlocks.map((block, i) => (
                                                         block.type === 'text' ? (
-                                                            <p key={i} className="text-base md:text-lg text-slate-300 leading-relaxed font-medium text-justify">{block.content || 'Escribe contenido para verlo aquí...'}</p>
+                                                            <p key={i} className="text-base md:text-lg text-slate-300 leading-relaxed font-medium text-justify whitespace-pre-line">{block.content || 'Escribe contenido para verlo aquí...'}</p>
                                                         ) : (
                                                             <div key={i} className="flex flex-col gap-3">
                                                                 <img src={block.content} className="w-full rounded-[2rem] shadow-2xl border border-white/5" alt="" />
