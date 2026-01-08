@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS news (
     image TEXT,
     is_hero BOOLEAN DEFAULT FALSE,
     is_flash BOOLEAN DEFAULT FALSE,
+    status TEXT DEFAULT 'published',
+    scheduled_at TIMESTAMP WITH TIME ZONE,
     time_read TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

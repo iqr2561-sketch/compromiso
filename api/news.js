@@ -7,22 +7,32 @@ export default async function handler(req, res) {
         const client = await pool.connect();
 
         switch (method) {
-            case 'GET':
+            case 'GET': {
                 const { all } = req.query;
-                let query = "SELECT * FROM news WHERE (status = 'published' OR status IS NULL OR (status = 'scheduled' AND scheduled_at <= CURRENT_TIMESTAMP)) ORDER BY date DESC, created_at DESC";
-                if (all === 'true') {
-                    query = 'SELECT * FROM news ORDER BY date DESC, created_at DESC';
+                let rows = [];
+                try {
+                    let query = "SELECT * FROM news WHERE (status = 'published' OR status IS NULL OR (status = 'scheduled' AND scheduled_at <= CURRENT_TIMESTAMP)) ORDER BY date DESC, created_at DESC";
+                    if (all === 'true') {
+                        query = 'SELECT * FROM news ORDER BY date DESC, created_at DESC';
+                    }
+                    const result = await client.query(query);
+                    rows = result.rows;
+                } catch (e) {
+                    console.error("Advanced query failed, falling back to simple query:", e.message);
+                    const result = await client.query('SELECT * FROM news ORDER BY date DESC, created_at DESC');
+                    rows = result.rows;
                 }
-                const { rows } = await client.query(query);
+
                 // Map database naming (snake_case) to frontend (camelCase)
                 const mappedRows = rows.map(row => ({
                     ...row,
-                    isHero: row.is_hero,
-                    isFlash: row.is_flash,
-                    timeRead: row.time_read
+                    isHero: !!row.is_hero,
+                    isFlash: !!row.is_flash,
+                    timeRead: row.time_read || '2 min'
                 }));
                 res.status(200).json(mappedRows);
                 break;
+            }
 
             case 'POST': {
                 const { title, content, category, author, date, image, isHero, isFlash, timeRead, status, scheduledAt } = req.body;
