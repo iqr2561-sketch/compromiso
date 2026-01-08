@@ -366,18 +366,28 @@ export const NewsProvider = ({ children }) => {
 
     const addAd = async (ad) => {
         try {
+            console.log('NewsContext: addAd called with:', ad);
+            console.log('NewsContext: Image length:', ad.image ? ad.image.length : 'NO IMAGE');
+
             const res = await fetch('/api/ads', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(ad)
             });
+
+            console.log('NewsContext: Response status:', res.status);
+
             if (res.ok) {
                 const newAd = await res.json();
+                console.log('NewsContext: New ad created:', newAd);
                 setAds(prev => [...prev, newAd]);
                 return true;
+            } else {
+                const errorText = await res.text();
+                console.error('NewsContext: Failed to add ad. Status:', res.status, 'Error:', errorText);
             }
         } catch (err) {
-            console.error('Failed to add ad:', err);
+            console.error('NewsContext: Exception in addAd:', err);
         }
         return false;
     };
@@ -397,18 +407,28 @@ export const NewsProvider = ({ children }) => {
 
     const updateAd = async (id, item) => {
         try {
+            console.log('NewsContext: updateAd called with id:', id, 'item:', item);
+            console.log('NewsContext: Image length:', item.image ? item.image.length : 'NO IMAGE');
+
             const res = await fetch('/api/ads', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, ...item })
             });
+
+            console.log('NewsContext: Update response status:', res.status);
+
             if (res.ok) {
                 const updated = await res.json();
+                console.log('NewsContext: Ad updated:', updated);
                 setAds(prev => prev.map(a => a.id === id ? updated : a));
                 return true;
+            } else {
+                const errorText = await res.text();
+                console.error('NewsContext: Failed to update ad. Status:', res.status, 'Error:', errorText);
             }
         } catch (err) {
-            console.error('Failed to update ad:', err);
+            console.error('NewsContext: Exception in updateAd:', err);
         }
         return false;
     };

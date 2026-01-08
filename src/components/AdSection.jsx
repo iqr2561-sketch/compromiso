@@ -33,7 +33,31 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
             button: 'Más Información',
             link: '#'
         },
-        // Generic fallback for hero/other types
+        hero_1: {
+            title: 'ANUNCIATE AQUÍ',
+            content: 'Espacio Disponible',
+            subContent: '',
+            image: '',
+            button: 'Contactar',
+            link: '#'
+        },
+        hero_2: {
+            title: 'ANUNCIATE AQUÍ',
+            content: 'Espacio Disponible',
+            subContent: '',
+            image: '',
+            button: 'Contactar',
+            link: '#'
+        },
+        hero_3: {
+            title: 'ANUNCIATE AQUÍ',
+            content: 'Espacio Disponible',
+            subContent: '',
+            image: '',
+            button: 'Contactar',
+            link: '#'
+        },
+        // Generic fallback for other types
         default: {
             title: 'ANUNCIATE AQUÍ',
             content: 'Espacio Disponible',
@@ -45,6 +69,8 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
     };
 
     const adData = defaultAds[type] || defaultAds.default;
+
+    console.log('AdSection render - type:', type, 'dynamicAd:', dynamicAd, 'allAds:', ads.filter(a => a.type === type));
 
     const ad = dynamicAd ? {
         ...adData,
@@ -86,16 +112,19 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
         );
     }
 
+    // For square and hero ads
     return (
         <div
-            onClick={() => window.open(ad.link, '_blank')}
-            className={`aspect-square bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden group cursor-pointer relative border border-gray-200 dark:border-white/5 ${className}`}
+            onClick={() => ad.link && ad.link !== '#' && window.open(ad.link, '_blank')}
+            className={`aspect-square bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden group ${ad.link && ad.link !== '#' ? 'cursor-pointer' : 'cursor-default'} relative border border-gray-200 dark:border-white/5 ${className}`}
         >
             {ad.image ? (
                 <>
                     <img src={ad.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={ad.title} />
                     {/* Optional subtle overlay on hover to indicate clickability */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    {ad.link && ad.link !== '#' && (
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    )}
                 </>
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
