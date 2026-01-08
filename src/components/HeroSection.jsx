@@ -127,9 +127,9 @@ const HeroSection = () => {
                 </div>
                 {/* Hero Ads Section - 3 Columns */}
                 <div className="grid grid-cols-3 gap-4">
-                    <AdSection type="hero_1" className="!aspect-video h-auto !p-0 !rounded-xl" />
-                    <AdSection type="hero_2" className="!aspect-video h-auto !p-0 !rounded-xl" />
-                    <AdSection type="hero_3" className="!aspect-video h-auto !p-0 !rounded-xl" />
+                    <AdSection type="hero_1" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
+                    <AdSection type="hero_2" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
+                    <AdSection type="hero_3" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
                 </div>
             </div>
 

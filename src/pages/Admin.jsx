@@ -247,7 +247,6 @@ const Admin = () => {
         { id: 'categories', label: 'Categorías', icon: Grid },
         { id: 'comments', label: 'Comentarios', icon: MessageSquare },
         { id: 'ads', label: 'Publicidad', icon: View },
-        { id: 'videos', label: 'Videos', icon: Video },
         { id: 'gallery', label: 'Galería', icon: ImageIcon },
         { id: 'pharmacies', label: 'Farmacias', icon: MapPin },
         { id: 'cover', label: 'Tapa Diaria', icon: Eye },

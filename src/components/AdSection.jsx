@@ -93,7 +93,7 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
                     src={ad.image}
                     className="w-full h-full"
                     alt={ad.title || "Publicidad"}
-                    style={{ objectFit: 'fill' }} // 'fill' ensures it stretches to container (no crop, no whitespace). 'contain' would leave whitespace. User said "not cropped". usually meant "show whole image".
+                    style={{ objectFit: 'contain' }} // 'contain' ensures the full image is visible without cropping or distortion, maintaining aspect ratio.
                 />
             ) : (
                 // Fallback only if no image

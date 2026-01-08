@@ -2,7 +2,7 @@ import React from 'react';
 import HeroSection from '../components/HeroSection';
 import FlashNews from '../components/FlashNews';
 import CategoryGrid from '../components/CategoryGrid';
-import MultimediaSection from '../components/MultimediaSection';
+
 import Newsletter from '../components/Newsletter';
 import AdSection from '../components/AdSection';
 import { motion } from 'framer-motion';
@@ -52,10 +52,6 @@ const Home = () => {
             <AdSection type="premium" className="shadow-2xl shadow-primary/5" />
 
             <FlashNews />
-
-            {/* High Impact Multimedia Section */}
-            <MultimediaSection />
-
             {/* Grid of ads for diversity */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 flex flex-col gap-8">
@@ -90,8 +86,7 @@ const Home = () => {
                         </Link>
                     </div>
 
-                    {/* 4th Ad Slot */}
-                    <AdSection type="horizontal" className="h-32" />
+
                 </div>
                 <div className="flex flex-col gap-8">
                     <AdSection type="square" className="h-[500px]" />

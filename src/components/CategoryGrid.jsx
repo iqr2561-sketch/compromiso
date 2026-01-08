@@ -25,9 +25,17 @@ const CategoryGrid = () => {
         return nonHeroes.length > 0 ? nonHeroes.slice(0, 3) : filtered.slice(0, 3);
     };
 
+    const orderedCategories = ['Locales', 'Deportes', 'Sociedad', 'Zonales', 'Provinciales', 'Nacionales', 'Actualidad'];
+    const sortedCategories = [...categories].sort((a, b) => {
+        const indexA = orderedCategories.indexOf(a.name);
+        const indexB = orderedCategories.indexOf(b.name);
+        // If not found in order list, put at the end
+        return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+    });
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {categories.map((cat) => (
+            {sortedCategories.map((cat) => (
                 <section key={cat.name} className="flex flex-col gap-6" id={cat.name.toLowerCase()}>
                     <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 pb-4">
                         <div className="flex items-center gap-3">
@@ -53,7 +61,7 @@ const CategoryGrid = () => {
                                 className="bg-white dark:bg-surface-darker rounded-[2rem] p-5 flex gap-5 hover:shadow-2xl transition-all border border-gray-100 dark:border-white/5 cursor-pointer group shadow-lg shadow-black/5"
                             >
                                 <div
-                                    className="w-24 h-24 shrink-0 rounded-2xl bg-cover bg-center overflow-hidden border border-white/5 shadow-inner"
+                                    className="w-36 h-24 shrink-0 rounded-2xl bg-cover bg-center overflow-hidden border border-white/5 shadow-inner"
                                     style={{ backgroundImage: `url(${item.image})` }}
                                 >
                                     <div className="w-full h-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
