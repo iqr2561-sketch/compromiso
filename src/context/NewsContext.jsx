@@ -246,10 +246,12 @@ export const NewsProvider = ({ children }) => {
             if (res.ok) {
                 const newItem = await res.json();
                 setNews(prev => [newItem, ...prev]);
+                return true;
             }
         } catch (err) {
             console.error('Failed to add news:', err);
         }
+        return false;
     };
 
     const deleteNews = async (id) => {
@@ -273,10 +275,12 @@ export const NewsProvider = ({ children }) => {
             if (res.ok) {
                 const updatedItem = await res.json();
                 setNews(prev => prev.map(n => n.id === id ? updatedItem : n));
+                return true;
             }
         } catch (err) {
             console.error('Failed to update news:', err);
         }
+        return false;
     };
 
     const addCategory = async (cat) => {

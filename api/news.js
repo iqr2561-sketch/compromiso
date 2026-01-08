@@ -19,7 +19,7 @@ export default async function handler(req, res) {
                 res.status(200).json(mappedRows);
                 break;
 
-            case 'POST':
+            case 'POST': {
                 const { title, content, category, author, date, image, isHero, isFlash, timeRead } = req.body;
                 const insertRes = await client.query(
                     'INSERT INTO news (title, content, category, author, date, image, is_hero, is_flash, time_read) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
@@ -32,18 +32,32 @@ export default async function handler(req, res) {
                     timeRead: insertRes.rows[0].time_read
                 });
                 break;
+            }
 
-            case 'PUT':
-                const { id, isHero: isHeroUpdate, isFlash: isFlashUpdate, timeRead: timeReadUpdate, ...updateData } = req.body;
+            case 'PUT': {
+                const { id, title, content, category, author, date, image, isHero, isFlash, timeRead } = req.body;
+
                 const mappedUpdateData = {
-                    ...updateData,
-                    is_hero: isHeroUpdate,
-                    is_flash: isFlashUpdate,
-                    time_read: timeReadUpdate
+                    title,
+                    content,
+                    category,
+                    author,
+                    date,
+                    image,
+                    is_hero: isHero,
+                    is_flash: isFlash,
+                    time_read: timeRead
                 };
 
-                const fields = Object.keys(mappedUpdateData).filter(key => mappedUpdateData[key] !== undefined).map((key, i) => `${key} = $${i + 2}`).join(', ');
-                const values = Object.values(mappedUpdateData).filter(val => val !== undefined);
+                // Filter out undefined fields so we only update what's provided
+                const filteredKeys = Object.keys(mappedUpdateData).filter(key => mappedUpdateData[key] !== undefined);
+                const fields = filteredKeys.map((key, i) => `${key} = $${i + 2}`).join(', ');
+                const values = filteredKeys.map(key => mappedUpdateData[key]);
+
+                if (fields.length === 0) {
+                    res.status(400).json({ error: 'No fields to update' });
+                    break;
+                }
 
                 const updateRes = await client.query(
                     `UPDATE news SET ${fields} WHERE id = $1 RETURNING *`,
@@ -56,6 +70,7 @@ export default async function handler(req, res) {
                     timeRead: updateRes.rows[0].time_read
                 });
                 break;
+            }
 
             case 'DELETE':
                 const { id: delId } = req.query;

@@ -106,33 +106,43 @@ const Admin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let success = false;
 
         if (activeTab === 'news') {
             const newItem = {
-                ...formData,
+                title: formData.title,
+                category: formData.category,
+                author: formData.author,
+                date: formData.date || new Date().toISOString().split('T')[0],
+                image: formData.image,
                 content: JSON.stringify(editorBlocks),
                 isHero: !!formData.isHero,
                 isFlash: !!formData.isFlash,
-                date: formData.date || new Date().toISOString().split('T')[0]
+                timeRead: formData.timeRead || '2 min'
             };
             if (editingId) {
-                await updateNews(editingId, newItem);
+                success = await updateNews(editingId, newItem);
             } else {
-                await addNews(newItem);
+                success = await addNews(newItem);
             }
         } else if (activeTab === 'pharmacies') {
-            editingId ? updatePharmacy(editingId, formData) : addPharmacy(formData);
+            success = editingId ? await updatePharmacy(editingId, formData) : await addPharmacy(formData);
         } else if (activeTab === 'categories') {
-            editingId ? updateCategory(editingId, formData) : addCategory(formData);
+            success = editingId ? await updateCategory(editingId, formData) : await addCategory(formData);
         } else if (activeTab === 'ads') {
-            editingId ? updateAd(editingId, formData) : addAd(formData);
+            success = editingId ? await updateAd(editingId, formData) : await addAd(formData);
         } else if (activeTab === 'cover') {
-            updateCoverPage(formData.image, formData.date);
+            await updateCoverPage(formData.image, formData.date);
+            success = true;
         } else if (activeTab === 'tickers') {
-            editingId ? updateTicker(editingId, formData) : addTicker(formData);
+            success = editingId ? await updateTicker(editingId, formData) : await addTicker(formData);
         }
 
-        resetForms();
+        if (success) {
+            resetForms();
+        } else {
+            alert("Error al guardar los cambios. Por favor, inténtelo de nuevo.");
+        }
     };
 
     const handleEdit = (item) => {
@@ -1266,7 +1276,6 @@ const Admin = () => {
                                 </section>
                             </div>
                         </div>
-                    )}
                     )}
 
                 </div>
