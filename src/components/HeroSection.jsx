@@ -127,9 +127,9 @@ const HeroSection = () => {
                 </div>
                 {/* Hero Ads Section - 3 Columns */}
                 <div className="grid grid-cols-3 gap-4">
-                    <AdSection type="hero_1" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
-                    <AdSection type="hero_2" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
-                    <AdSection type="hero_3" className="!aspect-[3/1] h-auto !p-0 !rounded-xl" />
+                    <AdSection type="hero_1" className="h-48 md:h-64 !p-0 !rounded-xl" />
+                    <AdSection type="hero_2" className="h-48 md:h-64 !p-0 !rounded-xl" />
+                    <AdSection type="hero_3" className="h-48 md:h-64 !p-0 !rounded-xl" />
                 </div>
             </div>
 
@@ -169,31 +169,39 @@ const HeroSection = () => {
 
 
 
-                {/* Cover Page Section */}
+                {/* Cover Page Section - Redesigned as Double Page */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl group cursor-pointer"
+                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl group cursor-pointer min-h-[400px]"
                 >
                     <Link to="/tapa-de-hoy" className="flex flex-col h-full">
                         <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <LayoutDashboard size={16} className="text-primary" />
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Tapa de Portada</h4>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Edición Impresa</h4>
                             </div>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
                         </div>
-                        <div className="relative flex-1 bg-black/5 overflow-hidden">
-                            <img
-                                src={coverPage.image}
-                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 aspect-[3/4]"
-                                alt="Tapa del día"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
-                                <p className="text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                    Ver edición de hoy <ArrowRight size={14} />
-                                </p>
+                        <div className="grid grid-cols-2 h-full bg-slate-200 dark:bg-black/20 p-4 gap-4">
+                            {/* Front Cover */}
+                            <div className="relative bg-white shadow-lg rotate-[-2deg] group-hover:rotate-0 transition-transform duration-500 origin-bottom-right">
+                                <img
+                                    src={coverPage.image}
+                                    className="w-full h-full object-cover"
+                                    alt="Tapa"
+                                />
+                                <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[8px] font-black uppercase tracking-widest">Tapa</div>
+                            </div>
+
+                            {/* Back Cover / Second Slot */}
+                            <div className="relative bg-white shadow-lg rotate-[2deg] group-hover:rotate-0 transition-transform duration-500 origin-bottom-left flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800)` }}>
+                                <div className="absolute inset-0 bg-white/90 dark:bg-black/50 backdrop-blur-[2px]"></div>
+                                <div className="relative z-10 flex flex-col items-center gap-2 opacity-50">
+                                    <LayoutDashboard size={24} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Contratapa</span>
+                                </div>
                             </div>
                         </div>
                     </Link>
