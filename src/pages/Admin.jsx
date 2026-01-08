@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.4");
+    console.log("Admin Component Loaded-Version 4.4");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -267,7 +267,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.5 - RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.5-RELEASE</span>
                     </div>
                 </div>
 
@@ -316,13 +316,13 @@ const Admin = () => {
                             </button>
                             {activeTab === 'pharmacies' && (
                                 <div className="flex p-1 bg-white dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/5">
-                                    <button onClick={() => setPharmacyMode('list')} className={`px - 4 py - 2 rounded - lg text - [9px] font - black uppercase tracking - widest transition - all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Listado</button>
-                                    <button onClick={() => setPharmacyMode('schedule')} className={`px - 4 py - 2 rounded - lg text - [9px] font - black uppercase tracking - widest transition - all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Programar</button>
+                                    <button onClick={() => setPharmacyMode('list')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Listado</button>
+                                    <button onClick={() => setPharmacyMode('schedule')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Programar</button>
                                 </div>
                             )}
                             <button
                                 onClick={() => { setIsAdding(!isAdding); if (isAdding) resetForms(); }}
-                                className={`h - 10 px - 6 rounded - xl font - black text - [10px] uppercase tracking - widest flex items - center gap - 2 transition - all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'} `}
+                                className={`h-10 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'} `}
                             >
                                 {isAdding ? <X size={14} /> : `Añadir Nuevo`}
                             </button>
@@ -338,8 +338,8 @@ const Admin = () => {
                                     <div className="flex flex-col gap-8">
                                         <div className="flex items-center justify-between bg-white dark:bg-[#0a0c10] p-4 rounded-2xl border border-gray-200 dark:border-white/5">
                                             <div className="flex items-center gap-4">
-                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px - 6 py - 2 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Editor</button>
-                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px - 6 py - 2 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Previsualizar</button>
+                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Editor</button>
+                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Previsualizar</button>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {aiConfig.enabled && previewMode && (
@@ -392,7 +392,7 @@ const Admin = () => {
                                                                 <button key={src} type="button" onClick={() => {
                                                                     setImageSource(src);
                                                                     if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
-                                                                }} className={`flex - 1 py - 3 rounded - xl text - [9px] uppercase font - black transition - all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
+                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
                                                             ))}
                                                         </div>
                                                         {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
@@ -401,14 +401,14 @@ const Admin = () => {
 
                                                     <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size - 5 rounded - md border - 2 border - slate - 200 dark: border - white / 10 flex items - center justify - center transition - all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
+                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
                                                                 {formData.isHero && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
                                                             <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
                                                         </label>
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size - 5 rounded - md border - 2 border - slate - 200 dark: border - white / 10 flex items - center justify - center transition - all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
+                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
                                                                 {formData.isFlash && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
@@ -586,10 +586,15 @@ const Admin = () => {
 
                                 {activeTab === 'ads' && (
                                     <div className="flex flex-col gap-6">
+                                        <div className="flex flex-col gap-2 mb-2">
+                                            <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Configurar Anuncio</h2>
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Define el tipo, la imagen y el enlace del anuncio publicitario</p>
+                                        </div>
+
                                         <div className="flex flex-col gap-5">
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Tipo de Anuncio</label>
-                                                <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                                                     <option value="premium">Premium (Header)</option>
                                                     <option value="horizontal">Horizontal (Body)</option>
                                                     <option value="square">Cuadrada (Sidebar)</option>
@@ -604,7 +609,7 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-3">
                                                     <input
                                                         type="text"
-                                                        className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white"
+                                                        className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
                                                         value={formData.image}
                                                         onChange={e => setFormData({ ...formData, image: e.target.value })}
                                                         placeholder="URL de la imagen..."
@@ -613,14 +618,14 @@ const Admin = () => {
                                                         <button
                                                             type="button"
                                                             onClick={() => fileInputRef.current?.click()}
-                                                            className="flex-1 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                                            className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
                                                         >
                                                             Subir desde PC
                                                         </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => { setGalleryTarget('ad'); setShowGallery(true); }}
-                                                            className="flex-1 py-2 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                                                            className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all shadow-sm"
                                                         >
                                                             Galería
                                                         </button>
@@ -631,19 +636,25 @@ const Admin = () => {
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Enlace de Destino</label>
                                                 <input
-                                                    className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white"
+                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
                                                     value={formData.link}
                                                     onChange={e => setFormData({ ...formData, link: e.target.value })}
                                                     placeholder="https://ejemplo.com"
                                                 />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-5">
-                                            <label className="flex items-center gap-2 cursor-pointer mt-2">
-                                                <input type="checkbox" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} className="size-4 accent-primary" />
-                                                <span className="text-[10px] font-black uppercase text-slate-500">Publicidad Activa</span>
+
+                                        <div className="flex flex-col gap-5 mt-4">
+                                            <label className="flex items-center gap-3 cursor-pointer group">
+                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.active ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                                    {formData.active && <Zap size={12} className="text-white" />}
+                                                </div>
+                                                <input type="checkbox" className="hidden" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} />
+                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Publicidad Activa</span>
                                             </label>
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Anuncio</button>
+                                            <button type="submit" className="h-14 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] transition-all">
+                                                Guardar Anuncio Publicitario
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -743,7 +754,7 @@ const Admin = () => {
                                 { label: 'Guardia Hoy', value: onDutyToday?.name || '---', icon: CalendarIcon, color: 'text-accent-purple' },
                             ].map((stat, i) => (
                                 <div key={i} className="bg-[#11141b] p-6 rounded-2xl border border-white/5 shadow-xl select-none group hover:border-primary/20 transition-all">
-                                    <div className={`size - 10 rounded - xl bg - white / 5 flex items - center justify - center ${stat.color} mb - 4 group - hover: scale - 110 transition - transform`}><stat.icon size={20} /></div>
+                                    <div className={`size-10 rounded-xl bg-white / 5 flex items-center justify-center ${stat.color} mb-4 group-hover: scale-110 transition-transform`}><stat.icon size={20} /></div>
                                     <h3 className="text-xl font-black text-white italic truncate">{stat.value}</h3>
                                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</span>
                                 </div>
@@ -777,14 +788,14 @@ const Admin = () => {
                                             <div className="flex gap-2 p-1 bg-slate-100 dark:bg-black/20 rounded-lg border border-gray-200 dark:border-white/5">
                                                 <button
                                                     onClick={() => setPharmacyViewType('grid')}
-                                                    className={`p - 2 rounded - md transition - all ${pharmacyViewType === 'grid' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
+                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'grid' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
                                                     title="Vista Cuadrícula"
                                                 >
                                                     <Grid size={18} />
                                                 </button>
                                                 <button
                                                     onClick={() => setPharmacyViewType('list')}
-                                                    className={`p - 2 rounded - md transition - all ${pharmacyViewType === 'list' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
+                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'list' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
                                                     title="Vista Lista"
                                                 >
                                                     <Layers size={18} />
@@ -887,7 +898,7 @@ const Admin = () => {
                                                     <button
                                                         onClick={() => {
                                                             const newMonth = new Date(currentMonth);
-                                                            newMonth.setMonth(newMonth.getMonth() - 1);
+                                                            newMonth.setMonth(newMonth.getMonth()-1);
                                                             setCurrentMonth(newMonth);
                                                         }}
                                                         className="p-2 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors text-slate-400 dark:text-slate-500 hover:text-primary"
@@ -928,7 +939,7 @@ const Admin = () => {
                                                         const days = [];
 
                                                         for (let i = 0; i < firstDay; i++) {
-                                                            days.push(<div key={`empty - ${i} `} className="aspect-square" />);
+                                                            days.push(<div key={`empty-${i} `} className="aspect-square" />);
                                                         }
 
                                                         for (let day = 1; day <= daysInMonth; day++) {
@@ -941,7 +952,7 @@ const Admin = () => {
                                                                 <button
                                                                     key={day}
                                                                     onClick={() => setDisplayDate(dateStr)}
-                                                                    className={`aspect - square rounded - lg text - [10px] font - bold transition - all relative ${isSelected
+                                                                    className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
                                                                         ? 'bg-primary text-white shadow-lg scale-110'
                                                                         : hasAssignment
                                                                             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
@@ -1035,7 +1046,7 @@ const Admin = () => {
 
                     {activeTab === 'ads' && (
                         <div className="flex flex-col gap-10">
-                            {/* Hero Ads - 3 Specific Slots */}
+                            {/* Hero Ads-3 Specific Slots */}
                             <div>
                                 <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
                                     <View size={14} className="text-purple-500" /> Publicidad Portada (3 Espacios)
@@ -1301,7 +1312,7 @@ const Admin = () => {
                                                         <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                                             <CalendarIcon size={12} /> {new Date(comment.created_at).toLocaleDateString()}
                                                         </div>
-                                                        <span className={`text - [8px] font - black px - 2 py - 0.5 rounded - full uppercase tracking - [0.2em] ${comment.status === 'approved' ? 'bg-emerald-500/20 text-emerald-500' : comment.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-red-500/10 text-red-500'} `}>
+                                                        <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-[0.2em] ${comment.status === 'approved' ? 'bg-emerald-500/20 text-emerald-500' : comment.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-red-500/10 text-red-500'} `}>
                                                             {comment.status === 'approved' ? 'Aprobado' : comment.status === 'pending' ? 'Pendiente' : 'Rechazado'}
                                                         </span>
                                                     </div>
@@ -1415,7 +1426,7 @@ const Admin = () => {
 
                                     <div className="flex items-center gap-4">
                                         <button
-                                            onClick={() => updateEdition(parseInt(editionNumber) - 1)}
+                                            onClick={() => updateEdition(parseInt(editionNumber)-1)}
                                             className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
                                             type="button"
                                         >-</button>
@@ -1490,9 +1501,9 @@ const Admin = () => {
                                                 value={aiConfig.model}
                                                 onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
                                             >
-                                                <option value="llama3-70b-8192">Groq - Llama 3 70B (Recomendado)</option>
-                                                <option value="mixtral-8x7b-32768">Groq - Mixtral 8x7b</option>
-                                                <option value="gemma-7b-it">Groq - Gemma 7B</option>
+                                                <option value="llama3-70b-8192">Groq-Llama 3 70B (Recomendado)</option>
+                                                <option value="mixtral-8x7b-32768">Groq-Mixtral 8x7b</option>
+                                                <option value="gemma-7b-it">Groq-Gemma 7B</option>
                                                 <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
                                                 <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
                                                 <option value="gpt-4o">OpenAI GPT-4o</option>
@@ -1526,7 +1537,7 @@ const Admin = () => {
                         exit={{ opacity: 0, x: 100, scale: 0.9 }}
                         className="fixed top-8 right-8 z-[9999] flex items-center gap-4 px-6 py-4 rounded-3xl bg-white/80 dark:bg-[#1a1d25]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                     >
-                        <div className={`size - 12 rounded - 2xl flex items - center justify - center shadow - lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
+                        <div className={`size-12 rounded-2xl flex items-center justify-center shadow-lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
                             } `}>
                             {toast.type === 'success' ? <Trophy className="text-white" size={24} /> : <Zap className="text-white" size={24} />}
                         </div>
