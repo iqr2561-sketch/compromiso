@@ -47,7 +47,13 @@ const Admin = () => {
     const [aiPrompt, setAiPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
+    const [toast, setToast] = useState(null); // { message, type }
     const fileInputRef = useRef(null);
+
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 4000);
+    };
 
     useEffect(() => {
         if (isDarkMode) {
@@ -139,9 +145,10 @@ const Admin = () => {
         }
 
         if (success) {
+            showToast(editingId ? "Crónica actualizada con éxito" : "Noticia publicada correctamente", "success");
             resetForms();
         } else {
-            alert("Error al guardar los cambios. Por favor, inténtelo de nuevo.");
+            showToast("Error al guardar los cambios. Revisa la consola.", "error");
         }
     };
 
@@ -1280,6 +1287,30 @@ const Admin = () => {
 
                 </div>
             </main>
+
+            {/* Modern Toast System */}
+            <AnimatePresence>
+                {toast && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 100, scale: 0.9 }}
+                        className="fixed top-8 right-8 z-[9999] flex items-center gap-4 px-6 py-4 rounded-3xl bg-white/80 dark:bg-[#1a1d25]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                    >
+                        <div className={`size-12 rounded-2xl flex items-center justify-center shadow-lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
+                            }`}>
+                            {toast.type === 'success' ? <Trophy className="text-white" size={24} /> : <Zap className="text-white" size={24} />}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Sistema Compromiso</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{toast.message}</span>
+                        </div>
+                        <button onClick={() => setToast(null)} className="ml-4 p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors text-slate-400">
+                            <X size={18} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {showGallery && (
