@@ -167,7 +167,9 @@ const Admin = () => {
 
         if (success) {
             showToast(editingId ? "Cambios guardados con éxito" : "Elemento creado correctamente", "success");
-            resetForms();
+            if (activeTab !== 'cover') {
+                resetForms();
+            }
         } else {
             showToast("Error al guardar los cambios. Revisa la consola.", "error");
         }

@@ -1,6 +1,9 @@
--- SQL SCHEMA FOR DIARIO COMPROMISO (NEON SQL)
+-- =====================================================
+-- ESQUEMA COMPLETO DE BASE DE DATOS - DIARIO COMPROMISO
+-- versión unificada v1.0
+-- =====================================================
 
--- NEWS TABLE
+-- 1. NOTICIAS (News)
 CREATE TABLE IF NOT EXISTS news (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
@@ -11,16 +14,16 @@ CREATE TABLE IF NOT EXISTS news (
     image TEXT,
     is_hero BOOLEAN DEFAULT FALSE,
     is_flash BOOLEAN DEFAULT FALSE,
-    status TEXT DEFAULT 'published',
+    status TEXT DEFAULT 'published', -- 'published', 'scheduled'
     scheduled_at TIMESTAMP WITH TIME ZONE,
     time_read TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- ADS TABLE
+-- 2. PUBLICIDAD (Ads)
 CREATE TABLE IF NOT EXISTS ads (
     id SERIAL PRIMARY KEY,
-    type TEXT NOT NULL,
+    type TEXT NOT NULL, -- 'premium', 'square', 'horizontal', 'hero_1', 'hero_2', 'hero_3'
     title TEXT,
     content TEXT,
     sub_content TEXT,
@@ -31,7 +34,7 @@ CREATE TABLE IF NOT EXISTS ads (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- COMMENTS TABLE
+-- 3. COMENTARIOS (Comments)
 CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
     post_id INTEGER REFERENCES news(id) ON DELETE CASCADE,
@@ -42,7 +45,11 @@ CREATE TABLE IF NOT EXISTS comments (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- TICKERS TABLE
+-- Índices para comentarios
+CREATE INDEX IF NOT EXISTS idx_comments_status ON comments(status);
+CREATE INDEX IF NOT EXISTS idx_comments_post_id ON comments(post_id);
+
+-- 4. TICKERS (Cintillo de noticias/alertas)
 CREATE TABLE IF NOT EXISTS tickers (
     id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
@@ -52,14 +59,14 @@ CREATE TABLE IF NOT EXISTS tickers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- SETTINGS TABLE
+-- 5. CONFIGURACIÓN (Settings)
 CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- CATEGORIES TABLE
+-- 6. CATEGORÍAS (Categories)
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
@@ -68,7 +75,7 @@ CREATE TABLE IF NOT EXISTS categories (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- GALLERY TABLE (for image storage)
+-- 7. GALERÍA DE IMÁGENES (Gallery)
 CREATE TABLE IF NOT EXISTS gallery (
     id SERIAL PRIMARY KEY,
     url TEXT NOT NULL,
@@ -77,18 +84,19 @@ CREATE TABLE IF NOT EXISTS gallery (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- PHARMACIES TABLE
+-- 8. FARMACIAS (Pharmacies)
 CREATE TABLE IF NOT EXISTS pharmacies (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     address TEXT,
     phone TEXT,
-    lat DECIMAL(10, 8),
-    lng DECIMAL(11, 8),
+    city TEXT DEFAULT 'Central',
+    lat DECIMAL(10, 8) DEFAULT 0,
+    lng DECIMAL(11, 8) DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- PHARMACY DUTY TABLE (for scheduling)
+-- 9. FARMACIAS DE TURNO (Pharmacy Duty)
 CREATE TABLE IF NOT EXISTS pharmacy_duty (
     id SERIAL PRIMARY KEY,
     pharmacy_id INTEGER REFERENCES pharmacies(id) ON DELETE CASCADE,
@@ -97,12 +105,9 @@ CREATE TABLE IF NOT EXISTS pharmacy_duty (
     UNIQUE(date)
 );
 
--- INITIAL SETTINGS
-INSERT INTO settings (key, value) VALUES ('edition_number', '42891') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('last_increment_date', '2026-01-05') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('cover_page_image', 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('cover_page_date', '2026-01-06') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('ai_enabled', 'true') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('ai_api_key', 'YOUR_GROQ_API_KEY_HERE') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-INSERT INTO settings (key, value) VALUES ('ai_model', 'llama3-70b-8192') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+-- =====================================================
+-- DATOS INICIALES (Solo se insertan si no existen)
+-- =====================================================
 
+INSERT INTO settings (key, value) VALUES ('edition_number', '1') ON CONFLICT (key) DO NOTHING;
+INSERT INTO settings (key, value) VALUES ('cover_page_date', CURRENT_DATE::text) ON CONFLICT (key) DO NOTHING;
