@@ -1,5 +1,13 @@
 import pool from './lib/db.js';
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '10mb',
+        },
+    },
+};
+
 export default async function handler(req, res) {
     const { method } = req;
 
@@ -52,7 +60,7 @@ export default async function handler(req, res) {
 
             case 'PUT': {
                 const { id, title, content, category, author, date, image, isHero, isFlash, timeRead, status, scheduledAt } = req.body;
-
+                console.log('API PUT News - Updating ID:', id);
                 const mappedUpdateData = {
                     title,
                     content,

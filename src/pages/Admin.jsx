@@ -76,7 +76,7 @@ const Admin = () => {
         text: '', tag: 'DEPORTES', type: 'score', isHero: false, isFlash: false,
         home: '', away: '', homeScore: 0, awayScore: 0, homeLogo: '', awayLogo: '', time: 'Finalizado',
         name: '', color: 'primary', bgImage: '',
-        link: '', active: true,
+        link: '', sub_content: '', button: '', active: true,
         views: '0', duration: '0:00', url: '',
         address: '', phone: '', city: 'Central',
         scheduleDate: new Date().toISOString().split('T')[0],
@@ -108,12 +108,16 @@ const Admin = () => {
     const resetForms = () => {
         setEditingId(null);
         setIsAdding(false);
+        const defaultType =
+            activeTab === 'ads' ? 'premium' :
+                activeTab === 'tickers' ? 'alert' : 'score';
+
         setFormData({
             title: '', category: categories[0]?.name || 'Actualidad', image: '', content: '', author: 'Admin', date: new Date().toISOString().split('T')[0],
-            text: '', tag: 'DEPORTES', type: 'score', isHero: false, isFlash: false,
+            text: '', tag: 'DEPORTES', type: defaultType, isHero: false, isFlash: false,
             home: '', away: '', homeScore: 0, awayScore: 0, homeLogo: '', awayLogo: '', time: 'Finalizado',
             name: '', color: 'primary', bgImage: '',
-            link: '', active: true,
+            link: '', sub_content: '', button: '', active: true,
             views: '0', duration: '0:00', url: '',
             address: '', phone: '', city: 'Central'
         });
@@ -196,7 +200,7 @@ const Admin = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64 = reader.result;
-                setFormData({ ...formData, image: base64 });
+                setFormData(prev => ({ ...prev, image: base64, bgImage: base64 }));
                 addToGallery(base64);
             };
             reader.readAsDataURL(file);
@@ -322,7 +326,15 @@ const Admin = () => {
                                 </div>
                             )}
                             <button
-                                onClick={() => { setIsAdding(!isAdding); if (isAdding) resetForms(); }}
+                                onClick={() => {
+                                    if (!isAdding) {
+                                        resetForms();
+                                        setIsAdding(true);
+                                    } else {
+                                        setIsAdding(false);
+                                        setEditingId(null);
+                                    }
+                                }}
                                 className={`h-10 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'} `}
                             >
                                 {isAdding ? <X size={14} /> : `Añadir Nuevo`}
@@ -608,6 +620,18 @@ const Admin = () => {
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen Publicitaria</label>
                                                 <div className="flex flex-col gap-3">
+                                                    {formData.image && (
+                                                        <div className="relative w-full aspect-video rounded-xl overflow-hidden group shadow-lg">
+                                                            <img src={formData.image} className="w-full h-full object-cover" alt="Vista previa" />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                                                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                     <input
                                                         type="text"
                                                         className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
@@ -641,6 +665,46 @@ const Admin = () => {
                                                     value={formData.link}
                                                     onChange={e => setFormData({ ...formData, link: e.target.value })}
                                                     placeholder="https://ejemplo.com"
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Título / Empresa</label>
+                                                <input
+                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                    value={formData.title}
+                                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                                    placeholder="Nombre de la empresa..."
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Contenido Principal</label>
+                                                <input
+                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                    value={formData.content}
+                                                    onChange={e => setFormData({ ...formData, content: e.target.value })}
+                                                    placeholder="Mensaje principal..."
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Sub-contenido / Detalles</label>
+                                                <input
+                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                    value={formData.sub_content}
+                                                    onChange={e => setFormData({ ...formData, sub_content: e.target.value })}
+                                                    placeholder="Detalles adicionales..."
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Texto del Botón</label>
+                                                <input
+                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                    value={formData.button}
+                                                    onChange={e => setFormData({ ...formData, button: e.target.value })}
+                                                    placeholder="Saber más, Comprar, etc."
                                                 />
                                             </div>
                                         </div>
@@ -1054,14 +1118,21 @@ const Admin = () => {
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {[1, 2, 3].map(num => {
-                                        const adType = `hero_${num} `;
+                                        const adType = `hero_${num}`;
                                         const existingAd = ads.find(a => a.type === adType);
                                         return (
                                             <div key={num} className="relative group">
                                                 <div className="aspect-[4/3] bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-purple-500/50">
-                                                    {existingAd?.image ? (
+                                                    {existingAd ? (
                                                         <>
-                                                            <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                            {existingAd.image ? (
+                                                                <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-2 text-slate-500">
+                                                                    <Plus size={24} />
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest">Sin Imagen</span>
+                                                                </div>
+                                                            )}
                                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                                                 <button
                                                                     onClick={() => {

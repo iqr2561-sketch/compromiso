@@ -52,6 +52,7 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
         link: dynamicAd.link || adData.link,
         content: dynamicAd.content || adData.content,
         title: dynamicAd.title || adData.title, // Ensure title is used if available
+        subContent: dynamicAd.sub_content || adData.subContent, // Map sub_content from DB
         button: dynamicAd.button || adData.button
     } : adData;
 

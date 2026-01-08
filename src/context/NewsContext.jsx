@@ -137,11 +137,8 @@ export const NewsProvider = ({ children }) => {
                 const data = await res.json();
                 // Extract just the URLs from the gallery objects
                 const urls = data.map(img => img.url);
-                if (urls.length > 0) {
-                    setImageGallery(urls);
-                }
+                setImageGallery(urls);
             } else {
-                // If gallery API fails (404, 500, etc.), just keep the default values
                 console.warn('Gallery API returned error status:', res.status);
             }
         } catch (err) {

@@ -4,6 +4,11 @@ import pharmaciesHandler from './api/pharmacies.js';
 import dutiesHandler from './api/pharmacy-duties.js';
 import categoriesHandler from './api/categories.js';
 import galleryHandler from './api/gallery.js';
+import adsHandler from './api/ads.js';
+import settingsHandler from './api/settings.js';
+import commentsHandler from './api/comments.js';
+import tickersHandler from './api/flash-tickers.js';
+import cronIncrementHandler from './api/cron-increment.js';
 
 const app = express();
 const PORT = 3000;
@@ -31,6 +36,11 @@ app.all('/api/pharmacies', adapt(pharmaciesHandler));
 app.all('/api/pharmacy-duties', adapt(dutiesHandler));
 app.all('/api/categories', adapt(categoriesHandler));
 app.all('/api/gallery', adapt(galleryHandler));
+app.all('/api/ads', adapt(adsHandler));
+app.all('/api/settings', adapt(settingsHandler));
+app.all('/api/comments', adapt(commentsHandler));
+app.all('/api/tickers', adapt(tickersHandler));
+app.all('/api/cron-increment', adapt(cronIncrementHandler));
 
 app.listen(PORT, () => {
     console.log(`✅ Local API Server running on http://localhost:${PORT}`);
