@@ -3,7 +3,7 @@ import pool from './lib/db.js';
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '10mb',
+            sizeLimit: '50mb',
         },
     },
 };

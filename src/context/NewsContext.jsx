@@ -249,9 +249,12 @@ export const NewsProvider = ({ children }) => {
             if (res1.ok && res2.ok) {
                 console.log('NewsContext: Cover page updated successfully');
                 setCoverPage({ image, date });
+                return true;
             }
+            return false;
         } catch (err) {
             console.error('NewsContext: Exception in updateCoverPage:', err);
+            return false;
         }
     };
 

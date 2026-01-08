@@ -12,8 +12,8 @@ import cronIncrementHandler from './api/cron-increment.js';
 const app = express();
 const PORT = 3000;
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Helper to adapt Vercel/Next.js handler signature (req, res) to Express
 const adapt = (handler) => async (req, res) => {

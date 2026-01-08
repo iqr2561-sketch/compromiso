@@ -159,8 +159,7 @@ const Admin = () => {
             success = editingId ? await updateAd(editingId, formData) : await addAd(formData);
             console.log('CLIENT: Save response success:', success);
         } else if (activeTab === 'cover') {
-            await updateCoverPage(formData.image, formData.date);
-            success = true;
+            success = await updateCoverPage(formData.image, formData.date);
         } else if (activeTab === 'tickers') {
             success = editingId ? await updateTicker(editingId, formData) : await addTicker(formData);
         }
