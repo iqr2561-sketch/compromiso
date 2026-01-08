@@ -135,15 +135,15 @@ const HeroSection = () => {
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News - RESTORED and Corrected */}
-                <div className="grid grid-cols-1 gap-4 flex-1">
-                    {sidebarNews.map((item, idx) => (
+                {/* Lateral News - Two legible cards */}
+                <div className="flex flex-col gap-4">
+                    {sidebarNews.slice(0, 2).map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative min-h-[160px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-60 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
@@ -152,14 +152,14 @@ const HeroSection = () => {
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                 <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-primary text-[9px] font-bold uppercase tracking-widest mb-1">
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-primary text-[10px] font-bold uppercase tracking-widest">
                                             {item.category}
                                         </span>
-                                        <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors leading-snug">
+                                        <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors leading-tight">
                                             {item.title}
                                         </h3>
-                                        <span className="text-[9px] text-gray-500 font-medium mt-1">{item.date}</span>
+                                        <span className="text-[10px] text-gray-500 font-medium">{item.date}</span>
                                     </div>
                                 </div>
                             </Link>
@@ -167,41 +167,31 @@ const HeroSection = () => {
                     ))}
                 </div>
 
-
-
-                {/* Cover Page Section - Redesigned as Double Page */}
+                {/* Cover Page Section - Single Top-Aligned Image */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl group cursor-pointer min-h-[400px]"
+                    className="bg-white dark:bg-surface-dark flex flex-col rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-2xl group cursor-pointer"
                 >
                     <Link to="/tapa-de-hoy" className="flex flex-col h-full">
                         <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <LayoutDashboard size={16} className="text-primary" />
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Edición Impresa</h4>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Tapa del Día</h4>
                             </div>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
                         </div>
-                        <div className="grid grid-cols-2 h-full bg-slate-200 dark:bg-black/20 p-4 gap-4">
-                            {/* Front Cover */}
-                            <div className="relative bg-white shadow-lg rotate-[-2deg] group-hover:rotate-0 transition-transform duration-500 origin-bottom-right">
-                                <img
-                                    src={coverPage.image}
-                                    className="w-full h-full object-cover"
-                                    alt="Tapa"
-                                />
-                                <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[8px] font-black uppercase tracking-widest">Tapa</div>
-                            </div>
-
-                            {/* Back Cover / Second Slot */}
-                            <div className="relative bg-white shadow-lg rotate-[2deg] group-hover:rotate-0 transition-transform duration-500 origin-bottom-left flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800)` }}>
-                                <div className="absolute inset-0 bg-white/90 dark:bg-black/50 backdrop-blur-[2px]"></div>
-                                <div className="relative z-10 flex flex-col items-center gap-2 opacity-50">
-                                    <LayoutDashboard size={24} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Contratapa</span>
-                                </div>
+                        <div className="relative w-full h-[500px] bg-slate-200 dark:bg-black/20 overflow-hidden">
+                            <img
+                                src={coverPage.image}
+                                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                alt="Tapa del día"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+                                <p className="text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                    Ver edición completa <ArrowRight size={14} />
+                                </p>
                             </div>
                         </div>
                     </Link>
