@@ -26,6 +26,7 @@ const Admin = () => {
         coverPage, updateCoverPage,
         aiConfig, updateAiConfig,
         comments, deleteComment, updateCommentStatus,
+        fetchNews,
         reorderCategories
     } = useNews();
 
