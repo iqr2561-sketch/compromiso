@@ -45,6 +45,7 @@ export const NewsProvider = ({ children }) => {
     ]);
     const [pharmacies, setPharmacies] = useState([]);
     const [pharmacyDuty, setPharmacyDuty] = useState([]);
+    const [comments, setComments] = useState([]);
 
     // Initial fetch
     useEffect(() => {
@@ -54,6 +55,7 @@ export const NewsProvider = ({ children }) => {
         fetchGallery();
         fetchPharmacies();
         fetchDuties();
+        fetchComments();
     }, []);
 
     const fetchNews = async () => {
@@ -155,6 +157,18 @@ export const NewsProvider = ({ children }) => {
             }
         } catch (err) {
             console.error('Failed to fetch duties:', err);
+        }
+    };
+
+    const fetchComments = async () => {
+        try {
+            const res = await fetch('/api/comments');
+            if (res.ok) {
+                const data = await res.json();
+                setComments(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch comments:', err);
         }
     };
 
@@ -408,6 +422,33 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
+    const deleteComment = async (id) => {
+        try {
+            const res = await fetch(`/api/comments?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setComments(prev => prev.filter(c => c.id !== id));
+            }
+        } catch (err) {
+            console.error('Failed to delete comment:', err);
+        }
+    };
+
+    const updateCommentStatus = async (id, status) => {
+        try {
+            const res = await fetch('/api/comments', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status })
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                setComments(prev => prev.map(c => c.id === id ? updated : c));
+            }
+        } catch (err) {
+            console.error('Failed to update comment status:', err);
+        }
+    };
+
     return (
         <NewsContext.Provider value={{
             news, addNews, deleteNews, updateNews, loading,
@@ -421,6 +462,7 @@ export const NewsProvider = ({ children }) => {
             imageGallery, addToGallery, deleteFromGallery,
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
             pharmacyDuty, setDuty,
+            comments, deleteComment, updateCommentStatus,
             aiConfig, updateAiConfig,
             reorderCategories: setCategories
         }}>

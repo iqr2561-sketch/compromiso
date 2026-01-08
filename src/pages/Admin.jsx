@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -19,12 +19,13 @@ const Admin = () => {
         categories, addCategory, deleteCategory, updateCategory,
         ads, addAd, deleteAd, updateAd,
         videos, addVideo, deleteVideo, updateVideo,
-        imageGallery, addToGallery,
+        imageGallery, addToGallery, deleteFromGallery,
         pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
         pharmacyDuty, setDuty,
         editionNumber, updateEdition,
         coverPage, updateCoverPage,
         aiConfig, updateAiConfig,
+        comments, deleteComment, updateCommentStatus,
         reorderCategories
     } = useNews();
 
@@ -222,14 +223,14 @@ const Admin = () => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'news', label: 'Noticias', icon: Newspaper },
-        { id: 'pharmacies', label: 'Farmacias', icon: Crosshair },
-        { id: 'ads', label: 'Publicidad', icon: Megaphone },
+        { id: 'categories', label: 'Categorías', icon: Grid },
+        { id: 'comments', label: 'Comentarios', icon: MessageSquare },
+        { id: 'ads', label: 'Publicidad', icon: View },
         { id: 'videos', label: 'Videos', icon: Video },
         { id: 'gallery', label: 'Galería', icon: ImageIcon },
-        { id: 'categories', label: 'Categorías', icon: Layers },
-        { id: 'cover', label: 'Tapa Diaria', icon: LayoutDashboard },
-        { id: 'tickers', label: 'Flash Tickers', icon: Zap },
-        { id: 'settings', label: 'Configuración', icon: Settings },
+        { id: 'pharmacies', label: 'Farmacias', icon: MapPin },
+        { id: 'cover', label: 'Tapa Diaria', icon: Eye },
+        { id: 'settings', label: 'Ajustes', icon: Settings },
     ];
 
     const upcomingDuties = pharmacyDuty
@@ -262,9 +263,10 @@ const Admin = () => {
                         <button
                             key={item.id}
                             onClick={() => { setActiveTab(item.id); resetForms(); }}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
+                            className={`flex items - center gap - 3 px - 4 py - 3 rounded - xl text - sm font - bold transition - all ${activeTab === item.id
                                 ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
-                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'}`}
+                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
+                                } `}
                         >
                             <item.icon size={18} />
                             <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
@@ -301,16 +303,15 @@ const Admin = () => {
                             </button>
                             {activeTab === 'pharmacies' && (
                                 <div className="flex p-1 bg-white dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/5">
-                                    <button onClick={() => setPharmacyMode('list')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'}`}>Listado</button>
-                                    <button onClick={() => setPharmacyMode('schedule')} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'}`}>Programar</button>
+                                    <button onClick={() => setPharmacyMode('list')} className={`px - 4 py - 2 rounded - lg text - [9px] font - black uppercase tracking - widest transition - all ${pharmacyMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Listado</button>
+                                    <button onClick={() => setPharmacyMode('schedule')} className={`px - 4 py - 2 rounded - lg text - [9px] font - black uppercase tracking - widest transition - all ${pharmacyMode === 'schedule' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500'} `}>Programar</button>
                                 </div>
                             )}
                             <button
                                 onClick={() => { setIsAdding(!isAdding); if (isAdding) resetForms(); }}
-                                className={`h-10 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'}`}
+                                className={`h - 10 px - 6 rounded - xl font - black text - [10px] uppercase tracking - widest flex items - center gap - 2 transition - all ${isAdding ? 'bg-slate-800 dark:bg-slate-700 text-white' : 'bg-primary text-white shadow-xl hover:scale-105'} `}
                             >
-                                {isAdding ? <X size={14} /> : <Plus size={14} />}
-                                {isAdding ? 'Cerrar' : `Añadir Nuevo`}
+                                {isAdding ? <X size={14} /> : `Añadir Nuevo`}
                             </button>
                         </div>
                     )}
@@ -324,8 +325,8 @@ const Admin = () => {
                                     <div className="flex flex-col gap-8">
                                         <div className="flex items-center justify-between bg-white dark:bg-[#0a0c10] p-4 rounded-2xl border border-gray-200 dark:border-white/5">
                                             <div className="flex items-center gap-4">
-                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>Editor</button>
-                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>Previsualizar</button>
+                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px - 6 py - 2 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Editor</button>
+                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px - 6 py - 2 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Previsualizar</button>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {aiConfig.enabled && previewMode && (
@@ -378,7 +379,7 @@ const Admin = () => {
                                                                 <button key={src} type="button" onClick={() => {
                                                                     setImageSource(src);
                                                                     if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
-                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}>{src}</button>
+                                                                }} className={`flex - 1 py - 3 rounded - xl text - [9px] uppercase font - black transition - all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
                                                             ))}
                                                         </div>
                                                         {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
@@ -387,14 +388,14 @@ const Admin = () => {
 
                                                     <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                                            <div className={`size - 5 rounded - md border - 2 border - slate - 200 dark: border - white / 10 flex items - center justify - center transition - all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
                                                                 {formData.isHero && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
                                                             <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
                                                         </label>
                                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'}`}>
+                                                            <div className={`size - 5 rounded - md border - 2 border - slate - 200 dark: border - white / 10 flex items - center justify - center transition - all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
                                                                 {formData.isFlash && <Zap size={12} className="text-white" />}
                                                             </div>
                                                             <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
@@ -550,32 +551,59 @@ const Admin = () => {
                                 )}
 
                                 {activeTab === 'cover' && (
-                                    <>
-                                        <div className="flex flex-col gap-5">
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de la Tapa</label>
-                                                <div className="flex gap-2 p-1 bg-[#0a0c10] rounded-2xl border border-white/5">
-                                                    {['url', 'pc', 'gallery'].map(src => (
-                                                        <button key={src} type="button" onClick={() => {
-                                                            setImageSource(src);
-                                                            if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
-                                                        }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>{src}</button>
-                                                    ))}
+                                    <div className="max-w-4xl mx-auto flex flex-col gap-10">
+                                        {/* Vista Previa de Tapa */}
+                                        <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                                            <div className="md:w-1/2 aspect-[4/5] bg-slate-100 dark:bg-white/5 relative overflow-hidden group">
+                                                <img src={coverPage.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Tapa actual" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                                <div className="absolute bottom-6 left-6 flex flex-col gap-1">
+                                                    <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Vista Previa Actual</span>
+                                                    <span className="text-lg font-black text-white italic tracking-tighter">Edición del {new Date(coverPage.date + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                                                 </div>
-                                                {imageSource === 'url' && <input className="bg-[#0a0c10] border border-white/5 rounded-2xl px-6 py-4 text-sm text-white mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la tapa digital..." />}
-                                                {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
                                             </div>
-                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Fecha de Portada</label>
-                                            <input type="date" className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                                            <div className="md:w-1/2 p-10 flex flex-col gap-8 justify-center">
+                                                <div className="flex flex-col gap-2">
+                                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase leading-none">Actualizar Tapa</h3>
+                                                    <p className="text-xs font-bold text-slate-500 text-pretty">Selecciona una nueva imagen de alta resolución para la portada del diario de hoy.</p>
+                                                </div>
+
+                                                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen de Portada</label>
+                                                        <input
+                                                            type="text"
+                                                            className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                            placeholder="Pega la URL aquí o sube una imagen..."
+                                                            value={formData.image || ''}
+                                                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                                        />
+                                                        <div className="flex gap-2 mt-2">
+                                                            <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Sube desde PC</button>
+                                                            <button type="button" onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all">Galería</button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Fecha de Portada</label>
+                                                        <input
+                                                            type="date"
+                                                            className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                            value={formData.date || ''}
+                                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                                            style={{ colorScheme: 'dark' }}
+                                                        />
+                                                    </div>
+
+                                                    <button type="submit" className="w-full py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all mt-4">Actualizar Portada</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col justify-end mt-4">
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Actualizar Tapa</button>
-                                        </div>
-                                    </>
+                                    </div>
                                 )}
 
                                 {/* Fallback for other tabs */}
-                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers', 'cover'].includes(activeTab) && (
+                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers', 'cover', 'comments'].includes(activeTab) && (
                                     <div className="col-span-2 text-center py-10 bg-white/5 rounded-2xl border border-dashed border-white/10">
                                         <Zap size={32} className="mx-auto text-primary/40 mb-3" />
                                         <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Configuración para {activeTab}</p>
@@ -598,11 +626,18 @@ const Admin = () => {
                                 { label: 'Guardia Hoy', value: onDutyToday?.name || '---', icon: CalendarIcon, color: 'text-accent-purple' },
                             ].map((stat, i) => (
                                 <div key={i} className="bg-[#11141b] p-6 rounded-2xl border border-white/5 shadow-xl select-none group hover:border-primary/20 transition-all">
-                                    <div className={`size-10 rounded-xl bg-white/5 flex items-center justify-center ${stat.color} mb-4 group-hover:scale-110 transition-transform`}><stat.icon size={20} /></div>
+                                    <div className={`size - 10 rounded - xl bg - white / 5 flex items - center justify - center ${stat.color} mb - 4 group - hover: scale - 110 transition - transform`}><stat.icon size={20} /></div>
                                     <h3 className="text-xl font-black text-white italic truncate">{stat.value}</h3>
                                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</span>
                                 </div>
                             ))}
+                            <div className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 shadow-xl select-none group hover:border-accent-pink/20 transition-all">
+                                <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-accent-pink mb-4 group-hover:scale-110 transition-transform">
+                                    <MessageCircle size={20} />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white italic truncate">{comments.filter(c => c.status === 'pending').length}</h3>
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Comentarios Pendientes</span>
+                            </div>
                         </div>
                     )}
 
@@ -625,14 +660,14 @@ const Admin = () => {
                                             <div className="flex gap-2 p-1 bg-slate-100 dark:bg-black/20 rounded-lg border border-gray-200 dark:border-white/5">
                                                 <button
                                                     onClick={() => setPharmacyViewType('grid')}
-                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'grid' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                                                    className={`p - 2 rounded - md transition - all ${pharmacyViewType === 'grid' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
                                                     title="Vista Cuadrícula"
                                                 >
                                                     <Grid size={18} />
                                                 </button>
                                                 <button
                                                     onClick={() => setPharmacyViewType('list')}
-                                                    className={`p-2 rounded-md transition-all ${pharmacyViewType === 'list' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                                                    className={`p - 2 rounded - md transition - all ${pharmacyViewType === 'list' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'} `}
                                                     title="Vista Lista"
                                                 >
                                                     <Layers size={18} />
@@ -776,11 +811,11 @@ const Admin = () => {
                                                         const days = [];
 
                                                         for (let i = 0; i < firstDay; i++) {
-                                                            days.push(<div key={`empty-${i}`} className="aspect-square" />);
+                                                            days.push(<div key={`empty - ${i} `} className="aspect-square" />);
                                                         }
 
                                                         for (let day = 1; day <= daysInMonth; day++) {
-                                                            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                                            const dateStr = `${year} -${String(month + 1).padStart(2, '0')} -${String(day).padStart(2, '0')} `;
                                                             const isSelected = dateStr === displayDate;
                                                             const hasAssignment = pharmacyDuty.some(d => d.date === dateStr);
                                                             const isToday = dateStr === new Date().toISOString().split('T')[0];
@@ -789,12 +824,12 @@ const Admin = () => {
                                                                 <button
                                                                     key={day}
                                                                     onClick={() => setDisplayDate(dateStr)}
-                                                                    className={`aspect-square rounded-lg text-[10px] font-bold transition-all relative ${isSelected
+                                                                    className={`aspect - square rounded - lg text - [10px] font - bold transition - all relative ${isSelected
                                                                         ? 'bg-primary text-white shadow-lg scale-110'
                                                                         : hasAssignment
                                                                             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
                                                                             : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-white/5'
-                                                                        } ${isToday ? 'ring-2 ring-primary/20 dark:ring-primary/50' : ''}`}
+                                                                        } ${isToday ? 'ring-2 ring-primary/20 dark:ring-primary/50' : ''} `}
                                                                 >
                                                                     {day}
                                                                     {hasAssignment && !isSelected && (
@@ -827,9 +862,10 @@ const Admin = () => {
                                                     <button
                                                         key={phi.id}
                                                         onClick={() => setDuty(displayDate, phi.id)}
-                                                        className={`w-full text-left px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id)
+                                                        className={`w - full text - left px - 5 py - 3 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id)
                                                             ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                                            : 'bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'}`}
+                                                            : 'bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+                                                            } `}
                                                     >
                                                         {phi.name}
                                                     </button>
@@ -889,7 +925,7 @@ const Admin = () => {
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {[1, 2, 3].map(num => {
-                                        const adType = `hero_${num}`;
+                                        const adType = `hero_${num} `;
                                         const existingAd = ads.find(a => a.type === adType);
                                         return (
                                             <div key={num} className="relative group">
@@ -946,7 +982,7 @@ const Admin = () => {
                             {/* Premium Header Ads */}
                             <div>
                                 <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <Star size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
+                                    <Zap size={14} className="text-yellow-500" /> Publicidad Premium (Cabecera)
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {ads.filter(a => a.type === 'premium').map(ad => (
@@ -1119,8 +1155,79 @@ const Admin = () => {
                         </div>
                     )}
 
+                    {/* Comments View */}
+                    {activeTab === 'comments' && (
+                        <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                            <div className="px-10 py-6 border-b border-gray-200 dark:border-white/5 flex items-center justify-between bg-slate-50 dark:bg-[#14171d]">
+                                <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Moderación de Comentarios</h3>
+                                <div className="flex gap-4">
+                                    <span className="px-3 py-1 bg-accent-pink/20 text-accent-pink rounded-full text-[9px] font-black uppercase">{comments.filter(c => c.status === 'pending').length} Pendientes</span>
+                                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-500 rounded-full text-[9px] font-black uppercase">{comments.filter(c => c.status === 'approved').length} Aprobados</span>
+                                </div>
+                            </div>
+                            <div className="divide-y divide-gray-100 dark:divide-white/5">
+                                {comments.length > 0 ? comments.map(comment => (
+                                    <div key={comment.id} className="p-8 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                        <div className="flex items-start justify-between gap-6">
+                                            <div className="flex items-start gap-5">
+                                                <div className="size-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0 border border-gray-200 dark:border-white/10">
+                                                    <MessageSquare size={24} className="text-slate-400" />
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="font-black text-slate-900 dark:text-white text-sm uppercase italic">{comment.name}</span>
+                                                        <span className="text-[10px] font-bold text-slate-400">{comment.email}</span>
+                                                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">• {comment.post_title || 'Noticia desconocida'}</span>
+                                                    </div>
+                                                    <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-2xl font-medium">"{comment.comment}"</p>
+                                                    <div className="flex items-center gap-4 mt-1">
+                                                        <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                                            <CalendarIcon size={12} /> {new Date(comment.created_at).toLocaleDateString()}
+                                                        </div>
+                                                        <span className={`text - [8px] font - black px - 2 py - 0.5 rounded - full uppercase tracking - [0.2em] ${comment.status === 'approved' ? 'bg-emerald-500/20 text-emerald-500' : comment.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-red-500/10 text-red-500'} `}>
+                                                            {comment.status === 'approved' ? 'Aprobado' : comment.status === 'pending' ? 'Pendiente' : 'Rechazado'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                {comment.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => updateCommentStatus(comment.id, 'approved')}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl text-[10px] font-black hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/20 uppercase"
+                                                        >
+                                                            Aprobar
+                                                        </button>
+                                                        <button
+                                                            onClick={() => updateCommentStatus(comment.id, 'rejected')}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white rounded-xl text-[10px] font-black hover:bg-slate-50 transition-all uppercase"
+                                                        >
+                                                            Rechazar
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <button
+                                                    onClick={() => { if (confirm('¿Eliminar comentario permanentemente?')) deleteComment(comment.id) }}
+                                                    className="flex items-center justify-center p-2 text-slate-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )) : (
+                                    <div className="py-20 text-center flex flex-col items-center gap-4">
+                                        <MessageSquare size={48} className="text-slate-100 dark:text-slate-800" />
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em]">No hay comentarios aún</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Generic Table View (for News, Ads, etc.) */}
-                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && (
+                    {activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && (
                         <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
                             <table className="w-full text-left">
                                 <thead className="bg-slate-50 dark:bg-[#14171d]">
@@ -1297,8 +1404,8 @@ const Admin = () => {
                         exit={{ opacity: 0, x: 100, scale: 0.9 }}
                         className="fixed top-8 right-8 z-[9999] flex items-center gap-4 px-6 py-4 rounded-3xl bg-white/80 dark:bg-[#1a1d25]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                     >
-                        <div className={`size-12 rounded-2xl flex items-center justify-center shadow-lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
-                            }`}>
+                        <div className={`size - 12 rounded - 2xl flex items - center justify - center shadow - lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
+                            } `}>
                             {toast.type === 'success' ? <Trophy className="text-white" size={24} /> : <Zap className="text-white" size={24} />}
                         </div>
                         <div className="flex flex-col">
