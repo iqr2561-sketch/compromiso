@@ -276,10 +276,10 @@ const Admin = () => {
                         <button
                             key={item.id}
                             onClick={() => { setActiveTab(item.id); resetForms(); }}
-                            className={`flex items - center gap - 3 px - 4 py - 3 rounded - xl text - sm font - bold transition - all ${activeTab === item.id
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
                                 ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
                                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
-                                } `}
+                                }`}
                         >
                             <item.icon size={18} />
                             <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
@@ -585,24 +585,67 @@ const Admin = () => {
                                 )}
 
                                 {activeTab === 'ads' && (
-                                    <>
+                                    <div className="flex flex-col gap-6">
                                         <div className="flex flex-col gap-5">
-                                            <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
-                                                <option value="premium">Premium (Header)</option>
-                                                <option value="horizontal">Horizontal (Body)</option>
-                                                <option value="square">Cuadrada (Sidebar)</option>
-                                            </select>
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de la imagen..." required />
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.link} onChange={e => setFormData({ ...formData, link: e.target.value })} placeholder="Link de destino..." />
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Tipo de Anuncio</label>
+                                                <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                    <option value="premium">Premium (Header)</option>
+                                                    <option value="horizontal">Horizontal (Body)</option>
+                                                    <option value="square">Cuadrada (Sidebar)</option>
+                                                    <option value="hero_1">Portada Slot 1</option>
+                                                    <option value="hero_2">Portada Slot 2</option>
+                                                    <option value="hero_3">Portada Slot 3</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen Publicitaria</label>
+                                                <div className="flex flex-col gap-3">
+                                                    <input
+                                                        type="text"
+                                                        className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white"
+                                                        value={formData.image}
+                                                        onChange={e => setFormData({ ...formData, image: e.target.value })}
+                                                        placeholder="URL de la imagen..."
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => fileInputRef.current?.click()}
+                                                            className="flex-1 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                                        >
+                                                            Subir desde PC
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => { setGalleryTarget('ad'); setShowGallery(true); }}
+                                                            className="flex-1 py-2 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                                                        >
+                                                            Galería
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Enlace de Destino</label>
+                                                <input
+                                                    className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white"
+                                                    value={formData.link}
+                                                    onChange={e => setFormData({ ...formData, link: e.target.value })}
+                                                    placeholder="https://ejemplo.com"
+                                                />
+                                            </div>
                                         </div>
                                         <div className="flex flex-col gap-5">
-                                            <label className="flex items-center gap-2 cursor-pointer mt-4">
+                                            <label className="flex items-center gap-2 cursor-pointer mt-2">
                                                 <input type="checkbox" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} className="size-4 accent-primary" />
                                                 <span className="text-[10px] font-black uppercase text-slate-500">Publicidad Activa</span>
                                             </label>
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Publicidad</button>
+                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Anuncio</button>
                                         </div>
-                                    </>
+                                    </div>
                                 )}
 
                                 {activeTab === 'tickers' && (
@@ -936,10 +979,10 @@ const Admin = () => {
                                                     <button
                                                         key={phi.id}
                                                         onClick={() => setDuty(displayDate, phi.id)}
-                                                        className={`w - full text - left px - 5 py - 3 rounded - xl text - [10px] font - black uppercase tracking - widest transition - all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id)
+                                                        className={`w-full text-left px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pharmacyDuty.find(d => d.date === displayDate && d.pharmacyId === phi.id)
                                                             ? 'bg-primary text-white shadow-lg shadow-primary/30'
                                                             : 'bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
-                                                            } `}
+                                                            }`}
                                                     >
                                                         {phi.name}
                                                     </button>
@@ -1530,6 +1573,8 @@ const Admin = () => {
                                         key={idx}
                                         onClick={() => {
                                             if (galleryTarget === 'cover') {
+                                                setFormData({ ...formData, image: img });
+                                            } else if (galleryTarget === 'ad') {
                                                 setFormData({ ...formData, image: img });
                                             } else {
                                                 updateBlock(galleryTarget, img);
