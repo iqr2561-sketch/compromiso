@@ -56,7 +56,20 @@ export const NewsProvider = ({ children }) => {
         fetchPharmacies();
         fetchDuties();
         fetchComments();
+        fetchAds();
     }, []);
+
+    const fetchAds = async () => {
+        try {
+            const res = await fetch('/api/ads');
+            if (res.ok) {
+                const data = await res.json();
+                setAds(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch ads:', err);
+        }
+    };
 
     const fetchNews = async (isAdmin = false) => {
         try {
@@ -354,9 +367,54 @@ export const NewsProvider = ({ children }) => {
     const deleteTicker = (id) => setFlashTickers(prev => prev.filter(t => t.id !== id));
     const updateTicker = (id, item) => setFlashTickers(prev => prev.map(t => t.id === id ? { ...t, ...item } : t));
 
-    const addAd = (ad) => setAds(prev => [...prev, { ...ad, id: Date.now() }]);
-    const deleteAd = (id) => setAds(prev => prev.filter(a => a.id !== id));
-    const updateAd = (id, item) => setAds(prev => prev.map(a => a.id === id ? { ...a, ...item } : a));
+    const addAd = async (ad) => {
+        try {
+            const res = await fetch('/api/ads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ad)
+            });
+            if (res.ok) {
+                const newAd = await res.json();
+                setAds(prev => [...prev, newAd]);
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to add ad:', err);
+        }
+        return false;
+    };
+
+    const deleteAd = async (id) => {
+        try {
+            const res = await fetch(`/api/ads?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setAds(prev => prev.filter(a => a.id !== id));
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to delete ad:', err);
+        }
+        return false;
+    };
+
+    const updateAd = async (id, item) => {
+        try {
+            const res = await fetch('/api/ads', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, ...item })
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                setAds(prev => prev.map(a => a.id === id ? updated : a));
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to update ad:', err);
+        }
+        return false;
+    };
 
     const addVideo = (vid) => setVideos(prev => [...prev, { ...vid, id: Date.now() }]);
     const deleteVideo = (id) => setVideos(prev => prev.filter(v => v.id !== id));

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         switch (method) {
             case 'GET':
                 const { all } = req.query;
-                let query = 'SELECT * FROM news WHERE status = \'published\' OR (status = \'scheduled\' AND scheduled_at <= CURRENT_TIMESTAMP) ORDER BY date DESC, created_at DESC';
+                let query = "SELECT * FROM news WHERE (status = 'published' OR status IS NULL OR (status = 'scheduled' AND scheduled_at <= CURRENT_TIMESTAMP)) ORDER BY date DESC, created_at DESC";
                 if (all === 'true') {
                     query = 'SELECT * FROM news ORDER BY date DESC, created_at DESC';
                 }

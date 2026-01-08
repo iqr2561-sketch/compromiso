@@ -52,6 +52,7 @@ const Admin = () => {
     const [toast, setToast] = useState(null); // { message, type }
     const [isScheduling, setIsScheduling] = useState(false);
     const fileInputRef = useRef(null);
+    const galleryInputRef = useRef(null);
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
@@ -159,7 +160,7 @@ const Admin = () => {
         }
 
         if (success) {
-            showToast(editingId ? "Crónica actualizada con éxito" : "Noticia publicada correctamente", "success");
+            showToast(editingId ? "Cambios guardados con éxito" : "Elemento creado correctamente", "success");
             resetForms();
         } else {
             showToast("Error al guardar los cambios. Revisa la consola.", "error");
@@ -898,7 +899,7 @@ const Admin = () => {
                                                     <button
                                                         onClick={() => {
                                                             const newMonth = new Date(currentMonth);
-                                                            newMonth.setMonth(newMonth.getMonth()-1);
+                                                            newMonth.setMonth(newMonth.getMonth() - 1);
                                                             setCurrentMonth(newMonth);
                                                         }}
                                                         className="p-2 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors text-slate-400 dark:text-slate-500 hover:text-primary"
@@ -1226,10 +1227,10 @@ const Admin = () => {
                                 className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
                                 onDrop={handleDrop}
                                 onDragOver={handleDragOver}
-                                onClick={() => fileInputRef.current?.click()}
+                                onClick={() => galleryInputRef.current?.click()}
                             >
                                 <input
-                                    ref={fileInputRef}
+                                    ref={galleryInputRef}
                                     type="file"
                                     multiple
                                     className="hidden"
@@ -1426,7 +1427,7 @@ const Admin = () => {
 
                                     <div className="flex items-center gap-4">
                                         <button
-                                            onClick={() => updateEdition(parseInt(editionNumber)-1)}
+                                            onClick={() => updateEdition(parseInt(editionNumber) - 1)}
                                             className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
                                             type="button"
                                         >-</button>
@@ -1670,6 +1671,13 @@ const Admin = () => {
                     </div>
                 )}
             </AnimatePresence>
+            <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                onChange={handleFileUpload}
+                accept="image/*"
+            />
         </div>
     );
 };
