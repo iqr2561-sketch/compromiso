@@ -116,7 +116,7 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
     return (
         <div
             onClick={() => ad.link && ad.link !== '#' && window.open(ad.link, '_blank')}
-            className={`aspect-square bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden group ${ad.link && ad.link !== '#' ? 'cursor-pointer' : 'cursor-default'} relative border border-gray-200 dark:border-white/5 ${className}`}
+            className={`bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden group ${ad.link && ad.link !== '#' ? 'cursor-pointer' : 'cursor-default'} relative border border-gray-200 dark:border-white/5 ${className}`}
         >
             {ad.image ? (
                 <>

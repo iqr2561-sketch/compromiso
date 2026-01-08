@@ -750,11 +750,11 @@ const Admin = () => {
                                         {/* Vista Previa de Tapa */}
                                         <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl flex flex-col md:flex-row">
                                             <div className="md:w-1/2 aspect-[4/5] bg-slate-100 dark:bg-white/5 relative overflow-hidden group">
-                                                <img src={coverPage.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Tapa actual" />
+                                                <img src={formData.image || coverPage.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Tapa actual" />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                                                 <div className="absolute bottom-6 left-6 flex flex-col gap-1">
                                                     <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Vista Previa Actual</span>
-                                                    <span className="text-lg font-black text-white italic tracking-tighter">Edición del {new Date(coverPage.date + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                                    <span className="text-lg font-black text-white italic tracking-tighter">Edición del {new Date((formData.date || coverPage.date) + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                                                 </div>
                                             </div>
                                             <div className="md:w-1/2 p-10 flex flex-col gap-8 justify-center">
