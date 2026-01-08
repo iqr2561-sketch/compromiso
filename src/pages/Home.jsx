@@ -95,19 +95,7 @@ const Home = () => {
                 </div>
                 <div className="flex flex-col gap-8">
                     <AdSection type="square" className="h-[500px]" />
-                    <div className="bg-gradient-to-br from-primary to-accent-purple p-10 rounded-[3rem] text-white flex flex-col gap-6 shadow-2xl shadow-primary/30 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 size-40 bg-white/20 blur-[100px] rounded-full translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-1000"></div>
-                        <h4 className="text-3xl font-black italic tracking-tighter uppercase relative z-10">Exclusivo</h4>
-                        <p className="text-sm font-bold opacity-90 leading-relaxed relative z-10">Accede a contenido sin publicidad y reportajes especiales con nuestra suscripción GOLD.</p>
-                        <ul className="text-[10px] font-black uppercase tracking-widest flex flex-col gap-2 opacity-60 relative z-10">
-                            <li>• Crónicas Sin Censura</li>
-                            <li>• Reportes Financieros</li>
-                            <li>• Acceso VIP a Eventos</li>
-                        </ul>
-                        <button className="mt-4 py-4 bg-white text-primary font-black text-[10px] rounded-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest shadow-xl relative z-10 shadow-black/20">
-                            Unirse ahora por $9.99
-                        </button>
-                    </div>
+
 
                     <div className="bg-slate-900 p-1 rounded-[3rem] overflow-hidden group">
                         <div className="bg-[#111318] p-8 rounded-[2.8rem] flex flex-col gap-4 border border-white/5">
