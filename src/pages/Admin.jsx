@@ -155,7 +155,9 @@ const Admin = () => {
         } else if (activeTab === 'categories') {
             success = editingId ? await updateCategory(editingId, formData) : await addCategory(formData);
         } else if (activeTab === 'ads') {
+            console.log('CLIENT: Saving Ad - editingId:', editingId, 'data:', formData);
             success = editingId ? await updateAd(editingId, formData) : await addAd(formData);
+            console.log('CLIENT: Save response success:', success);
         } else if (activeTab === 'cover') {
             await updateCoverPage(formData.image, formData.date);
             success = true;

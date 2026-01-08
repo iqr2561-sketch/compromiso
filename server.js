@@ -7,13 +7,13 @@ import galleryHandler from './api/gallery.js';
 import adsHandler from './api/ads.js';
 import settingsHandler from './api/settings.js';
 import commentsHandler from './api/comments.js';
-import tickersHandler from './api/flash-tickers.js';
 import cronIncrementHandler from './api/cron-increment.js';
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Helper to adapt Vercel/Next.js handler signature (req, res) to Express
 const adapt = (handler) => async (req, res) => {
@@ -39,7 +39,6 @@ app.all('/api/gallery', adapt(galleryHandler));
 app.all('/api/ads', adapt(adsHandler));
 app.all('/api/settings', adapt(settingsHandler));
 app.all('/api/comments', adapt(commentsHandler));
-app.all('/api/tickers', adapt(tickersHandler));
 app.all('/api/cron-increment', adapt(cronIncrementHandler));
 
 app.listen(PORT, () => {
