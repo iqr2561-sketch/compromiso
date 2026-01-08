@@ -58,9 +58,10 @@ export const NewsProvider = ({ children }) => {
         fetchComments();
     }, []);
 
-    const fetchNews = async () => {
+    const fetchNews = async (isAdmin = false) => {
         try {
-            const res = await fetch('/api/news');
+            const url = isAdmin ? '/api/news?all=true' : '/api/news';
+            const res = await fetch(url);
             if (res.ok) {
                 const data = await res.json();
                 setNews(data);
@@ -464,6 +465,7 @@ export const NewsProvider = ({ children }) => {
             pharmacyDuty, setDuty,
             comments, deleteComment, updateCommentStatus,
             aiConfig, updateAiConfig,
+            fetchNews,
             reorderCategories: setCategories
         }}>
             {children}

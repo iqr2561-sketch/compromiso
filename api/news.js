@@ -8,7 +8,12 @@ export default async function handler(req, res) {
 
         switch (method) {
             case 'GET':
-                const { rows } = await client.query('SELECT * FROM news ORDER BY created_at DESC');
+                const { all } = req.query;
+                let query = 'SELECT * FROM news WHERE status = \'published\' OR (status = \'scheduled\' AND scheduled_at <= CURRENT_TIMESTAMP) ORDER BY date DESC, created_at DESC';
+                if (all === 'true') {
+                    query = 'SELECT * FROM news ORDER BY date DESC, created_at DESC';
+                }
+                const { rows } = await client.query(query);
                 // Map database naming (snake_case) to frontend (camelCase)
                 const mappedRows = rows.map(row => ({
                     ...row,
@@ -20,22 +25,23 @@ export default async function handler(req, res) {
                 break;
 
             case 'POST': {
-                const { title, content, category, author, date, image, isHero, isFlash, timeRead } = req.body;
+                const { title, content, category, author, date, image, isHero, isFlash, timeRead, status, scheduledAt } = req.body;
                 const insertRes = await client.query(
-                    'INSERT INTO news (title, content, category, author, date, image, is_hero, is_flash, time_read) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-                    [title, content, category, author, date, image, isHero || false, isFlash || false, timeRead]
+                    'INSERT INTO news (title, content, category, author, date, image, is_hero, is_flash, time_read, status, scheduled_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+                    [title, content, category, author, date, image, isHero || false, isFlash || false, timeRead, status || 'published', scheduledAt]
                 );
                 res.status(201).json({
                     ...insertRes.rows[0],
                     isHero: insertRes.rows[0].is_hero,
                     isFlash: insertRes.rows[0].is_flash,
-                    timeRead: insertRes.rows[0].time_read
+                    timeRead: insertRes.rows[0].time_read,
+                    scheduledAt: insertRes.rows[0].scheduled_at
                 });
                 break;
             }
 
             case 'PUT': {
-                const { id, title, content, category, author, date, image, isHero, isFlash, timeRead } = req.body;
+                const { id, title, content, category, author, date, image, isHero, isFlash, timeRead, status, scheduledAt } = req.body;
 
                 const mappedUpdateData = {
                     title,
@@ -46,7 +52,9 @@ export default async function handler(req, res) {
                     image,
                     is_hero: isHero,
                     is_flash: isFlash,
-                    time_read: timeRead
+                    time_read: timeRead,
+                    status,
+                    scheduled_at: scheduledAt
                 };
 
                 // Filter out undefined fields so we only update what's provided
@@ -67,7 +75,8 @@ export default async function handler(req, res) {
                     ...updateRes.rows[0],
                     isHero: updateRes.rows[0].is_hero,
                     isFlash: updateRes.rows[0].is_flash,
-                    timeRead: updateRes.rows[0].time_read
+                    timeRead: updateRes.rows[0].time_read,
+                    scheduledAt: updateRes.rows[0].scheduled_at
                 });
                 break;
             }

@@ -49,12 +49,17 @@ const Admin = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
     const [toast, setToast] = useState(null); // { message, type }
+    const [isScheduling, setIsScheduling] = useState(false);
     const fileInputRef = useRef(null);
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 4000);
     };
+
+    useEffect(() => {
+        fetchNews(true);
+    }, []);
 
     useEffect(() => {
         if (isDarkMode) {
@@ -71,7 +76,9 @@ const Admin = () => {
         name: '', color: 'primary', bgImage: '',
         link: '', active: true,
         views: '0', duration: '0:00', url: '',
-        address: '', phone: '', city: 'Central'
+        address: '', phone: '', city: 'Central',
+        scheduleDate: new Date().toISOString().split('T')[0],
+        scheduleTime: '12:00'
     });
 
     useEffect(() => {
@@ -116,6 +123,9 @@ const Admin = () => {
         let success = false;
 
         if (activeTab === 'news') {
+            const status = isScheduling ? 'scheduled' : 'published';
+            const scheduledAt = isScheduling ? `${formData.scheduleDate}T${formData.scheduleTime}:00Z` : null;
+
             const newItem = {
                 title: formData.title,
                 category: formData.category,
@@ -125,7 +135,9 @@ const Admin = () => {
                 content: JSON.stringify(editorBlocks),
                 isHero: !!formData.isHero,
                 isFlash: !!formData.isFlash,
-                timeRead: formData.timeRead || '2 min'
+                timeRead: formData.timeRead || '2 min',
+                status,
+                scheduledAt
             };
             if (editingId) {
                 success = await updateNews(editingId, newItem);
@@ -442,9 +454,70 @@ const Admin = () => {
                                                         ))}
                                                     </div>
 
-                                                    <button type="submit" className="mt-4 h-14 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
-                                                        {editingId ? 'Actualizar Crónica' : 'Publicar Noticia'}
-                                                    </button>
+                                                    <div className="flex flex-col md:flex-row gap-4">
+                                                        <button
+                                                            type="submit"
+                                                            onClick={() => setIsScheduling(false)}
+                                                            className="flex-1 py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all"
+                                                        >
+                                                            {editingId ? 'Actualizar Crónica' : 'Publicar Noticia'}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsScheduling(!isScheduling)}
+                                                            className={`flex-1 py-5 border-2 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${isScheduling
+                                                                ? 'bg-amber-500 border-amber-500 text-white shadow-xl shadow-amber-500/20'
+                                                                : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 hover:border-amber-500 hover:text-amber-500'
+                                                                }`}
+                                                        >
+                                                            <Clock size={16} /> {isScheduling ? 'Programado' : 'Programar Publicación'}
+                                                        </button>
+                                                    </div>
+
+                                                    <AnimatePresence>
+                                                        {isScheduling && (
+                                                            <motion.div
+                                                                initial={{ height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={{ height: 0, opacity: 0 }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 rounded-2xl p-6 flex flex-col gap-4 mt-2">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Zap size={14} className="text-amber-500" />
+                                                                        <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-widest">Configuración de Lanzamiento</span>
+                                                                    </div>
+                                                                    <div className="grid grid-cols-2 gap-4">
+                                                                        <div className="flex flex-col gap-1.5">
+                                                                            <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Fecha</label>
+                                                                            <input
+                                                                                type="date"
+                                                                                className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                                                                                value={formData.scheduleDate}
+                                                                                onChange={(e) => setFormData({ ...formData, scheduleDate: e.target.value })}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="flex flex-col gap-1.5">
+                                                                            <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Hora</label>
+                                                                            <input
+                                                                                type="time"
+                                                                                className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                                                                                value={formData.scheduleTime}
+                                                                                onChange={(e) => setFormData({ ...formData, scheduleTime: e.target.value })}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <p className="text-[10px] text-amber-600/60 font-medium italic">La noticia se hará visible automáticamente en el sitio público al llegar el horario especificado.</p>
+                                                                    <button
+                                                                        type="submit"
+                                                                        className="w-full py-4 bg-amber-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20"
+                                                                    >
+                                                                        Confirmar Lanzamiento Programado
+                                                                    </button>
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
                                                 </div>
                                             </div>
                                         ) : (
@@ -1254,6 +1327,11 @@ const Admin = () => {
                                                                                 <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
                                                                                 {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
                                                                                 {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
+                                                                                {item.status === 'scheduled' && (
+                                                                                    <span className="text-[7px] bg-amber-500/20 text-amber-600 px-1.5 py-0.5 rounded font-black tracking-widest flex items-center gap-1">
+                                                                                        <Clock size={8} /> PROGRAMADA
+                                                                                    </span>
+                                                                                )}
                                                                             </div>
                                                                         </div>
                                                                     </div>
