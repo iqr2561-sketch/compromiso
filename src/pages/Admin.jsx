@@ -257,7 +257,7 @@ const Admin = () => {
                             onClick={() => { setActiveTab(item.id); resetForms(); }}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
                                 ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
-                                : 'text-slate-500 hover:bg-white/5 hover:text-white border border-transparent'}`}
+                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'}`}
                         >
                             <item.icon size={18} />
                             <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
@@ -266,10 +266,10 @@ const Admin = () => {
                 </nav>
 
                 <div className="mt-auto flex flex-col gap-2">
-                    <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-slate-500 hover:text-white transition-all uppercase tracking-widest">
+                    <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white transition-all uppercase tracking-widest">
                         <Globe size={16} /> Web Pública
                     </Link>
-                    <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-accent-pink/60 hover:text-accent-pink transition-all uppercase tracking-widest">
+                    <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-accent-pink/60 hover:bg-red-50 dark:hover:bg-red-500/5 hover:text-accent-pink transition-all uppercase tracking-widest">
                         <LogOut size={16} /> Salir
                     </button>
                 </div>
