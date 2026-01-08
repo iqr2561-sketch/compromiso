@@ -1,5 +1,13 @@
 import pool from './lib/db.js';
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '10mb',
+        },
+    },
+};
+
 export default async function handler(req, res) {
     const { method } = req;
 
@@ -18,6 +26,8 @@ export default async function handler(req, res) {
 
             case 'POST':
                 const { key, value } = req.body;
+                console.log(`API POST Settings - Key: ${key}, Value length: ${value ? value.length : 0}`);
+
                 await client.query(
                     'INSERT INTO settings (key, value, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()',
                     [key, value.toString()]

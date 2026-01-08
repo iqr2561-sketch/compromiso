@@ -222,19 +222,36 @@ export const NewsProvider = ({ children }) => {
 
     const updateCoverPage = async (image, date) => {
         try {
-            await fetch('/api/settings', {
+            console.log('NewsContext: updateCoverPage called. Image length:', image ? image.length : 0);
+
+            const res1 = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ key: 'cover_page_image', value: image })
             });
-            await fetch('/api/settings', {
+
+            if (!res1.ok) {
+                const errText = await res1.text();
+                console.error('NewsContext: Failed to update cover image. Status:', res1.status, errText);
+            }
+
+            const res2 = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ key: 'cover_page_date', value: date })
             });
-            setCoverPage({ image, date });
+
+            if (!res2.ok) {
+                const errText = await res2.text();
+                console.error('NewsContext: Failed to update cover date. Status:', res2.status, errText);
+            }
+
+            if (res1.ok && res2.ok) {
+                console.log('NewsContext: Cover page updated successfully');
+                setCoverPage({ image, date });
+            }
         } catch (err) {
-            console.error('Failed to update cover page:', err);
+            console.error('NewsContext: Exception in updateCoverPage:', err);
         }
     };
 

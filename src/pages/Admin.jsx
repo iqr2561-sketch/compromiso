@@ -282,7 +282,17 @@ const Admin = () => {
                     {menuItems.map(item => (
                         <button
                             key={item.id}
-                            onClick={() => { setActiveTab(item.id); resetForms(); }}
+                            onClick={() => {
+                                setActiveTab(item.id);
+                                resetForms();
+                                if (item.id === 'cover') {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        image: coverPage.image,
+                                        date: coverPage.date
+                                    }));
+                                }
+                            }}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
                                 ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
                                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
