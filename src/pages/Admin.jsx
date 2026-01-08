@@ -681,45 +681,13 @@ const Admin = () => {
                                                 />
                                             </div>
 
+                                            {/* Text fields hidden by user request
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Título / Empresa</label>
-                                                <input
-                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                    value={formData.title}
-                                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                                    placeholder="Nombre de la empresa..."
-                                                />
+                                                <input ... />
                                             </div>
-
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Contenido Principal</label>
-                                                <input
-                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                    value={formData.content}
-                                                    onChange={e => setFormData({ ...formData, content: e.target.value })}
-                                                    placeholder="Mensaje principal..."
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Sub-contenido / Detalles</label>
-                                                <input
-                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                    value={formData.sub_content}
-                                                    onChange={e => setFormData({ ...formData, sub_content: e.target.value })}
-                                                    placeholder="Detalles adicionales..."
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Texto del Botón</label>
-                                                <input
-                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                    value={formData.button}
-                                                    onChange={e => setFormData({ ...formData, button: e.target.value })}
-                                                    placeholder="Saber más, Comprar, etc."
-                                                />
-                                            </div>
+                                            ... (other fields)
+                                            */}
                                         </div>
 
                                         <div className="flex flex-col gap-5 mt-4">
@@ -774,7 +742,8 @@ const Admin = () => {
                                                     <p className="text-xs font-bold text-slate-500 text-pretty">Selecciona una nueva imagen de alta resolución para la portada del diario de hoy.</p>
                                                 </div>
 
-                                                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                                                {/* Removed nested form tag */}
+                                                <div className="flex flex-col gap-6">
                                                     <div className="flex flex-col gap-2">
                                                         <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen de Portada</label>
                                                         <input
@@ -802,7 +771,7 @@ const Admin = () => {
                                                     </div>
 
                                                     <button type="submit" className="w-full py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all mt-4">Actualizar Portada</button>
-                                                </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -822,6 +791,56 @@ const Admin = () => {
                 </AnimatePresence>
 
                 <div className="flex flex-col gap-6">
+                    {/* Cover View Mode */}
+                    {activeTab === 'cover' && (
+                        <div className="flex flex-col gap-6">
+                            <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-xl">
+                                <div className="p-8 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+                                    <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Portada Actual Vinculada</h2>
+                                    <button
+                                        onClick={() => {
+                                            setFormData({ image: coverPage.image, date: coverPage.date });
+                                            setIsAdding(true);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
+                                    >
+                                        Editar Portada
+                                    </button>
+                                </div>
+                                <div className="p-8 flex flex-col md:flex-row gap-8 items-center">
+                                    <div className="w-full md:w-1/3 aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative group">
+                                        <img src={coverPage.image} className="w-full h-full object-cover" alt="Portada actual" />
+                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+                                    </div>
+                                    <div className="flex-1 flex flex-col gap-6">
+                                        <div className="flex flex-col gap-2">
+                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Fecha de Emisión</span>
+                                            <div className="flex items-center gap-3">
+                                                <CalendarIcon size={20} className="text-primary" />
+                                                <span className="text-2xl font-black text-slate-900 dark:text-white italic tracking-tighter">
+                                                    {new Date(coverPage.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Estado del Sistema</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="size-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                                                <span className="text-sm font-bold text-emerald-500 uppercase tracking-wide">Portada Activa y Visible</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/5 mt-4">
+                                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                                                <strong className="text-primary">Nota:</strong> Esta es la imagen que los lectores verán al ingresar a la sección "Tapa de Hoy" y en el acceso directo del Home. Asegúrate de que la fecha coincida con la edición impresa.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {/* Dashboard View */}
                     {activeTab === 'dashboard' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
