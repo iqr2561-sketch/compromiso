@@ -52,6 +52,7 @@ const Admin = () => {
     const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
     const [toast, setToast] = useState(null); // { message, type }
     const [isScheduling, setIsScheduling] = useState(false);
+    const [dbStatus, setDbStatus] = useState(null); // { success, message, data }
     const fileInputRef = useRef(null);
     const galleryInputRef = useRef(null);
 
@@ -172,6 +173,23 @@ const Admin = () => {
             }
         } else {
             showToast("Error al guardar los cambios. Revisa la consola.", "error");
+        }
+    };
+
+    const testDbConnection = async () => {
+        setDbStatus({ loading: true });
+        try {
+            const res = await fetch('/api/test-db');
+            const data = await res.json();
+            setDbStatus(data);
+            if (data.success) {
+                showToast("Conexión exitosa con la base de datos", "success");
+            } else {
+                showToast("Error de conexión: " + data.error, "error");
+            }
+        } catch (err) {
+            setDbStatus({ success: false, error: err.message });
+            showToast("Error crítico al intentar conectar", "error");
         }
     };
 
@@ -1859,14 +1877,68 @@ const Admin = () => {
                                                 <option value="llama3-70b-8192">Groq-Llama 3 70B (Recomendado)</option>
                                                 <option value="mixtral-8x7b-32768">Groq-Mixtral 8x7b</option>
                                                 <option value="gemma-7b-it">Groq-Gemma 7B</option>
-                                                <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
-                                                <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                                                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                                                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
                                                 <option value="gpt-4o">OpenAI GPT-4o</option>
                                             </select>
                                         </div>
                                     </div>
                                 </section>
 
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 md:col-span-2">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <Layers size={14} className="text-primary" /> Sistema de Base de Datos
+                                    </h3>
+                                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Estado del Servidor</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className={`size-2 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : dbStatus?.loading ? 'bg-amber-500 animate-pulse' : 'bg-slate-700'} `}></div>
+                                                <span className="text-sm font-black text-white italic tracking-tighter">
+                                                    {dbStatus?.loading ? 'Comprobando...' : dbStatus?.success ? 'Conexión Activa' : 'Sin Comprobar'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                                            <button
+                                                onClick={testDbConnection}
+                                                disabled={dbStatus?.loading}
+                                                className={`px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 justify-center ${dbStatus?.loading ? 'bg-slate-700 text-slate-400 opacity-50 cursor-wait' : 'bg-white/10 text-white hover:bg-white/20'} `}
+                                            >
+                                                {dbStatus?.loading ? 'Conectando...' : 'Probar Conexión'}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const sqlContent = `/* Comandos de verificación */ SELECT NOW(); SELECT COUNT(*) FROM news;`;
+                                                    navigator.clipboard.writeText(sqlContent);
+                                                    showToast("Script de prueba copiado", "success");
+                                                }}
+                                                className="px-8 py-3 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/25"
+                                            >
+                                                Copiar Script de Prueba
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {dbStatus?.success && (
+                                        <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+                                            <div className="flex flex-col gap-1">
+                                                <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Respuesta del Servidor:</p>
+                                                <p className="text-[11px] font-mono text-emerald-400">Base de Datos: {dbStatus.data.db} | Hora: {new Date(dbStatus.data.time).toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!dbStatus?.success && dbStatus?.error && (
+                                        <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+                                            <div className="flex flex-col gap-1">
+                                                <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">Error Detectado:</p>
+                                                <p className="text-[11px] font-mono text-red-400">{dbStatus.error}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </section>
                                 <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5 opacity-50">
                                     <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                                         <Wand2 size={14} className="text-accent-pink" /> Generación Automática
