@@ -13,7 +13,7 @@ const HeroSection = () => {
     const heroNewsList = news.filter(n => n.isHero).slice(0, 10);
     // Sidebar news: any news that is NOT a hero, OR if there aren't enough, just the rest of the news
     const otherNews = news.filter(n => !n.isHero && !n.isFlash);
-    const sidebarNews = otherNews.length >= 2 ? otherNews.slice(0, 2) : news.filter(n => !n.isFlash && !heroNewsList.slice(0, 1).includes(n)).slice(1, 3);
+    const sidebarNews = otherNews.length >= 3 ? otherNews.slice(0, 3) : news.filter(n => !n.isFlash && !heroNewsList.slice(0, 1).includes(n)).slice(1, 4);
 
     useEffect(() => {
         if (heroNewsList.length === 0) return;
@@ -135,15 +135,15 @@ const HeroSection = () => {
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News - Two legible cards */}
+                {/* Lateral News - Three cards */}
                 <div className="flex flex-col gap-4">
-                    {sidebarNews.slice(0, 2).map((item, idx) => (
+                    {sidebarNews.slice(0, 3).map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative h-60 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-44 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
