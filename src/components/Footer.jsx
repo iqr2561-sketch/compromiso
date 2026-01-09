@@ -6,66 +6,74 @@ const Footer = () => {
     const { footerSettings } = useNews();
 
     return (
-        <footer className="max-w-[1440px] mx-auto px-4 lg:px-8 border-t border-gray-200 dark:border-white/10 pt-12 pb-8 mt-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
-                {/* Branding Section - Spans 2 columns on large screens */}
-                <div className="lg:col-span-2 flex flex-col gap-1 items-center text-center">
-                    {footerSettings.logo ? (
-                        <img src={footerSettings.logo} alt="Logo" className="h-44 w-auto object-contain mx-auto" />
-                    ) : (
-                        <Newspaper className="text-primary mx-auto" size={80} />
-                    )}
-                    <p className="text-slate-500 text-sm leading-relaxed font-semibold max-w-lg mx-auto">
-                        {footerSettings.description}
-                    </p>
-                </div>
-
-                {/* Empty spacer to push content or for future use */}
-                <div className="hidden lg:block"></div>
-
-                {/* Social Media Section */}
-                <div className="flex flex-col gap-6">
-                    <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic border-b border-gray-100 dark:border-white/5 pb-2">CONECTATE</h4>
-                    <div className="flex flex-col gap-4">
-                        {footerSettings.facebook_url !== '#' && (
-                            <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group">
-                                <div className="p-2 bg-slate-50 dark:bg-white/5 rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                    <Globe size={18} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">Facebook</span>
-                            </a>
+        <footer className="bg-slate-100 dark:bg-[#0a0f1a] border-t border-gray-200 dark:border-white/10 pt-16 pb-12 mt-12 transition-colors duration-300">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 items-center mb-16">
+                    {/* Column 1: Logo */}
+                    <div className="flex justify-center lg:justify-start">
+                        {footerSettings.logo ? (
+                            <img src={footerSettings.logo} alt="Logo" className="h-40 w-auto object-contain hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                            <div className="flex flex-col items-center lg:items-start">
+                                <Newspaper className="text-primary mb-2" size={60} />
+                                <span className="font-black italic text-2xl tracking-tighter dark:text-white">COMPROMISO</span>
+                            </div>
                         )}
-                        {footerSettings.instagram_url !== '#' && (
-                            <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group">
-                                <div className="p-2 bg-slate-50 dark:bg-white/5 rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                    <Instagram size={18} />
+                    </div>
+
+                    {/* Column 2: Intellectual Property */}
+                    <div className="flex flex-col items-center lg:items-start gap-2 border-l-0 lg:border-l border-gray-300 dark:border-white/10 lg:pl-8">
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px] italic">Propiedad Intelectual</h4>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold leading-relaxed text-center lg:text-left">
+                            {footerSettings.copyright}
+                        </p>
+                    </div>
+
+                    {/* Columns 3 & 4: Data Fiscal QR */}
+                    <div className="md:col-span-2 flex justify-center lg:justify-end items-center gap-8">
+                        {footerSettings.qr_image && (
+                            <div className="flex items-center gap-6 bg-white dark:bg-white/5 p-4 rounded-3xl shadow-2xl border border-white dark:border-white/10 hover:shadow-primary/5 transition-all duration-500 group">
+                                <div className="relative">
+                                    <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-28 w-28 object-contain rounded-xl" />
+                                    <div className="absolute inset-0 rounded-xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">Instagram</span>
-                            </a>
+                                <div className="hidden sm:flex flex-col gap-1">
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white">AFIP - DATA FISCAL</p>
+                                    <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Comprobante Oficial de Registro</p>
+                                    <div className="h-1 w-12 bg-primary rounded-full mt-1"></div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>
 
-                {/* Fiscal/QR Section */}
-                <div className="flex flex-col items-center md:items-end">
-                    {footerSettings.qr_image && (
-                        <div className="flex flex-col items-center md:items-end gap-3">
-                            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic border-b border-gray-100 dark:border-white/5 pb-2 w-full text-center md:text-right">LEGAL</h4>
-                            <div className="relative group">
-                                <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-24 w-24 object-contain rounded-xl bg-white p-1 hover:scale-105 transition-transform shadow-xl border border-gray-100" />
-                                <div className="absolute inset-0 rounded-xl bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                            </div>
-                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Data Fiscal</p>
-                        </div>
-                    )}
-                </div>
-            </div>
+                {/* Bottom Row: Description and Socials */}
+                <div className="flex flex-col lg:flex-row items-center justify-between pt-10 border-t border-gray-300 dark:border-white/10 gap-8">
+                    <div className="max-w-xl">
+                        <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium leading-relaxed text-center lg:text-left">
+                            {footerSettings.description}
+                        </p>
+                    </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 gap-4">
-                <p className="text-xs text-slate-500 font-medium">{footerSettings.copyright}</p>
-                <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="text-xs text-slate-500 font-black uppercase tracking-widest">Sistemas Operativos</span>
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <div className="flex items-center gap-6 mr-4">
+                            {footerSettings.facebook_url !== '#' && (
+                                <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="p-3 bg-white dark:bg-white/5 rounded-full text-slate-400 hover:text-primary hover:scale-110 transition-all shadow-sm border border-gray-100 dark:border-white/5">
+                                    <Globe size={20} />
+                                </a>
+                            )}
+                            {footerSettings.instagram_url !== '#' && (
+                                <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="p-3 bg-white dark:bg-white/5 rounded-full text-slate-400 hover:text-primary hover:scale-110 transition-all shadow-sm border border-gray-100 dark:border-white/5">
+                                    <Instagram size={20} />
+                                </a>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-3 py-2 px-4 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-[0.2em]">Sistemas Operativos</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
