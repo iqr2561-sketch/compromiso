@@ -10,7 +10,7 @@ import AdSection from '../components/AdSection';
 
 const Post = () => {
     const { id } = useParams();
-    const { news, footerSettings } = useNews();
+    const { news } = useNews();
     const post = news.find(n => n.id === parseInt(id));
 
     useEffect(() => {
