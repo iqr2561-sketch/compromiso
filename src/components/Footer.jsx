@@ -6,25 +6,25 @@ const Footer = () => {
     const { footerSettings } = useNews();
 
     return (
-        <footer className="bg-slate-100 dark:bg-[#0a0f1a] border-t border-gray-200 dark:border-white/10 pt-16 pb-8 mt-12 transition-colors duration-300">
+        <footer className="bg-slate-50 dark:bg-[#080c14] border-t-4 border-primary/10 pt-20 pb-10 mt-16 transition-colors duration-500">
             <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
                 {/* Top Section: Logo, Divider, and Legal Info */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-12">
-                    <div className="flex flex-col md:flex-row items-center gap-10 lg:gap-16">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-16">
+                    <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
                         {/* Logo */}
-                        <div className="shrink-0">
+                        <div className="shrink-0 flex items-center justify-center">
                             {footerSettings.logo ? (
-                                <img src={footerSettings.logo} alt="Logo" className="h-28 md:h-32 w-auto object-contain hover:scale-105 transition-transform duration-500" />
+                                <img src={footerSettings.logo} alt="Logo" className="h-32 md:h-48 w-auto object-contain hover:scale-105 transition-transform duration-700" />
                             ) : (
                                 <div className="flex flex-col items-center">
-                                    <Newspaper className="text-primary mb-2" size={50} />
-                                    <span className="font-black italic text-xl tracking-tighter dark:text-white">COMPROMISO</span>
+                                    <Newspaper className="text-primary mb-2" size={60} />
+                                    <span className="font-black italic text-2xl tracking-tighter dark:text-white">COMPROMISO</span>
                                 </div>
                             )}
                         </div>
 
                         {/* Vertical Divider (Hidden on mobile) */}
-                        <div className="hidden md:block w-px h-24 bg-gray-300 dark:bg-white/10"></div>
+                        <div className="hidden md:block w-px h-32 bg-gray-300 dark:bg-white/10"></div>
 
                         {/* Legal Text Block */}
                         <div className="flex flex-col gap-1.5 text-center md:text-left">
