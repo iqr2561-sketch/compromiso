@@ -23,10 +23,20 @@ export default async function handler(req, res) {
             }
 
             case 'POST': {
-                const { post_id, name, email, comment } = req.body;
+                const { newsId, post_id, userName, name, email, content, comment } = req.body;
+
+                // Handle both frontend aliases (newsId/content) and DB names (post_id/comment)
+                const finalPostId = newsId || post_id;
+                const finalName = userName || name;
+                const finalContent = content || comment;
+
+                if (!finalPostId || !finalName || !finalContent) {
+                    return res.status(400).json({ error: 'Missing required fields' });
+                }
+
                 const insertRes = await client.query(
                     'INSERT INTO comments (post_id, name, email, comment) VALUES ($1, $2, $3, $4) RETURNING *',
-                    [post_id, name, email, comment]
+                    [finalPostId, finalName, email, finalContent]
                 );
                 res.status(201).json(insertRes.rows[0]);
                 break;
