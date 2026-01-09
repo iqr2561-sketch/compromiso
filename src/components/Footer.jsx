@@ -11,9 +11,9 @@ const Footer = () => {
                 {/* Branding Section - Spans 2 columns on large screens */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {footerSettings.logo ? (
-                        <img src={footerSettings.logo} alt="Logo" className="h-28 w-auto object-contain self-start" />
+                        <img src={footerSettings.logo} alt="Logo" className="h-44 w-auto object-contain self-start" />
                     ) : (
-                        <Newspaper className="text-primary" size={60} />
+                        <Newspaper className="text-primary" size={80} />
                     )}
                     <p className="text-slate-500 text-sm leading-relaxed font-semibold max-w-lg">
                         {footerSettings.description}
