@@ -96,8 +96,8 @@ const Home = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <AdSection type="footer_1" className="bg-slate-900 dark:bg-surface-darker border-none h-40" />
-                <AdSection type="footer_2" className="bg-slate-900 dark:bg-surface-darker border-none h-40" />
+                <AdSection type="footer_1" className="h-32" />
+                <AdSection type="footer_2" className="h-32" />
             </div>
 
             <Newsletter />
