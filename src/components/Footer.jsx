@@ -9,13 +9,13 @@ const Footer = () => {
         <footer className="max-w-[1440px] mx-auto px-4 lg:px-8 border-t border-gray-200 dark:border-white/10 pt-12 pb-8 mt-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
                 {/* Branding Section - Spans 2 columns on large screens */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="lg:col-span-2 flex flex-col gap-6 items-center text-center">
                     {footerSettings.logo ? (
-                        <img src={footerSettings.logo} alt="Logo" className="h-44 w-auto object-contain self-start" />
+                        <img src={footerSettings.logo} alt="Logo" className="h-44 w-auto object-contain mx-auto" />
                     ) : (
-                        <Newspaper className="text-primary" size={80} />
+                        <Newspaper className="text-primary mx-auto" size={80} />
                     )}
-                    <p className="text-slate-500 text-sm leading-relaxed font-semibold max-w-lg">
+                    <p className="text-slate-500 text-sm leading-relaxed font-semibold max-w-lg mx-auto">
                         {footerSettings.description}
                     </p>
                 </div>
