@@ -274,7 +274,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.5-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.6.0-RELEASE</span>
                     </div>
                 </div>
 
