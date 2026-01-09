@@ -23,7 +23,7 @@ const Footer = () => {
 
                     {/* Column 2: Intellectual Property */}
                     <div className="flex flex-col items-center lg:items-start gap-2 border-l-0 lg:border-l border-gray-300 dark:border-white/10 lg:pl-8">
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px] italic">Propiedad Intelectual</h4>
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px] italic">{footerSettings.column_2_title || 'Propiedad Intelectual'}</h4>
                         <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold leading-relaxed text-center lg:text-left">
                             {footerSettings.copyright}
                         </p>
@@ -38,7 +38,7 @@ const Footer = () => {
                                     <div className="absolute inset-0 rounded-xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 <div className="hidden sm:flex flex-col gap-1">
-                                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white">AFIP - DATA FISCAL</p>
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white">{footerSettings.column_4_title || 'AFIP - DATA FISCAL'}</p>
                                     <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Comprobante Oficial de Registro</p>
                                     <div className="h-1 w-12 bg-primary rounded-full mt-1"></div>
                                 </div>

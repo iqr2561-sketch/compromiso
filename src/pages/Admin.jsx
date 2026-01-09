@@ -1480,9 +1480,9 @@ const Admin = () => {
 
                                     <div className="flex flex-col gap-6">
                                         <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Títulos de Columnas</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Columna 2</label>
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Título Propiedad Intelectual</label>
                                                 <input
                                                     className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
                                                     value={footerSettings.column_2_title || ''}
@@ -1490,15 +1490,7 @@ const Admin = () => {
                                                 />
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Columna 3</label>
-                                                <input
-                                                    className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
-                                                    value={footerSettings.column_3_title || ''}
-                                                    onChange={e => updateFooterSettings({ column_3_title: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Columna 4</label>
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Título AFIP - Data Fiscal</label>
                                                 <input
                                                     className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
                                                     value={footerSettings.column_4_title || ''}
