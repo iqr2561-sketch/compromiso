@@ -1808,6 +1808,26 @@ const Admin = () => {
                                     </div>
                                 </section>
 
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <History size={14} className="text-primary" /> ¿Te Acordás Dolores?
+                                    </h3>
+                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Establece la imagen de fondo para la sección histórica en la página de inicio.</p>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Imagen de Fondo (URL)</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
+                                                value={footerSettings.te_acordas_bg || ''}
+                                                onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
+                                                placeholder="URL de la imagen de fondo..."
+                                            />
+                                            <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={20} /></button>
+                                        </div>
+                                    </div>
+                                </section>
+
                                 <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
                                     <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                                         <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
@@ -1934,6 +1954,8 @@ const Admin = () => {
                                                 updateFooterSettings({ logo: img });
                                             } else if (galleryTarget === 'qr') {
                                                 updateFooterSettings({ qr_image: img });
+                                            } else if (galleryTarget === 'te_acordas') {
+                                                updateFooterSettings({ te_acordas_bg: img });
                                             } else {
                                                 updateBlock(galleryTarget, img);
                                             }

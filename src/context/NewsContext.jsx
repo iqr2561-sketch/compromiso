@@ -57,6 +57,7 @@ export const NewsProvider = ({ children }) => {
         instagram_url: '#',
         youtube_url: '#',
         twitter_url: '#',
+        te_acordas_bg: 'https://images.unsplash.com/photo-1544253109-c88ce53cc9d0?auto=format&fit=crop&q=80&w=1600',
         copyright: `© ${new Date().getFullYear()} Diario Digital Inc. Todos los derechos reservados.`
     });
 
