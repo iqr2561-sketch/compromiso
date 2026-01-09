@@ -23,6 +23,7 @@ export default async function handler(req, res) {
             const newNumber = currentNumber + 1;
 
             await client.query("UPDATE settings SET value = $1, updated_at = NOW() WHERE key = 'edition_number'", [newNumber.toString()]);
+            await client.query("UPDATE settings SET value = $1, updated_at = NOW() WHERE key = 'cover_page_date'", [today]);
             await client.query("UPDATE settings SET value = $1, updated_at = NOW() WHERE key = 'last_increment_date'", [today]);
 
             client.release();

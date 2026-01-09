@@ -6,7 +6,7 @@ import { useNews } from '../context/NewsContext';
 import { Link } from 'react-router-dom';
 
 const HeaderTop = () => {
-    const { pharmacies, pharmacyDuty, editionNumber, news } = useNews();
+    const { pharmacies, pharmacyDuty, editionNumber, news, coverPage } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -40,9 +40,10 @@ const HeaderTop = () => {
     const dutyToday = pharmacyDuty.find(d => d.date === todayISO);
     const pharmacyOnDuty = pharmacies.find(p => p.id === dutyToday?.pharmacyId);
 
-    const today = new Date();
+    // Use coverPage.date if it exists, otherwise use today's date
+    const displayDateBase = coverPage.date ? new Date(coverPage.date + 'T12:00:00') : new Date();
     const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    const dateStr = today.toLocaleDateString('es-ES', dateOptions);
+    const dateStr = displayDateBase.toLocaleDateString('es-ES', dateOptions);
     const todayDisplay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
     const weatherData = {

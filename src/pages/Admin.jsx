@@ -1776,14 +1776,24 @@ const Admin = () => {
                                     </div>
 
                                     <div className="mt-6">
-                                        <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-widest">Fecha de Publicación</label>
-                                        <input
-                                            type="date"
-                                            className="w-full bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors"
-                                            value={coverPage.date || ''}
-                                            onChange={(e) => updateCoverPage(coverPage.image, e.target.value)}
-                                            style={{ colorScheme: 'dark' }}
-                                        />
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest">Fecha de Publicación</label>
+                                            <button
+                                                onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])}
+                                                className="text-[9px] font-black uppercase text-primary hover:underline"
+                                                type="button"
+                                            >Fijar Hoy</button>
+                                        </div>
+                                        <div className="relative">
+                                            <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                            <input
+                                                type="date"
+                                                className="w-full bg-[#11141b] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors"
+                                                value={coverPage.date || ''}
+                                                onChange={(e) => updateCoverPage(coverPage.image, e.target.value)}
+                                                style={{ colorScheme: 'dark' }}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="mt-6 pt-6 border-t border-white/5">
