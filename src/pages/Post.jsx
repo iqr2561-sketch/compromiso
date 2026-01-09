@@ -153,25 +153,82 @@ const Post = () => {
                             </div>
                         </div>
 
-                        {/* Data Fiscal */}
-                        <div className="flex justify-center py-8">
-                            <a href="https://www.afip.gob.ar/" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
-                                <img src="https://images.afip.gob.ar/images/datafiscal96x96.png" alt="Data Fiscal" className="w-24" />
-                            </a>
+                        {/* Data Fiscal Section Refactored */}
+                        <div className="flex flex-col items-center gap-4 py-12 border-b border-gray-100 dark:border-white/5">
+                            <div className="flex flex-col items-center gap-2">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">{footerSettings.column_4_title || 'DATAFISCAL'}</h4>
+                                {footerSettings.qr_image ? (
+                                    <a href="https://www.afip.gob.ar/" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-all hover:scale-105 duration-300">
+                                        <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-24 md:h-28 w-auto object-contain" />
+                                    </a>
+                                ) : (
+                                    <img src="https://images.afip.gob.ar/images/datafiscal96x96.png" alt="Data Fiscal" className="h-24 opacity-20 grayscale" />
+                                )}
+                            </div>
+                            <div className="flex flex-col items-center text-center gap-1">
+                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-tight max-w-md">{footerSettings.description}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{footerSettings.column_2_title || 'Propiedad Intelectual Registrada'}</p>
+                            </div>
                         </div>
 
                         {/* Comments Section */}
-                        <div className="bg-slate-50 dark:bg-white/5 p-8 rounded-[2rem]">
-                            <h3 className="text-2xl font-black mb-6">Comentarios</h3>
-                            <form className="flex flex-col gap-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <input type="text" placeholder="Tu Nombre" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm" />
-                                    <input type="email" placeholder="Email de contacto" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm" />
+                        <div className="bg-slate-50 dark:bg-white/5 p-8 md:p-12 rounded-[3.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5 mt-4">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
+                                    <MessageCircle size={24} />
                                 </div>
-                                <textarea placeholder="Tu comentario..." rows="4" className="px-5 py-3 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-bold text-sm resize-none"></textarea>
-                                <div className="flex items-center justify-between mt-2">
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">* Los comentarios requieren aprobación del editor.</p>
-                                    <button type="submit" className="px-8 py-3 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20">Enviar Comentario</button>
+                                <div>
+                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900 dark:text-white leading-none">Deja tu Comentario</h3>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tu opinión enriquece la noticia</p>
+                                </div>
+                            </div>
+
+                            <form className="flex flex-col gap-5" onSubmit={async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const commentData = {
+                                    newsId: post.id,
+                                    userName: formData.get('userName'),
+                                    email: formData.get('email'),
+                                    content: formData.get('content')
+                                };
+
+                                try {
+                                    const res = await fetch('/api/comments', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(commentData)
+                                    });
+                                    if (res.ok) {
+                                        alert("¡Gracias! Tu comentario ha sido enviado y está pendiente de aprobación.");
+                                        e.target.reset();
+                                    } else {
+                                        alert("Hubo un error al enviar el comentario.");
+                                    }
+                                } catch (err) {
+                                    console.error("Error submitting comment:", err);
+                                }
+                            }}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Nombre Completo</label>
+                                        <input required name="userName" type="text" placeholder="Tu Nombre" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Tu Email</label>
+                                        <input required name="email" type="email" placeholder="email@ejemplo.com" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Mensaje</label>
+                                    <textarea required name="content" placeholder="Escribe lo que piensas sobre esta noticia..." rows="5" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm resize-none"></textarea>
+                                </div>
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Los comentarios requieren revisión editorial.</p>
+                                    </div>
+                                    <button type="submit" className="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">Publicar Comentario</button>
                                 </div>
                             </form>
                         </div>
