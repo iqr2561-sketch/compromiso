@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded-Version 4.4");
+    console.log("Admin Component Loaded - Version 4.6.0");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
