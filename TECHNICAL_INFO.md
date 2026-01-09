@@ -179,6 +179,11 @@ Similar patrón CRUD para:
 - Videos
 - Scores
 
+#### Utilidades Globales
+- `showToast(message, type)`: Dispara notificaciones visuales (success, error)
+- `fetchNews(isAdmin)`: Recarga el listado de noticias
+- `updateFooterSettings(settings)`: Persistencia de configuración del pie de página
+
 ## Sistema de Calendario
 
 ### Lógica de Renderizado
@@ -450,4 +455,4 @@ Ninguna requerida actualmente.
 
 ---
 
-Ultima actualización: 09/01/2026 - v4.7 - Consolidación de Funcionalidades y Roadmap 2026
+Ultima actualización: 09/01/2026 - v4.8 - Refinamiento Estético, Toasts y Backend de Comentarios.

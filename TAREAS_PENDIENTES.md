@@ -13,6 +13,12 @@ Este documento rastrea la evolución del desarrollo y las tareas pendientes prio
 
 ## ✅ Historial de Cambios Recientes
 
+### v4.8 (09/01/2026 - Noche) - Refinamiento Estético y Backend
+- [x] **Footer Premium**: Rediseño estructural total (Logo | Legal | QR) con fondo `slate-50` y línea divisoria.
+- [x] **Notificaciones**: Sistema global de Toasts (éxito/error) reemplazando alerts nativos.
+- [x] **Comentarios**: Reparado error 500 en backend y habilitada carga desde noticia con alias de campos (newsId/post_id).
+- [x] **Legal**: Información de Director y Propiedad Intelectual sincronizada en Footer y Pie de Noticia.
+
 ### v4.7 (09/01/2026) - Consolidación de Funcionalidades
 - [x] **Gestión Admin**: Habilitada carga de Tapa, modificación de fecha y edición.
 - [x] **Usuarios**: Sistema de sesión y roles consolidado.
