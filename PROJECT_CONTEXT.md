@@ -26,9 +26,6 @@
 *   **Routing**: React Router DOM
 
 ## Recent Updates (Jan 9, 2026)
-*   **Premium Footer Refactor**: Complete redesign based on visual reference. Top section with Logo, vertical divider, and Legal Info (Data Fiscal/IP). Bottom section for Director information and social links.
-*   **Global Notification System**: Replaced native browser alerts with custom, premium Toast notifications (framer-motion) accessible via `showToast` in `NewsContext`.
-*   **Comments System Fix**: Full integration of backend and frontend. Fixed data mapping (newsId/post_id) and added validation/UX feedback.
 *   **Memoria Histórica**: Refined "¿Te Acordás, Dolores?" section on the homepage. Now features a full-width, horizontal layout with enhanced visual effects, glassmorphism icons, and responsive design.
 
 ## Recent Updates (Jan 5, 2026)
