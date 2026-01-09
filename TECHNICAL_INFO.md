@@ -450,4 +450,4 @@ Ninguna requerida actualmente.
 
 ---
 
-Ultima actualización: 07/01/2026 - v4.5 - Fix API Galería y Optimización de Imágenes
+Ultima actualización: 09/01/2026 - v4.6 - Refactor Memoria Histórica y Layout Premium

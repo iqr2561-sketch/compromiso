@@ -25,6 +25,10 @@ Este documento rastrea la evolución del desarrollo y las tareas pendientes prio
 ---
 
 ## ✅ Historial de Cambios Recientes
+### v4.6 (09/01/2026)
+- [x] **Memoria Histórica**: Rediseño completo de la sección "¿Te Acordás, Dolores?" a ancho completo y formato horizontal premium.
+- [x] **Layout Home**: Optimización de espaciado y estructura de la página principal.
+
 ### v4.4 (06/01/2026)
 - [x] **Drag & Drop Galería**: Reparado carga de imágenes en bloque.
 - [x] **UI Farmacias**: Eliminado placeholder "---" y textos de "Consultar".

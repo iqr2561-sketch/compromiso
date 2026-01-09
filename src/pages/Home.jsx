@@ -2,7 +2,6 @@ import React from 'react';
 import HeroSection from '../components/HeroSection';
 import FlashNews from '../components/FlashNews';
 import CategoryGrid from '../components/CategoryGrid';
-
 import Newsletter from '../components/Newsletter';
 import AdSection from '../components/AdSection';
 import { motion } from 'framer-motion';
@@ -52,42 +51,44 @@ const Home = () => {
             <AdSection type="premium" className="shadow-2xl shadow-primary/5" />
 
             <FlashNews />
-            {/* Grid of ads for diversity */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 flex flex-col gap-8">
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-8">
                     <CategoryGrid />
-
-
-                    <div className="relative group">
-                        <Link to="/categoria/¿Te Acordás Dolores?" className="block relative h-64 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20">
-                            <img
-                                src={footerSettings.te_acordas_bg}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter sepia-[0.3]"
-                                alt="Memoria Histórica"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
-                            <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 flex flex-row items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="size-10 rounded-xl bg-primary/20 backdrop-blur-xl border border-white/10 flex items-center justify-center">
-                                        <History className="text-primary" size={20} />
-                                    </div>
-                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] drop-shadow-lg">
-                                        Memoria Histórica
-                                    </span>
-                                </div>
-                                <div className="px-8 py-4 bg-white text-primary text-[10px] font-black uppercase tracking-widest rounded-2xl group-hover:bg-primary group-hover:text-white transition-all shadow-2xl flex items-center gap-3">
-                                    Explorar Archivo <ArrowUpRight size={18} />
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-
-
                 </div>
-                <div className="flex flex-col gap-6">
+                <div className="lg:col-span-4 flex flex-col gap-6">
                     <AdSection type="sidebar_1" className="h-52 w-full" />
                     <AdSection type="sidebar_2" className="h-52 w-full" />
                     <AdSection type="sidebar_3" className="h-52 w-full" />
+                </div>
+            </div>
+
+            {/* Full Width Historic Section - Breaking out of container */}
+            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-4 lg:px-8 group">
+                <div className="max-w-[1440px] mx-auto">
+                    <Link to="/categoria/¿Te Acordás Dolores?" className="block relative h-[300px] md:h-[450px] rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 bg-slate-900 group-hover:shadow-primary/20">
+                        <img
+                            src={footerSettings.te_acordas_bg}
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 filter sepia-[0.15] brightness-75"
+                            alt="Memoria Histórica"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-5">
+                                <div className="size-16 rounded-[2rem] bg-primary/20 backdrop-blur-3xl border border-white/20 flex items-center justify-center shadow-2xl">
+                                    <History className="text-primary" size={32} />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] md:text-[12px] font-black text-white uppercase tracking-[0.6em] drop-shadow-lg opacity-80">Archivo Compromiso</span>
+                                    <span className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg">¿Te Acordás, Dolores?</span>
+                                </div>
+                            </div>
+                            <div className="px-12 py-5 bg-white text-primary text-[11px] font-black uppercase tracking-widest rounded-[2rem] group-hover:bg-primary group-hover:text-white transition-all shadow-2xl flex items-center gap-4 hover:scale-[1.05] active:scale-[0.98]">
+                                Explorar Archivo <ArrowUpRight size={24} />
+                            </div>
+                        </div>
+                    </Link>
                 </div>
             </div>
 

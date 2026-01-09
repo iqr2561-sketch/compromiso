@@ -25,11 +25,15 @@
 *   **State**: Context API (`NewsContext`)
 *   **Routing**: React Router DOM
 
+## Recent Updates (Jan 9, 2026)
+*   **Memoria Histórica**: Refined "¿Te Acordás, Dolores?" section on the homepage. Now features a full-width, horizontal layout with enhanced visual effects, glassmorphism icons, and responsive design.
+
 ## Recent Updates (Jan 5, 2026)
 *   **Navbar Redesign**: Simplified simplified navigation items, removed Admin link to utility bar, optimized for small screens.
 *   **News Display**: Removed author/reading time, added official AFIP Data Fiscal, enabled internal content images.
 *   **Homepage**: Expanded "Hero" section to 10 items, "Flash News" to 15 items, added dynamic Ad slots.
 *   **Comments**: Added comment section with moderation queue.
+
 
 ## Pending Roadmap
 *   [ ] Backend integration (Supabase/Firebase) for persistent data.
