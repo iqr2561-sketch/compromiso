@@ -7,56 +7,57 @@ const Footer = () => {
 
     return (
         <footer className="max-w-[1440px] mx-auto px-4 lg:px-8 border-t border-gray-200 dark:border-white/10 pt-12 pb-8 mt-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
-                <div className="col-span-2 lg:col-span-2 flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                        {footerSettings.logo ? (
-                            <img src={footerSettings.logo} alt="Logo" className="h-10 object-contain" />
-                        ) : (
-                            <Newspaper className="text-primary" size={30} />
-                        )}
-                        <h2 className="text-xl font-black text-slate-900 dark:text-white">Compromiso Diario</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm max-w-xs leading-relaxed">
+            <div className="flex flex-col items-center text-center gap-6 mb-12">
+                <div className="flex flex-col items-center gap-4 max-w-2xl px-4">
+                    {footerSettings.logo ? (
+                        <img src={footerSettings.logo} alt="Logo" className="h-16 w-auto object-contain mx-auto" />
+                    ) : (
+                        <Newspaper className="text-primary mx-auto" size={40} />
+                    )}
+                    <p className="text-slate-500 text-sm leading-loose font-medium">
                         {footerSettings.description}
                     </p>
 
-                    {footerSettings.qr_image && (
-                        <div className="mt-2">
-                            <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-20 w-20 object-contain rounded-lg bg-white p-1 shadow-sm border border-gray-100" />
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Data Fiscal</p>
-                        </div>
-                    )}
-
-                    <div className="flex gap-4 mt-2">
-                        {footerSettings.facebook_url !== '#' && <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-colors"><Globe size={20} /></a>}
-                        {footerSettings.instagram_url !== '#' && <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-colors"><Instagram size={20} /></a>}
-                        {footerSettings.youtube_url !== '#' && <a href={footerSettings.youtube_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-colors"><Youtube size={20} /></a>}
-                        {footerSettings.twitter_url !== '#' && <a href={footerSettings.twitter_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-colors"><Twitter size={20} /></a>}
+                    <div className="flex gap-6 mt-2 justify-center">
+                        {footerSettings.facebook_url !== '#' && <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Globe size={20} /></a>}
+                        {footerSettings.instagram_url !== '#' && <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Instagram size={20} /></a>}
+                        {footerSettings.youtube_url !== '#' && <a href={footerSettings.youtube_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Youtube size={20} /></a>}
+                        {footerSettings.twitter_url !== '#' && <a href={footerSettings.twitter_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Twitter size={20} /></a>}
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                    <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_2_title}</h4>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Actualidad</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Tecnología</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Deportes</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Opinión</a>
-                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full mt-8 border-t border-gray-100 dark:border-white/5 pt-12">
+                    <div className="flex flex-col gap-3 items-center md:items-start">
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_2_title}</h4>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Actualidad</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Tecnología</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Deportes</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Opinión</a>
+                    </div>
 
-                <div className="flex flex-col gap-3">
-                    <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_3_title}</h4>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Nosotros</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Carreras</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Publicidad</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Contacto</a>
-                </div>
+                    <div className="flex flex-col gap-3 items-center md:items-start">
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_3_title}</h4>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Nosotros</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Carreras</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Publicidad</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Contacto</a>
+                    </div>
 
-                <div className="flex flex-col gap-3">
-                    <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_4_title}</h4>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Privacidad</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Términos</a>
-                    <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Cookies</a>
+                    <div className="flex flex-col gap-3 items-center md:items-start">
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_4_title}</h4>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Privacidad</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Términos</a>
+                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Cookies</a>
+                    </div>
+
+                    <div className="flex flex-col gap-3 items-center md:items-center">
+                        {footerSettings.qr_image && (
+                            <div className="flex flex-col items-center">
+                                <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-16 w-16 object-contain rounded-lg bg-white p-1 shadow-sm border border-gray-100" />
+                                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-2 italic">Data Fiscal</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

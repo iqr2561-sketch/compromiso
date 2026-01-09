@@ -1568,36 +1568,37 @@ const Admin = () => {
                             </div>
 
                             {/* Gallery Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6">
                                 {imageGallery.map((img, idx) => (
-                                    <div key={idx} className="aspect-square bg-white dark:bg-[#11141b] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden relative group">
-                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+                                    <div key={idx} className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden relative group shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
+                                        <div className="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-black/40">
+                                            <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
 
-                                        {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigator.clipboard.writeText(img);
-                                                    alert('URL copiada al portapapeles');
-                                                }}
-                                                className="px-3 py-1.5 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-all w-full"
-                                            >
-                                                Copiar URL
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
-                                                }}
-                                                className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border border-red-500/50"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                            {/* Overlay Actions */}
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 pointer-events-none group-hover:pointer-events-auto">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigator.clipboard.writeText(img);
+                                                        showToast("URL copiada", "success");
+                                                    }}
+                                                    className="w-full px-3 py-2 bg-white text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+                                                >
+                                                    Copiar URL
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
+                                                    }}
+                                                    className="p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75 shadow-lg"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </div>
-
-                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform delay-75">
-                                            <p className="text-[8px] text-slate-400 font-mono truncate">{img.length > 30 ? 'Imagen ' + (idx + 1) : img}</p>
+                                        <div className="p-3 bg-white dark:bg-[#11141b] border-t border-gray-100 dark:border-white/5 mt-auto">
+                                            <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 truncate uppercase tracking-tighter">Imagen {idx + 1}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -1920,7 +1921,7 @@ const Admin = () => {
                                 </button>
                             </div>
 
-                            <div className="p-8 overflow-y-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="p-8 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                                 {imageGallery.map((img, idx) => (
                                     <div
                                         key={idx}
@@ -1938,11 +1939,16 @@ const Admin = () => {
                                             }
                                             setShowGallery(false);
                                         }}
-                                        className="aspect-square rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative"
+                                        className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col"
                                     >
-                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
-                                        <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform">Seleccionar</div>
+                                        <div className="aspect-square w-full relative">
+                                            <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+                                            <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
+                                            </div>
+                                        </div>
+                                        <div className="p-3 bg-black/40 mt-auto border-t border-white/5">
+                                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest truncate">Img {idx + 1}</p>
                                         </div>
                                     </div>
                                 ))}

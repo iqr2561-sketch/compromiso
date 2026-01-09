@@ -135,9 +135,9 @@ const HeroSection = () => {
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News - Four cards */}
+                {/* Lateral News - First two cards */}
                 <div className="flex flex-col gap-4">
-                    {sidebarNews.slice(0, 4).map((item, idx) => (
+                    {sidebarNews.slice(0, 2).map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
@@ -167,7 +167,7 @@ const HeroSection = () => {
                     ))}
                 </div>
 
-                {/* Cover Page Section - Single Top-Aligned Image */}
+                {/* Cover Page Section - Compact and Centered */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -177,12 +177,12 @@ const HeroSection = () => {
                     <Link to="/tapa-de-hoy" className="flex flex-col h-full">
                         <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <LayoutDashboard size={16} className="text-primary" />
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Tapa del Día</h4>
+                                <LayoutDashboard size={14} className="text-primary" />
+                                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Impreso del Día</h4>
                             </div>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
                         </div>
-                        <div className="relative w-full h-[320px] bg-slate-100 dark:bg-black/20 overflow-hidden">
+                        <div className="relative w-full h-[260px] bg-slate-100 dark:bg-black/20 overflow-hidden">
                             <img
                                 src={coverPage.image}
                                 className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
@@ -196,6 +196,38 @@ const HeroSection = () => {
                         </div>
                     </Link>
                 </motion.div>
+
+                {/* Lateral News - Remaining cards */}
+                <div className="flex flex-col gap-4">
+                    {sidebarNews.slice(2, 4).map((item, idx) => (
+                        <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 * (idx + 3) }}
+                            className="relative h-40 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                        >
+                            <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
+                                <div
+                                    className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
+                                    style={{ backgroundImage: `url(${item.image})` }}
+                                ></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                                <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-primary text-[10px] font-bold uppercase tracking-widest">
+                                            {item.category}
+                                        </span>
+                                        <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors leading-tight">
+                                            {item.title}
+                                        </h3>
+                                        <span className="text-[10px] text-gray-500 font-medium">{item.date}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section >
     );
