@@ -1456,12 +1456,12 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-col gap-2">
-                                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Descripción del Medio</label>
+                                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Información de Director / Propietario (Línea Inferior)</label>
                                             <textarea
                                                 className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all h-24 resize-none"
                                                 value={footerSettings.description || ''}
                                                 onChange={e => updateFooterSettings({ description: e.target.value })}
-                                                placeholder="Breve reseña sobre el diario..."
+                                                placeholder="Ej: Director - Propietario: Pedro Guillermo Sabalette..."
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2">
@@ -1482,19 +1482,19 @@ const Admin = () => {
                                         <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Títulos de Columnas</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Título Propiedad Intelectual</label>
-                                                <input
-                                                    className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
-                                                    value={footerSettings.column_2_title || ''}
-                                                    onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Título AFIP - Data Fiscal</label>
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Título Principal Legal (Ej: DATAFISCAL)</label>
                                                 <input
                                                     className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
                                                     value={footerSettings.column_4_title || ''}
                                                     onChange={e => updateFooterSettings({ column_4_title: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Subtítulo (Ej: Propiedad Intelectual)</label>
+                                                <input
+                                                    className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-primary transition-all"
+                                                    value={footerSettings.column_2_title || ''}
+                                                    onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
                                                 />
                                             </div>
                                         </div>
