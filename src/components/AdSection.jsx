@@ -9,6 +9,11 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
     // Find active ad of specific type from context, or fallback to first one of that type, or default info
     const dynamicAd = ads.find(a => a.type === type && a.active);
 
+    // Debug logging
+    if (type.startsWith('sidebar') || type.startsWith('footer')) {
+        console.log(`AdSection [${type}]: Found dynamicAd?`, !!dynamicAd, 'Total ads:', ads.length);
+    }
+
     const defaultAds = {
         horizontal: {
             title: 'ESPACIO PUBLICITARIO',

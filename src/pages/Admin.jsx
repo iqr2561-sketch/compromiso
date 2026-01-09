@@ -1282,25 +1282,82 @@ const Admin = () => {
                             {/* Sidebar Ads */}
                             <div>
                                 <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
-                                    <Grid size={14} className="text-accent-pink" /> Publicidad Cuadrada (Lateral)
+                                    <Grid size={14} className="text-accent-pink" /> Barra Lateral (3 Espacios)
                                 </h3>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                    {ads.filter(a => a.type === 'square').map(ad => (
-                                        <div key={ad.id} className="aspect-square bg-[#11141b] group relative overflow-hidden rounded-2xl border border-white/10 hover:border-accent-pink/50 transition-colors">
-                                            <img src={ad.image} className="w-full h-full object-cover opacity-60" alt="" />
-                                            <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3">
-                                                <span className="text-[9px] font-black uppercase text-white tracking-widest">{ad.active ? '🟢' : '🔴'}</span>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {[1, 2, 3].map(num => {
+                                        const adType = `sidebar_${num}`;
+                                        const existingAd = ads.find(a => a.type === adType);
+                                        return (
+                                            <div key={num} className="relative group">
+                                                <div className="aspect-square bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-accent-pink/50">
+                                                    {existingAd ? (
+                                                        <>
+                                                            {existingAd.image ? (
+                                                                <img src={existingAd.image} className="w-full h-full object-cover" alt="" />
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-2 text-slate-500">
+                                                                    <Plus size={24} />
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest">Sin Imagen</span>
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                                <button onClick={() => { if (confirm('¿Eliminar?')) deleteAd(existingAd.id); }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
+                                                                <button onClick={() => { setEditingId(existingAd.id); setFormData({ ...existingAd }); setIsAdding(true); }} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={16} /></button>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <div className="text-center p-4">
+                                                            <span className="block text-2xl font-black text-white/20 mb-2">{num}</span>
+                                                            <button onClick={() => { setFormData({ ...formData, type: adType, active: true }); setIsAdding(true); }} className="px-3 py-1 bg-accent-pink/20 text-accent-pink rounded-lg text-[9px] font-black uppercase hover:bg-accent-pink hover:text-white transition-colors">Configurar</button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Espacio {num}</p>
                                             </div>
-                                            <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
-                                                <button onClick={() => handleEdit(ad)} className="p-2 bg-white text-black rounded-lg"><Edit3 size={16} /></button>
-                                                <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500 text-white rounded-lg"><Trash2 size={16} /></button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Footer Ads */}
+                            <div>
+                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                                    <Layers size={14} className="text-emerald-500" /> Pie de Página (Largo / Logos)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {[1, 2].map(num => {
+                                        const adType = `footer_${num}`;
+                                        const existingAd = ads.find(a => a.type === adType);
+                                        return (
+                                            <div key={num} className="relative group">
+                                                <div className="h-24 bg-[#1a1d26] rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden transition-colors hover:border-emerald-500/50">
+                                                    {existingAd ? (
+                                                        <>
+                                                            {existingAd.image ? (
+                                                                <img src={existingAd.image} className="w-full h-full object-contain" alt="" />
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-2 text-slate-500">
+                                                                    <Plus size={20} />
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest">Sin Imagen</span>
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                                <button onClick={() => { if (confirm('¿Eliminar?')) deleteAd(existingAd.id); }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
+                                                                <button onClick={() => { setEditingId(existingAd.id); setFormData({ ...existingAd }); setIsAdding(true); }} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={16} /></button>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <div className="text-center">
+                                                            <span className="block text-md font-black text-white/20">F{num}</span>
+                                                            <button onClick={() => { setFormData({ ...formData, type: adType, active: true }); setIsAdding(true); }} className="mt-1 px-3 py-1 bg-emerald-500/20 text-emerald-500 rounded-lg text-[9px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-colors">Configurar</button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <p className="text-center text-[9px] font-bold text-slate-500 mt-2 uppercase tracking-widest">{num === 1 ? 'Lado Izquierdo' : 'Lado Derecho'}</p>
                                             </div>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => { setFormData({ ...formData, type: 'square', active: true }); setIsAdding(true); }} className="aspect-square rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all text-slate-500 hover:text-white">
-                                        <Plus size={24} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
-                                    </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
