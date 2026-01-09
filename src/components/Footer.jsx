@@ -7,57 +7,57 @@ const Footer = () => {
 
     return (
         <footer className="max-w-[1440px] mx-auto px-4 lg:px-8 border-t border-gray-200 dark:border-white/10 pt-12 pb-8 mt-12">
-            <div className="flex flex-col items-center text-center gap-6 mb-12">
-                <div className="flex flex-col items-center gap-4 max-w-2xl px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+                {/* Branding Section - Spans 2 columns on large screens */}
+                <div className="lg:col-span-2 flex flex-col gap-6">
                     {footerSettings.logo ? (
-                        <img src={footerSettings.logo} alt="Logo" className="h-16 w-auto object-contain mx-auto" />
+                        <img src={footerSettings.logo} alt="Logo" className="h-28 w-auto object-contain self-start" />
                     ) : (
-                        <Newspaper className="text-primary mx-auto" size={40} />
+                        <Newspaper className="text-primary" size={60} />
                     )}
-                    <p className="text-slate-500 text-sm leading-loose font-medium">
+                    <p className="text-slate-500 text-sm leading-relaxed font-semibold max-w-lg">
                         {footerSettings.description}
                     </p>
+                </div>
 
-                    <div className="flex gap-6 mt-2 justify-center">
-                        {footerSettings.facebook_url !== '#' && <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Globe size={20} /></a>}
-                        {footerSettings.instagram_url !== '#' && <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Instagram size={20} /></a>}
-                        {footerSettings.youtube_url !== '#' && <a href={footerSettings.youtube_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Youtube size={20} /></a>}
-                        {footerSettings.twitter_url !== '#' && <a href={footerSettings.twitter_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary transition-all hover:scale-110"><Twitter size={20} /></a>}
+                {/* Empty spacer to push content or for future use */}
+                <div className="hidden lg:block"></div>
+
+                {/* Social Media Section */}
+                <div className="flex flex-col gap-6">
+                    <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic border-b border-gray-100 dark:border-white/5 pb-2">CONECTATE</h4>
+                    <div className="flex flex-col gap-4">
+                        {footerSettings.facebook_url !== '#' && (
+                            <a href={footerSettings.facebook_url} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group">
+                                <div className="p-2 bg-slate-50 dark:bg-white/5 rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                    <Globe size={18} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Facebook</span>
+                            </a>
+                        )}
+                        {footerSettings.instagram_url !== '#' && (
+                            <a href={footerSettings.instagram_url} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group">
+                                <div className="p-2 bg-slate-50 dark:bg-white/5 rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                    <Instagram size={18} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Instagram</span>
+                            </a>
+                        )}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full mt-8 border-t border-gray-100 dark:border-white/5 pt-12">
-                    <div className="flex flex-col gap-3 items-center md:items-start">
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_2_title}</h4>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Actualidad</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Tecnología</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Deportes</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Opinión</a>
-                    </div>
-
-                    <div className="flex flex-col gap-3 items-center md:items-start">
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_3_title}</h4>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Nosotros</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Carreras</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Publicidad</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Contacto</a>
-                    </div>
-
-                    <div className="flex flex-col gap-3 items-center md:items-start">
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{footerSettings.column_4_title}</h4>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Privacidad</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Términos</a>
-                        <a href="#" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Cookies</a>
-                    </div>
-
-                    <div className="flex flex-col gap-3 items-center md:items-center">
-                        {footerSettings.qr_image && (
-                            <div className="flex flex-col items-center">
-                                <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-16 w-16 object-contain rounded-lg bg-white p-1 shadow-sm border border-gray-100" />
-                                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-2 italic">Data Fiscal</p>
+                {/* Fiscal/QR Section */}
+                <div className="flex flex-col items-center md:items-end">
+                    {footerSettings.qr_image && (
+                        <div className="flex flex-col items-center md:items-end gap-3">
+                            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter italic border-b border-gray-100 dark:border-white/5 pb-2 w-full text-center md:text-right">LEGAL</h4>
+                            <div className="relative group">
+                                <img src={footerSettings.qr_image} alt="Data Fiscal" className="h-24 w-24 object-contain rounded-xl bg-white p-1 hover:scale-105 transition-transform shadow-xl border border-gray-100" />
+                                <div className="absolute inset-0 rounded-xl bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                             </div>
-                        )}
-                    </div>
+                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Data Fiscal</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
