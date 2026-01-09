@@ -88,20 +88,17 @@ const Home = () => {
 
 
                 </div>
-                <div className="flex flex-col gap-8">
-                    <AdSection type="square" className="h-[500px]" />
-
-
-                    <div className="bg-slate-900 p-1 rounded-[3rem] overflow-hidden group">
-                        <div className="bg-[#111318] p-8 rounded-[2.8rem] flex flex-col gap-4 border border-white/5">
-                            <h5 className="text-white font-black uppercase tracking-[0.2em] text-[10px]">Patrocinado por</h5>
-                            <img src="https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=400" className="w-full h-32 object-cover rounded-2xl grayscale hover:grayscale-0 transition-all cursor-pointer" alt="sponsor" />
-                        </div>
-                    </div>
+                <div className="flex flex-col gap-6">
+                    <AdSection type="sidebar_1" className="min-h-[300px] w-full" />
+                    <AdSection type="sidebar_2" className="min-h-[200px] w-full" />
+                    <AdSection type="sidebar_3" className="min-h-[200px] w-full" />
                 </div>
             </div>
 
-            <AdSection type="horizontal" className="bg-slate-900 dark:bg-surface-darker border-none h-40" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <AdSection type="footer_1" className="bg-slate-900 dark:bg-surface-darker border-none h-40" />
+                <AdSection type="footer_2" className="bg-slate-900 dark:bg-surface-darker border-none h-40" />
+            </div>
 
             <Newsletter />
 

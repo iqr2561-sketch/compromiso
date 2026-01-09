@@ -621,11 +621,16 @@ const Admin = () => {
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Tipo de Anuncio</label>
                                                 <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                                                     <option value="premium">Premium (Header)</option>
-                                                    <option value="horizontal">Horizontal (Body)</option>
-                                                    <option value="square">Cuadrada (Sidebar)</option>
+                                                    <option value="horizontal">Horizontal Legacy</option>
+                                                    <option value="square">Cuadrada Legacy</option>
                                                     <option value="hero_1">Portada Slot 1</option>
                                                     <option value="hero_2">Portada Slot 2</option>
                                                     <option value="hero_3">Portada Slot 3</option>
+                                                    <option value="sidebar_1">Lateral Superior (Edea)</option>
+                                                    <option value="sidebar_2">Lateral Medio</option>
+                                                    <option value="sidebar_3">Lateral Inferior</option>
+                                                    <option value="footer_1">Pie de Página Izq (MHM)</option>
+                                                    <option value="footer_2">Pie de Página Der</option>
                                                 </select>
                                             </div>
 
