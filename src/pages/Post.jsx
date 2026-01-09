@@ -10,7 +10,7 @@ import AdSection from '../components/AdSection';
 
 const Post = () => {
     const { id } = useParams();
-    const { news, footerSettings, showToast } = useNews();
+    const { news, footerSettings, showToast, comments } = useNews();
     const post = news.find(n => n.id === parseInt(id));
 
     useEffect(() => {
@@ -171,7 +171,49 @@ const Post = () => {
                             </div>
                         </div>
 
-                        {/* Comments Section */}
+                        {/* Approved Comments List */}
+                        {comments && comments.filter(c => c.post_id === post.id && c.status === 'approved').length > 0 && (
+                            <div className="flex flex-col gap-6 mt-4">
+                                <div className="flex items-center gap-3 ml-2">
+                                    <MessageCircle size={18} className="text-primary" />
+                                    <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Comentarios de Lectores ({comments.filter(c => c.post_id === post.id && c.status === 'approved').length})</h4>
+                                </div>
+                                <div className="space-y-4">
+                                    {comments.filter(c => c.post_id === post.id && c.status === 'approved').map((comment, index) => (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.1 }}
+                                            key={comment.id}
+                                            className="p-6 md:p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow"
+                                        >
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="size-10 rounded-2xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-primary font-black uppercase text-sm border border-gray-100 dark:border-white/10">
+                                                            {comment.name.charAt(0)}
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-black text-slate-900 dark:text-white leading-none">{comment.name}</span>
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase mt-1">Lector Verificado</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                        <Clock size={12} />
+                                                        <span className="text-[10px] font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic border-l-2 border-primary/20 pl-4 py-1">
+                                                    "{comment.comment}"
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Comments Form Section */}
                         <div className="bg-slate-50 dark:bg-white/5 p-8 md:p-12 rounded-[3.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5 mt-4">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
