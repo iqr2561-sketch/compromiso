@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, History
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
