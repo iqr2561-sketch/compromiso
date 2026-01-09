@@ -73,13 +73,7 @@ const Home = () => {
                                         Memoria Histórica
                                     </span>
                                 </div>
-                                <h2 className="text-3xl md:text-5xl font-black text-white italic tracking-tighter leading-none">
-                                    ¿Te Acordás, <span className="text-primary">Dolores?</span>
-                                </h2>
-                                <p className="text-gray-300 max-w-md font-medium text-sm md:text-base line-clamp-2">
-                                    Un viaje visual por la historia, los rostros y los momentos que forjaron nuestra identidad. Redescubre el pasado de nuestra ciudad.
-                                </p>
-                                <div className="mt-4 px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl group-hover:bg-white group-hover:text-primary transition-all shadow-lg flex items-center gap-2">
+                                <div className="mt-auto px-6 py-3 bg-white text-primary text-xs font-black uppercase tracking-widest rounded-xl group-hover:bg-primary group-hover:text-white transition-all shadow-lg flex items-center gap-2">
                                     Explorar Archivo <ArrowUpRight size={16} />
                                 </div>
                             </div>
