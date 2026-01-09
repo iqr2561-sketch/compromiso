@@ -182,7 +182,7 @@ const HeroSection = () => {
                             </div>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
                         </div>
-                        <div className="relative w-full h-[500px] bg-slate-200 dark:bg-black/20 overflow-hidden">
+                        <div className="relative w-full h-[755px] bg-slate-200 dark:bg-black/20 overflow-hidden">
                             <img
                                 src={coverPage.image}
                                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
