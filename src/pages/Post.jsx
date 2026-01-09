@@ -10,7 +10,7 @@ import AdSection from '../components/AdSection';
 
 const Post = () => {
     const { id } = useParams();
-    const { news, footerSettings, showToast } = useNews();
+    const { news, footerSettings } = useNews();
     const post = news.find(n => n.id === parseInt(id));
 
     useEffect(() => {
@@ -200,14 +200,13 @@ const Post = () => {
                                         body: JSON.stringify(commentData)
                                     });
                                     if (res.ok) {
-                                        showToast("¡Gracias! Tu comentario ha sido enviado y está pendiente de aprobación.", "success");
+                                        alert("¡Gracias! Tu comentario ha sido enviado y está pendiente de aprobación.");
                                         e.target.reset();
                                     } else {
-                                        showToast("Hubo un error al enviar el comentario.", "error");
+                                        alert("Hubo un error al enviar el comentario.");
                                     }
                                 } catch (err) {
                                     console.error("Error submitting comment:", err);
-                                    showToast("Error de conexión al enviar el comentario.", "error");
                                 }
                             }}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

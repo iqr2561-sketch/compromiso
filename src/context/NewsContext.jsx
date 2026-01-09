@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const NewsContext = createContext();
 
@@ -62,12 +60,6 @@ export const NewsProvider = ({ children }) => {
         te_acordas_bg: 'https://images.unsplash.com/photo-1544253109-c88ce53cc9d0?auto=format&fit=crop&q=80&w=1600',
         copyright: `© ${new Date().getFullYear()} Diario Digital Inc. Todos los derechos reservados.`
     });
-    const [toast, setToast] = useState(null);
-
-    const showToast = (message, type = 'success') => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 4000);
-    };
 
     // Initial fetch
     useEffect(() => {
@@ -618,34 +610,9 @@ export const NewsProvider = ({ children }) => {
             aiConfig, updateAiConfig,
             footerSettings, updateFooterSettings,
             fetchNews,
-            showToast,
             reorderCategories: setCategories
         }}>
             {children}
-
-            {/* Global Toast Notification */}
-            <AnimatePresence>
-                {toast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[3000] px-6 py-4 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/10 shadow-2xl flex items-center gap-4 min-w-[320px]"
-                    >
-                        <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${toast.type === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                            }`}>
-                            {toast.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
-                        </div>
-                        <p className="text-sm font-bold text-white pr-8">{toast.message}</p>
-                        <button
-                            onClick={() => setToast(null)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
-                        >
-                            <X size={16} />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </NewsContext.Provider>
     );
 };
