@@ -57,6 +57,31 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
             button: 'Contactar',
             link: '#'
         },
+        sidebar_1: {
+            title: 'ANUNCIATE AQUÍ',
+            image: '',
+            link: '#'
+        },
+        sidebar_2: {
+            title: 'ANUNCIATE AQUÍ',
+            image: '',
+            link: '#'
+        },
+        sidebar_3: {
+            title: 'ANUNCIATE AQUÍ',
+            image: '',
+            link: '#'
+        },
+        footer_1: {
+            title: 'ANUNCIATE AQUÍ',
+            image: '',
+            link: '#'
+        },
+        footer_2: {
+            title: 'ANUNCIATE AQUÍ',
+            image: '',
+            link: '#'
+        },
         // Generic fallback for other types
         default: {
             title: 'ANUNCIATE AQUÍ',
