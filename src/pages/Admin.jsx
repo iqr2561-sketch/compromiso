@@ -1495,16 +1495,26 @@ const Admin = () => {
                                                                     <div className="flex items-center gap-4">
                                                                         {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
                                                                         <div className="flex flex-col">
-                                                                            <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">{item.title || item.name || item.text || 'Sin título'}</span>
+                                                                            <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                                                                                {activeTab === 'ads' ? (
+                                                                                    item.type === 'premium' ? 'Publicidad Superior (Logo)' :
+                                                                                        item.type === 'sidebar_1' ? 'Barra Lateral 1 (Arriba)' :
+                                                                                            item.type === 'sidebar_2' ? 'Barra Lateral 2 (Medio)' :
+                                                                                                item.type === 'sidebar_3' ? 'Barra Lateral 3 (Abajo)' :
+                                                                                                    item.type === 'footer_1' ? 'Pie de Página (Izquierda)' :
+                                                                                                        item.type === 'footer_2' ? 'Pie de Página (Derecha)' :
+                                                                                                            item.type === 'hero_1' ? 'Slot Portada 1' :
+                                                                                                                item.type === 'hero_2' ? 'Slot Portada 2' :
+                                                                                                                    item.type === 'hero_3' ? 'Slot Portada 3' :
+                                                                                                                        `Anuncio ${item.type}`
+                                                                                ) : (item.title || item.name || item.text || 'Sin título')}
+                                                                            </span>
                                                                             <div className="flex gap-2 items-center mt-1">
-                                                                                <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">{item.category || item.tag || 'Editorial'}</span>
-                                                                                {item.isFlash && <span className="text-[7px] bg-accent-pink/20 text-accent-pink px-1.5 py-0.5 rounded font-black tracking-widest">FLASH</span>}
-                                                                                {item.isHero && <span className="text-[7px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded font-black tracking-widest">PORTADA</span>}
-                                                                                {item.status === 'scheduled' && (
-                                                                                    <span className="text-[7px] bg-amber-500/20 text-amber-600 px-1.5 py-0.5 rounded font-black tracking-widest flex items-center gap-1">
-                                                                                        <Clock size={8} /> PROGRAMADA
-                                                                                    </span>
-                                                                                )}
+                                                                                <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">
+                                                                                    {activeTab === 'ads' ? `Ubicación: ${item.type}` : (item.category || item.tag || 'Editorial')}
+                                                                                </span>
+                                                                                {item.active === false && <span className="text-[7px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Inactivo</span>}
+                                                                                {item.active === true && <span className="text-[7px] bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Activo</span>}
                                                                             </div>
                                                                         </div>
                                                                     </div>
