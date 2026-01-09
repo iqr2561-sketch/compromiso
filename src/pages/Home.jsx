@@ -66,15 +66,17 @@ const Home = () => {
                                 alt="Memoria Histórica"
                             />
                             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
-                            <div className="absolute inset-0 p-10 flex flex-col justify-center items-start gap-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <History className="text-primary" size={24} />
-                                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-black text-white uppercase tracking-[0.2em]">
+                            <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 flex flex-row items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-10 rounded-xl bg-primary/20 backdrop-blur-xl border border-white/10 flex items-center justify-center">
+                                        <History className="text-primary" size={20} />
+                                    </div>
+                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] drop-shadow-lg">
                                         Memoria Histórica
                                     </span>
                                 </div>
-                                <div className="mt-auto px-6 py-3 bg-white text-primary text-xs font-black uppercase tracking-widest rounded-xl group-hover:bg-primary group-hover:text-white transition-all shadow-lg flex items-center gap-2">
-                                    Explorar Archivo <ArrowUpRight size={16} />
+                                <div className="px-8 py-4 bg-white text-primary text-[10px] font-black uppercase tracking-widest rounded-2xl group-hover:bg-primary group-hover:text-white transition-all shadow-2xl flex items-center gap-3">
+                                    Explorar Archivo <ArrowUpRight size={18} />
                                 </div>
                             </div>
                         </Link>
