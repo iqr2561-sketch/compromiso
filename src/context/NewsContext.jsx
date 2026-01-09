@@ -46,6 +46,19 @@ export const NewsProvider = ({ children }) => {
     const [pharmacies, setPharmacies] = useState([]);
     const [pharmacyDuty, setPharmacyDuty] = useState([]);
     const [comments, setComments] = useState([]);
+    const [footerSettings, setFooterSettings] = useState({
+        logo: '',
+        description: 'Periodismo moderno para la generación digital. Rápido, veraz y visualmente impactante.',
+        qr_image: '',
+        column_2_title: 'Secciones',
+        column_3_title: 'Compañía',
+        column_4_title: 'Legal',
+        facebook_url: '#',
+        instagram_url: '#',
+        youtube_url: '#',
+        twitter_url: '#',
+        copyright: `© ${new Date().getFullYear()} Diario Digital Inc. Todos los derechos reservados.`
+    });
 
     // Initial fetch
     useEffect(() => {
@@ -109,6 +122,16 @@ export const NewsProvider = ({ children }) => {
                 if (data.ai_model) {
                     setAiConfig(prev => ({ ...prev, model: data.ai_model }));
                 }
+
+                // Footer settings
+                const footer = { ...footerSettings };
+                Object.keys(data).forEach(key => {
+                    if (key.startsWith('footer_')) {
+                        const footerKey = key.replace('footer_', '');
+                        footer[footerKey] = data[key];
+                    }
+                });
+                setFooterSettings(footer);
 
                 // Trigger daily increment check on load
                 fetch('/api/cron-increment');
@@ -545,6 +568,30 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
+    const updateFooterSettings = async (settings) => {
+        try {
+            console.log('NewsContext: updateFooterSettings called with:', settings);
+            const promises = Object.entries(settings).map(([key, value]) => {
+                return fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: `footer_${key}`, value })
+                });
+            });
+
+            const results = await Promise.all(promises);
+            const allOk = results.every(res => res.ok);
+
+            if (allOk) {
+                setFooterSettings(prev => ({ ...prev, ...settings }));
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to update footer settings:', err);
+        }
+        return false;
+    };
+
     return (
         <NewsContext.Provider value={{
             news, addNews, deleteNews, updateNews, loading,
@@ -560,6 +607,7 @@ export const NewsProvider = ({ children }) => {
             pharmacyDuty, setDuty,
             comments, deleteComment, updateCommentStatus,
             aiConfig, updateAiConfig,
+            footerSettings, updateFooterSettings,
             fetchNews,
             reorderCategories: setCategories
         }}>
