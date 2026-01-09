@@ -357,449 +357,468 @@ const Admin = () => {
 
                 <AnimatePresence mode="wait">
                     {isAdding && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-white dark:bg-[#11141b] p-8 rounded-2xl border border-gray-200 dark:border-white/5 mb-10 shadow-2xl overflow-hidden">
-                            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
-                                {activeTab === 'news' && (
-                                    <div className="flex flex-col gap-8">
-                                        <div className="flex items-center justify-between bg-white dark:bg-[#0a0c10] p-4 rounded-2xl border border-gray-200 dark:border-white/5">
-                                            <div className="flex items-center gap-4">
-                                                <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Editor</button>
-                                                <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Previsualizar</button>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/60 backdrop-blur-md"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                className="bg-white dark:bg-[#11141b] w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-2xl relative custom-scrollbar"
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => resetForms()}
+                                    className="absolute top-8 right-8 p-3 bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-accent-pink rounded-full transition-all z-10"
+                                >
+                                    <X size={24} />
+                                </button>
+                                <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
+                                    {activeTab === 'news' && (
+                                        <div className="flex flex-col gap-8">
+                                            <div className="flex items-center justify-between bg-white dark:bg-[#0a0c10] p-4 rounded-2xl border border-gray-200 dark:border-white/5">
+                                                <div className="flex items-center gap-4">
+                                                    <button type="button" onClick={() => setPreviewMode(false)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Editor</button>
+                                                    <button type="button" onClick={() => setPreviewMode(true)} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${previewMode ? 'bg-primary text-white shadow-lg' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>Previsualizar</button>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {aiConfig.enabled && previewMode && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {/* TODO: Implement Enhance Style */ alert("Mejora de estilo próximamente") }}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-500/20"
+                                                        >
+                                                            <Sparkles size={14} /> Mejorar Estilo
+                                                        </button>
+                                                    )}
+                                                    {aiConfig.enabled && !previewMode && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowAiModal(true)}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20"
+                                                        >
+                                                            <Cpu size={14} /> Redactar con IA
+                                                        </button>
+                                                    )}
+                                                    <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest px-4">Estado: Borrador</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                {aiConfig.enabled && previewMode && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {/* TODO: Implement Enhance Style */ alert("Mejora de estilo próximamente") }}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-500/20"
-                                                    >
-                                                        <Sparkles size={14} /> Mejorar Estilo
-                                                    </button>
-                                                )}
-                                                {aiConfig.enabled && !previewMode && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowAiModal(true)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20"
-                                                    >
-                                                        <Cpu size={14} /> Redactar con IA
-                                                    </button>
-                                                )}
-                                                <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest px-4">Estado: Borrador</span>
-                                            </div>
-                                        </div>
 
-                                        {!previewMode ? (
-                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                                <div className="flex flex-col gap-6">
-                                                    <div className="flex flex-col gap-2">
-                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Cabecera de Noticia</label>
-                                                        <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
+                                            {!previewMode ? (
+                                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                                    <div className="flex flex-col gap-6">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Cabecera de Noticia</label>
+                                                            <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="Título impactante..." required />
+                                                        </div>
+
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div className="flex flex-col gap-2">
+                                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
+                                                                <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                                                                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex flex-col gap-2">
+                                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
+                                                                <input type="date" className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: isDarkMode ? 'dark' : 'light' }} />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de Portada</label>
+                                                            <div className="flex gap-2 p-1 bg-white dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
+                                                                {['url', 'pc', 'gallery'].map(src => (
+                                                                    <button key={src} type="button" onClick={() => {
+                                                                        setImageSource(src);
+                                                                        if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
+                                                                    }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
+                                                                ))}
+                                                            </div>
+                                                            {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
+                                                            {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
+                                                        </div>
+
+                                                        <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
+                                                            <label className="flex items-center gap-3 cursor-pointer group">
+                                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
+                                                                    {formData.isHero && <Zap size={12} className="text-white" />}
+                                                                </div>
+                                                                <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
+                                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
+                                                            </label>
+                                                            <label className="flex items-center gap-3 cursor-pointer group">
+                                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
+                                                                    {formData.isFlash && <Zap size={12} className="text-white" />}
+                                                                </div>
+                                                                <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
+                                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Flash Noticia</span>
+                                                            </label>
+                                                        </div>
                                                     </div>
 
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div className="flex flex-col gap-2">
-                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
-                                                            <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
-                                                                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                                                            </select>
+                                                    <div className="flex flex-col gap-6">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Cuerpo de la Noticia (Bloques)</label>
+                                                            <div className="flex gap-2">
+                                                                <button type="button" onClick={() => addBlock('text')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-primary/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Texto"><LayoutDashboard size={14} /></button>
+                                                                <button type="button" onClick={() => addBlock('image')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-accent-purple/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Imagen"><ImageIcon size={14} /></button>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex flex-col gap-2">
-                                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
-                                                            <input type="date" className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ colorScheme: isDarkMode ? 'dark' : 'light' }} />
-                                                        </div>
-                                                    </div>
 
-                                                    <div className="flex flex-col gap-2">
-                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Imagen de Portada</label>
-                                                        <div className="flex gap-2 p-1 bg-white dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
-                                                            {['url', 'pc', 'gallery'].map(src => (
-                                                                <button key={src} type="button" onClick={() => {
-                                                                    setImageSource(src);
-                                                                    if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
-                                                                }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
+                                                        <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                                            {editorBlocks.map((block, idx) => (
+                                                                <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="relative group">
+                                                                    <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gray-200 dark:bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
+                                                                    {block.type === 'text' ? (
+                                                                        <textarea
+                                                                            className="w-full bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed shadow-inner"
+                                                                            value={block.content}
+                                                                            onChange={e => updateBlock(idx, e.target.value)}
+                                                                            placeholder="Escribe el contenido de este párrafo..."
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="flex flex-col gap-3 p-4 bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl shadow-inner">
+                                                                            <div className="aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-black/40 relative group/img">
+                                                                                <img src={block.content} className="w-full h-full object-cover" alt="" />
+                                                                                <button type="button" onClick={() => { setGalleryTarget(idx); setShowGallery(true); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-black uppercase text-[10px] tracking-widest">
+                                                                                    <ImageIcon size={16} /> Cambiar Imagen
+                                                                                </button>
+                                                                            </div>
+                                                                            <input className="bg-transparent border-none text-[10px] text-slate-500 outline-none" value={block.content} onChange={e => updateBlock(idx, e.target.value)} placeholder="URL de la imagen..." />
+                                                                        </div>
+                                                                    )}
+                                                                    <button type="button" onClick={() => removeBlock(idx)} className="absolute -right-3 -top-3 size-8 bg-black/80 text-slate-500 hover:text-accent-pink rounded-full flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl">
+                                                                        <Trash2 size={14} />
+                                                                    </button>
+                                                                </motion.div>
                                                             ))}
                                                         </div>
-                                                        {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
-                                                        {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
-                                                    </div>
 
-                                                    <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
-                                                        <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
-                                                                {formData.isHero && <Zap size={12} className="text-white" />}
-                                                            </div>
-                                                            <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
-                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
-                                                        </label>
-                                                        <label className="flex items-center gap-3 cursor-pointer group">
-                                                            <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
-                                                                {formData.isFlash && <Zap size={12} className="text-white" />}
-                                                            </div>
-                                                            <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
-                                                            <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Flash Noticia</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex flex-col gap-6">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Cuerpo de la Noticia (Bloques)</label>
-                                                        <div className="flex gap-2">
-                                                            <button type="button" onClick={() => addBlock('text')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-primary/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Texto"><LayoutDashboard size={14} /></button>
-                                                            <button type="button" onClick={() => addBlock('image')} className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-accent-purple/20 text-slate-600 dark:text-white rounded-lg transition-colors" title="Añadir Imagen"><ImageIcon size={14} /></button>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                                                        {editorBlocks.map((block, idx) => (
-                                                            <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="relative group">
-                                                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gray-200 dark:bg-white/5 group-hover:bg-primary/40 rounded-full transition-colors"></div>
-                                                                {block.type === 'text' ? (
-                                                                    <textarea
-                                                                        className="w-full bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-300 outline-none focus:border-primary min-h-[100px] resize-none leading-relaxed shadow-inner"
-                                                                        value={block.content}
-                                                                        onChange={e => updateBlock(idx, e.target.value)}
-                                                                        placeholder="Escribe el contenido de este párrafo..."
-                                                                    />
-                                                                ) : (
-                                                                    <div className="flex flex-col gap-3 p-4 bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl shadow-inner">
-                                                                        <div className="aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-black/40 relative group/img">
-                                                                            <img src={block.content} className="w-full h-full object-cover" alt="" />
-                                                                            <button type="button" onClick={() => { setGalleryTarget(idx); setShowGallery(true); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-black uppercase text-[10px] tracking-widest">
-                                                                                <ImageIcon size={16} /> Cambiar Imagen
-                                                                            </button>
-                                                                        </div>
-                                                                        <input className="bg-transparent border-none text-[10px] text-slate-500 outline-none" value={block.content} onChange={e => updateBlock(idx, e.target.value)} placeholder="URL de la imagen..." />
-                                                                    </div>
-                                                                )}
-                                                                <button type="button" onClick={() => removeBlock(idx)} className="absolute -right-3 -top-3 size-8 bg-black/80 text-slate-500 hover:text-accent-pink rounded-full flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl">
-                                                                    <Trash2 size={14} />
-                                                                </button>
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-
-                                                    <div className="flex flex-col md:flex-row gap-4">
-                                                        <button
-                                                            type="submit"
-                                                            onClick={() => setIsScheduling(false)}
-                                                            className="flex-1 py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all"
-                                                        >
-                                                            {editingId ? 'Actualizar Crónica' : 'Publicar Noticia'}
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setIsScheduling(!isScheduling)}
-                                                            className={`flex-1 py-5 border-2 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${isScheduling
-                                                                ? 'bg-amber-500 border-amber-500 text-white shadow-xl shadow-amber-500/20'
-                                                                : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 hover:border-amber-500 hover:text-amber-500'
-                                                                }`}
-                                                        >
-                                                            <Clock size={16} /> {isScheduling ? 'Programado' : 'Programar Publicación'}
-                                                        </button>
-                                                    </div>
-
-                                                    <AnimatePresence>
-                                                        {isScheduling && (
-                                                            <motion.div
-                                                                initial={{ height: 0, opacity: 0 }}
-                                                                animate={{ height: 'auto', opacity: 1 }}
-                                                                exit={{ height: 0, opacity: 0 }}
-                                                                className="overflow-hidden"
+                                                        <div className="flex flex-col md:flex-row gap-4">
+                                                            <button
+                                                                type="submit"
+                                                                onClick={() => setIsScheduling(false)}
+                                                                className="flex-1 py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all"
                                                             >
-                                                                <div className="bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 rounded-2xl p-6 flex flex-col gap-4 mt-2">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Zap size={14} className="text-amber-500" />
-                                                                        <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-widest">Configuración de Lanzamiento</span>
-                                                                    </div>
-                                                                    <div className="grid grid-cols-2 gap-4">
-                                                                        <div className="flex flex-col gap-1.5">
-                                                                            <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Fecha</label>
-                                                                            <input
-                                                                                type="date"
-                                                                                className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
-                                                                                value={formData.scheduleDate}
-                                                                                onChange={(e) => setFormData({ ...formData, scheduleDate: e.target.value })}
-                                                                            />
-                                                                        </div>
-                                                                        <div className="flex flex-col gap-1.5">
-                                                                            <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Hora</label>
-                                                                            <input
-                                                                                type="time"
-                                                                                className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
-                                                                                value={formData.scheduleTime}
-                                                                                onChange={(e) => setFormData({ ...formData, scheduleTime: e.target.value })}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <p className="text-[10px] text-amber-600/60 font-medium italic">La noticia se hará visible automáticamente en el sitio público al llegar el horario especificado.</p>
-                                                                    <button
-                                                                        type="submit"
-                                                                        className="w-full py-4 bg-amber-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20"
-                                                                    >
-                                                                        Confirmar Lanzamiento Programado
-                                                                    </button>
-                                                                </div>
-                                                            </motion.div>
-                                                        )}
-                                                    </AnimatePresence>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="max-w-4xl mx-auto w-full bg-[#11141b] rounded-[3rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden text-left">
-                                                <div className="relative aspect-video rounded-3xl overflow-hidden mb-8">
-                                                    <img src={formData.image || 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b'} className="w-full h-full object-cover" alt="" />
-                                                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
-                                                        {formData.category}
-                                                    </div>
-                                                </div>
-                                                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8">
-                                                    {formData.title ? formData.title.charAt(0).toUpperCase() + formData.title.slice(1).toLowerCase() : 'Título de ejemplo'}
-                                                </h1>
-                                                <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest mb-10 pb-6 border-b border-white/5">
-                                                    <CalendarIcon size={14} className="text-primary" />
-                                                    {new Date(formData.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                                    <div className="flex items-center gap-1 ml-4"><Zap size={14} className="text-primary" /> {formData.author}</div>
-                                                </div>
-                                                <div className="flex flex-col gap-8">
-                                                    {editorBlocks.map((block, i) => (
-                                                        block.type === 'text' ? (
-                                                            <p key={i} className="text-base md:text-lg text-slate-300 leading-relaxed font-medium text-justify whitespace-pre-line">{block.content || 'Escribe contenido para verlo aquí...'}</p>
-                                                        ) : (
-                                                            <div key={i} className="flex flex-col gap-3">
-                                                                <img src={block.content} className="w-full rounded-[2rem] shadow-2xl border border-white/5" alt="" />
-                                                            </div>
-                                                        )
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {activeTab === 'pharmacies' && (
-                                    <>
-                                        <div className="flex flex-col gap-5">
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Nombre Farmacia..." required />
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} placeholder="Dirección..." required />
-                                        </div>
-                                        <div className="flex flex-col gap-5">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="Teléfono..." />
-                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="Ciudad..." />
-                                            </div>
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Establecimiento</button>
-                                        </div>
-                                    </>
-                                )}
-
-                                {activeTab === 'categories' && (
-                                    <>
-                                        <div className="flex flex-col gap-5">
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-primary" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Nombre de la categoría..." required />
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} placeholder="Color (css class o hex)..." />
-                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.bgImage} onChange={e => setFormData({ ...formData, bgImage: e.target.value })} placeholder="URL Imagen de fondo..." />
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col justify-end">
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Categoría</button>
-                                        </div>
-                                    </>
-                                )}
-
-                                {activeTab === 'ads' && (
-                                    <div className="flex flex-col gap-6">
-                                        <div className="flex flex-col gap-2 mb-2">
-                                            <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Configurar Anuncio</h2>
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Define el tipo, la imagen y el enlace del anuncio publicitario</p>
-                                        </div>
-
-                                        <div className="flex flex-col gap-5">
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Tipo de Anuncio</label>
-                                                <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
-                                                    <optgroup label="Cabecera">
-                                                        <option value="premium">Premium (Header)</option>
-                                                    </optgroup>
-                                                    <optgroup label="Portada (Hero)">
-                                                        <option value="hero_1">Portada Slot 1</option>
-                                                        <option value="hero_2">Portada Slot 2</option>
-                                                        <option value="hero_3">Portada Slot 3</option>
-                                                    </optgroup>
-                                                    <optgroup label="Barra Lateral (Sidebar)">
-                                                        <option value="sidebar_1">Espacio 1 (Superior)</option>
-                                                        <option value="sidebar_2">Espacio 2 (Medio)</option>
-                                                        <option value="sidebar_3">Espacio 3 (Inferior)</option>
-                                                    </optgroup>
-                                                    <optgroup label="Pie de Página (Footer)">
-                                                        <option value="footer_1">Pie de Página Izq</option>
-                                                        <option value="footer_2">Pie de Página Der</option>
-                                                    </optgroup>
-                                                    <optgroup label="Legacy / Otros">
-                                                        <option value="horizontal">Horizontal Legacy</option>
-                                                        <option value="square">Cuadrada Legacy</option>
-                                                    </optgroup>
-                                                </select>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen Publicitaria</label>
-                                                <div className="flex flex-col gap-3">
-                                                    {formData.image && (
-                                                        <div className="relative w-full aspect-video rounded-xl overflow-hidden group shadow-lg">
-                                                            <img src={formData.image} className="w-full h-full object-cover" alt="Vista previa" />
+                                                                {editingId ? 'Actualizar Crónica' : 'Publicar Noticia'}
+                                                            </button>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
-                                                                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                onClick={() => setIsScheduling(!isScheduling)}
+                                                                className={`flex-1 py-5 border-2 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${isScheduling
+                                                                    ? 'bg-amber-500 border-amber-500 text-white shadow-xl shadow-amber-500/20'
+                                                                    : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 hover:border-amber-500 hover:text-amber-500'
+                                                                    }`}
                                                             >
-                                                                <Trash2 size={14} />
+                                                                <Clock size={16} /> {isScheduling ? 'Programado' : 'Programar Publicación'}
                                                             </button>
                                                         </div>
-                                                    )}
-                                                    <input
-                                                        type="text"
-                                                        className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                        value={formData.image}
-                                                        onChange={e => setFormData({ ...formData, image: e.target.value })}
-                                                        placeholder="URL de la imagen..."
-                                                    />
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => fileInputRef.current?.click()}
-                                                            className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
-                                                        >
-                                                            Subir desde PC
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => { setGalleryTarget('ad'); setShowGallery(true); }}
-                                                            className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all shadow-sm"
-                                                        >
-                                                            Galería
-                                                        </button>
+
+                                                        <AnimatePresence>
+                                                            {isScheduling && (
+                                                                <motion.div
+                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                    className="overflow-hidden"
+                                                                >
+                                                                    <div className="bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 rounded-2xl p-6 flex flex-col gap-4 mt-2">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <Zap size={14} className="text-amber-500" />
+                                                                            <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 tracking-widest">Configuración de Lanzamiento</span>
+                                                                        </div>
+                                                                        <div className="grid grid-cols-2 gap-4">
+                                                                            <div className="flex flex-col gap-1.5">
+                                                                                <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Fecha</label>
+                                                                                <input
+                                                                                    type="date"
+                                                                                    className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                                                                                    value={formData.scheduleDate}
+                                                                                    onChange={(e) => setFormData({ ...formData, scheduleDate: e.target.value })}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex flex-col gap-1.5">
+                                                                                <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Hora</label>
+                                                                                <input
+                                                                                    type="time"
+                                                                                    className="bg-white dark:bg-[#11141b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                                                                                    value={formData.scheduleTime}
+                                                                                    onChange={(e) => setFormData({ ...formData, scheduleTime: e.target.value })}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="text-[10px] text-amber-600/60 font-medium italic">La noticia se hará visible automáticamente en el sitio público al llegar el horario especificado.</p>
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="w-full py-4 bg-amber-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20"
+                                                                        >
+                                                                            Confirmar Lanzamiento Programado
+                                                                        </button>
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
                                                     </div>
                                                 </div>
+                                            ) : (
+                                                <div className="max-w-4xl mx-auto w-full bg-[#11141b] rounded-[3rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden text-left">
+                                                    <div className="relative aspect-video rounded-3xl overflow-hidden mb-8">
+                                                        <img src={formData.image || 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b'} className="w-full h-full object-cover" alt="" />
+                                                        <div className="absolute top-6 left-6 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
+                                                            {formData.category}
+                                                        </div>
+                                                    </div>
+                                                    <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8">
+                                                        {formData.title ? formData.title.charAt(0).toUpperCase() + formData.title.slice(1).toLowerCase() : 'Título de ejemplo'}
+                                                    </h1>
+                                                    <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest mb-10 pb-6 border-b border-white/5">
+                                                        <CalendarIcon size={14} className="text-primary" />
+                                                        {new Date(formData.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                        <div className="flex items-center gap-1 ml-4"><Zap size={14} className="text-primary" /> {formData.author}</div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-8">
+                                                        {editorBlocks.map((block, i) => (
+                                                            block.type === 'text' ? (
+                                                                <p key={i} className="text-base md:text-lg text-slate-300 leading-relaxed font-medium text-justify whitespace-pre-line">{block.content || 'Escribe contenido para verlo aquí...'}</p>
+                                                            ) : (
+                                                                <div key={i} className="flex flex-col gap-3">
+                                                                    <img src={block.content} className="w-full rounded-[2rem] shadow-2xl border border-white/5" alt="" />
+                                                                </div>
+                                                            )
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'pharmacies' && (
+                                        <>
+                                            <div className="flex flex-col gap-5">
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Nombre Farmacia..." required />
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} placeholder="Dirección..." required />
+                                            </div>
+                                            <div className="flex flex-col gap-5">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="Teléfono..." />
+                                                    <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="Ciudad..." />
+                                                </div>
+                                                <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Establecimiento</button>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeTab === 'categories' && (
+                                        <>
+                                            <div className="flex flex-col gap-5">
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-primary" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Nombre de la categoría..." required />
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} placeholder="Color (css class o hex)..." />
+                                                    <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.bgImage} onChange={e => setFormData({ ...formData, bgImage: e.target.value })} placeholder="URL Imagen de fondo..." />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col justify-end">
+                                                <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Categoría</button>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeTab === 'ads' && (
+                                        <div className="flex flex-col gap-6">
+                                            <div className="flex flex-col gap-2 mb-2">
+                                                <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Configurar Anuncio</h2>
+                                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Define el tipo, la imagen y el enlace del anuncio publicitario</p>
                                             </div>
 
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Enlace de Destino</label>
-                                                <input
-                                                    className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
-                                                    value={formData.link}
-                                                    onChange={e => setFormData({ ...formData, link: e.target.value })}
-                                                    placeholder="https://ejemplo.com"
-                                                />
-                                            </div>
+                                            <div className="flex flex-col gap-5">
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Tipo de Anuncio</label>
+                                                    <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                        <optgroup label="Cabecera">
+                                                            <option value="premium">Premium (Header)</option>
+                                                        </optgroup>
+                                                        <optgroup label="Portada (Hero)">
+                                                            <option value="hero_1">Portada Slot 1</option>
+                                                            <option value="hero_2">Portada Slot 2</option>
+                                                            <option value="hero_3">Portada Slot 3</option>
+                                                        </optgroup>
+                                                        <optgroup label="Barra Lateral (Sidebar)">
+                                                            <option value="sidebar_1">Espacio 1 (Superior)</option>
+                                                            <option value="sidebar_2">Espacio 2 (Medio)</option>
+                                                            <option value="sidebar_3">Espacio 3 (Inferior)</option>
+                                                        </optgroup>
+                                                        <optgroup label="Pie de Página (Footer)">
+                                                            <option value="footer_1">Pie de Página Izq</option>
+                                                            <option value="footer_2">Pie de Página Der</option>
+                                                        </optgroup>
+                                                        <optgroup label="Legacy / Otros">
+                                                            <option value="horizontal">Horizontal Legacy</option>
+                                                            <option value="square">Cuadrada Legacy</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
 
-                                            {/* Text fields hidden by user request
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen Publicitaria</label>
+                                                    <div className="flex flex-col gap-3">
+                                                        {formData.image && (
+                                                            <div className="relative w-full aspect-video rounded-xl overflow-hidden group shadow-lg">
+                                                                <img src={formData.image} className="w-full h-full object-cover" alt="Vista previa" />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                                                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            type="text"
+                                                            className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                            value={formData.image}
+                                                            onChange={e => setFormData({ ...formData, image: e.target.value })}
+                                                            placeholder="URL de la imagen..."
+                                                        />
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => fileInputRef.current?.click()}
+                                                                className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
+                                                            >
+                                                                Subir desde PC
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => { setGalleryTarget('ad'); setShowGallery(true); }}
+                                                                className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all shadow-sm"
+                                                            >
+                                                                Galería
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Enlace de Destino</label>
+                                                    <input
+                                                        className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner"
+                                                        value={formData.link}
+                                                        onChange={e => setFormData({ ...formData, link: e.target.value })}
+                                                        placeholder="https://ejemplo.com"
+                                                    />
+                                                </div>
+
+                                                {/* Text fields hidden by user request
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-1 tracking-widest">Título / Empresa</label>
                                                 <input ... />
                                             </div>
                                             ... (other fields)
                                             */}
-                                        </div>
+                                            </div>
 
-                                        <div className="flex flex-col gap-5 mt-4">
-                                            <label className="flex items-center gap-3 cursor-pointer group">
-                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.active ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
-                                                    {formData.active && <Zap size={12} className="text-white" />}
-                                                </div>
-                                                <input type="checkbox" className="hidden" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} />
-                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Publicidad Activa</span>
-                                            </label>
-                                            <button type="submit" className="h-14 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] transition-all">
-                                                Guardar Anuncio Publicitario
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeTab === 'tickers' && (
-                                    <>
-                                        <div className="flex flex-col gap-5">
-                                            <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.text} onChange={e => setFormData({ ...formData, text: e.target.value })} placeholder="Mensaje del ticker..." required />
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.tag} onChange={e => setFormData({ ...formData, tag: e.target.value })} placeholder="Etiqueta (ej: URGENTE)..." />
-                                                <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
-                                                    <option value="alert">Alerta (Rojo)</option>
-                                                    <option value="ad">Publicidad (Azul)</option>
-                                                    <option value="score">Deporte (Verde)</option>
-                                                </select>
+                                            <div className="flex flex-col gap-5 mt-4">
+                                                <label className="flex items-center gap-3 cursor-pointer group">
+                                                    <div className={`size-5 rounded-md border-2 border-slate-200 dark:border-white/10 flex items-center justify-center transition-all ${formData.active ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                                        {formData.active && <Zap size={12} className="text-white" />}
+                                                    </div>
+                                                    <input type="checkbox" className="hidden" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} />
+                                                    <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Publicidad Activa</span>
+                                                </label>
+                                                <button type="submit" className="h-14 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] transition-all">
+                                                    Guardar Anuncio Publicitario
+                                                </button>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col justify-end">
-                                            <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Ticker</button>
-                                        </div>
-                                    </>
-                                )}
+                                    )}
 
-                                {activeTab === 'cover' && (
-                                    <div className="max-w-4xl mx-auto flex flex-col gap-10">
-                                        {/* Vista Previa de Tapa */}
-                                        <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl flex flex-col md:flex-row">
-                                            <div className="md:w-1/2 aspect-[4/5] bg-slate-100 dark:bg-white/5 relative overflow-hidden group">
-                                                <img src={formData.image || coverPage.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Tapa actual" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                                <div className="absolute bottom-6 left-6 flex flex-col gap-1">
-                                                    <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Vista Previa Actual</span>
-                                                    <span className="text-lg font-black text-white italic tracking-tighter">Edición del {new Date((formData.date || coverPage.date) + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                    {activeTab === 'tickers' && (
+                                        <>
+                                            <div className="flex flex-col gap-5">
+                                                <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none" value={formData.text} onChange={e => setFormData({ ...formData, text: e.target.value })} placeholder="Mensaje del ticker..." required />
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <input className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white" value={formData.tag} onChange={e => setFormData({ ...formData, tag: e.target.value })} placeholder="Etiqueta (ej: URGENTE)..." />
+                                                    <select className="bg-[#0a0c10] border border-white/5 rounded-xl px-4 py-3 text-sm text-white font-bold outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                                                        <option value="alert">Alerta (Rojo)</option>
+                                                        <option value="ad">Publicidad (Azul)</option>
+                                                        <option value="score">Deporte (Verde)</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div className="md:w-1/2 p-10 flex flex-col gap-8 justify-center">
-                                                <div className="flex flex-col gap-2">
-                                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase leading-none">Actualizar Tapa</h3>
-                                                    <p className="text-xs font-bold text-slate-500 text-pretty">Selecciona una nueva imagen de alta resolución para la portada del diario de hoy.</p>
-                                                </div>
+                                            <div className="flex flex-col justify-end">
+                                                <button type="submit" className="h-12 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Guardar Ticker</button>
+                                            </div>
+                                        </>
+                                    )}
 
-                                                {/* Removed nested form tag */}
-                                                <div className="flex flex-col gap-6">
+                                    {activeTab === 'cover' && (
+                                        <div className="max-w-4xl mx-auto flex flex-col gap-10">
+                                            {/* Vista Previa de Tapa */}
+                                            <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                                                <div className="md:w-1/2 aspect-[4/5] bg-slate-100 dark:bg-white/5 relative overflow-hidden group">
+                                                    <img src={formData.image || coverPage.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Tapa actual" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                                    <div className="absolute bottom-6 left-6 flex flex-col gap-1">
+                                                        <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Vista Previa Actual</span>
+                                                        <span className="text-lg font-black text-white italic tracking-tighter">Edición del {new Date((formData.date || coverPage.date) + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="md:w-1/2 p-10 flex flex-col gap-8 justify-center">
                                                     <div className="flex flex-col gap-2">
-                                                        <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen de Portada</label>
-                                                        <input
-                                                            type="text"
-                                                            className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
-                                                            placeholder="Pega la URL aquí o sube una imagen..."
-                                                            value={formData.image || ''}
-                                                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                                        />
-                                                        <div className="flex gap-2 mt-2">
-                                                            <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Sube desde PC</button>
-                                                            <button type="button" onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all">Galería</button>
+                                                        <h3 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase leading-none">Actualizar Tapa</h3>
+                                                        <p className="text-xs font-bold text-slate-500 text-pretty">Selecciona una nueva imagen de alta resolución para la portada del diario de hoy.</p>
+                                                    </div>
+
+                                                    {/* Removed nested form tag */}
+                                                    <div className="flex flex-col gap-6">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Imagen de Portada</label>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                                placeholder="Pega la URL aquí o sube una imagen..."
+                                                                value={formData.image || ''}
+                                                                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                                            />
+                                                            <div className="flex gap-2 mt-2">
+                                                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Sube desde PC</button>
+                                                                <button type="button" onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all">Galería</button>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className="flex flex-col gap-2">
-                                                        <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Fecha de Portada</label>
-                                                        <input
-                                                            type="date"
-                                                            className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
-                                                            value={formData.date || ''}
-                                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                                            style={{ colorScheme: 'dark' }}
-                                                        />
-                                                    </div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Fecha de Portada</label>
+                                                            <input
+                                                                type="date"
+                                                                className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                                value={formData.date || ''}
+                                                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                                                style={{ colorScheme: 'dark' }}
+                                                            />
+                                                        </div>
 
-                                                    <button type="submit" className="w-full py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all mt-4">Actualizar Portada</button>
+                                                        <button type="submit" className="w-full py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all mt-4">Actualizar Portada</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
-                                {/* Fallback for other tabs */}
-                                {!['news', 'pharmacies', 'categories', 'ads', 'tickers', 'cover', 'comments'].includes(activeTab) && (
-                                    <div className="col-span-2 text-center py-10 bg-white/5 rounded-2xl border border-dashed border-white/10">
-                                        <Zap size={32} className="mx-auto text-primary/40 mb-3" />
-                                        <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Configuración para {activeTab}</p>
-                                        <button type="submit" className="mt-4 px-8 py-3 bg-primary text-white rounded-xl text-[9px] font-black uppercase tracking-widest">Confirmar Acción</button>
-                                    </div>
-                                )}
-                            </form>
+                                    {/* Fallback for other tabs */}
+                                    {!['news', 'pharmacies', 'categories', 'ads', 'tickers', 'cover', 'comments'].includes(activeTab) && (
+                                        <div className="col-span-2 text-center py-10 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                                            <Zap size={32} className="mx-auto text-primary/40 mb-3" />
+                                            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Configuración para {activeTab}</p>
+                                            <button type="submit" className="mt-4 px-8 py-3 bg-primary text-white rounded-xl text-[9px] font-black uppercase tracking-widest">Confirmar Acción</button>
+                                        </div>
+                                    )}
+                                </form>
+                            </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
