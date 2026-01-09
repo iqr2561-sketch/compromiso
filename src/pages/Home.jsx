@@ -89,9 +89,9 @@ const Home = () => {
 
                 </div>
                 <div className="flex flex-col gap-6">
-                    <AdSection type="sidebar_1" className="h-60 w-full" />
-                    <AdSection type="sidebar_2" className="h-60 w-full" />
-                    <AdSection type="sidebar_3" className="h-60 w-full" />
+                    <AdSection type="sidebar_1" className="h-48 w-full" />
+                    <AdSection type="sidebar_2" className="h-48 w-full" />
+                    <AdSection type="sidebar_3" className="h-48 w-full" />
                 </div>
             </div>
 
