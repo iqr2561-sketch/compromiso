@@ -182,10 +182,10 @@ const HeroSection = () => {
                             </div>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{coverPage.date}</span>
                         </div>
-                        <div className="relative w-full h-[755px] bg-slate-200 dark:bg-black/20 overflow-hidden">
+                        <div className="relative w-full h-[320px] bg-slate-100 dark:bg-black/20 overflow-hidden">
                             <img
                                 src={coverPage.image}
-                                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
                                 alt="Tapa del día"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
