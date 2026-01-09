@@ -123,7 +123,7 @@ const AdSection = ({ type = 'horizontal', className = '' }) => {
                     src={ad.image}
                     className="w-full h-full"
                     alt={ad.title || "Publicidad"}
-                    style={{ objectFit: 'contain' }} // 'contain' ensures the full image is visible without cropping or distortion, maintaining aspect ratio.
+                    style={{ objectFit: 'cover' }} // 'cover' ensures the image fills the container entirely for a uniform look.
                 />
             ) : (
                 // Fallback only if no image
