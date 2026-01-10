@@ -1,34 +1,55 @@
 import pg from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const { Pool } = pg;
 
-// Using the same config as api/lib/db.js but with explicit URL from my records
+// Configuración SSL más permisiva para Supabase
 const pool = new Pool({
-    connectionString: 'postgres://neondb_owner:npg_oREsYyv1D9hp@ep-bold-glade-a5tq35n5-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+    connectionString: process.env.DATABASE_URL,
     ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        // Ignorar completamente la verificación del certificado
+        checkServerIdentity: () => undefined,
     }
 });
 
-async function checkColumns() {
+async function testConnection() {
     try {
+        console.log('🔌 Conectando a Supabase...');
         const client = await pool.connect();
-        const res = await client.query(`
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'news'
-        `);
-        console.log('Columns in news table:');
-        console.log(res.rows.map(r => r.column_name).join(', '));
+        console.log('✅ Conexión exitosa!\n');
 
-        const resCount = await client.query('SELECT COUNT(*) FROM news');
-        console.log('Total news count:', resCount.rows[0].count);
+        // Listar tablas
+        const { rows } = await client.query(`
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+            ORDER BY table_name
+        `);
+
+        console.log('📋 Tablas disponibles:');
+        rows.forEach(r => console.log(`   - ${r.table_name}`));
+
+        // Si existe tabla news, mostrar count
+        if (rows.some(r => r.table_name === 'news')) {
+            const count = await client.query('SELECT COUNT(*) FROM news');
+            console.log(`\n📰 Total noticias: ${count.rows[0].count}`);
+        }
 
         client.release();
         await pool.end();
+        console.log('\n✅ Todo OK');
     } catch (err) {
-        console.error('Error:', err.message);
+        console.error('❌ Error:', err.message);
+        console.error('\n💡 Si el error es de certificado SSL:');
+        console.log('   1. Verifica que estés usando la Connection String correcta de Supabase');
+        console.log('   2. Usa "Transaction" pooling mode, no "Session"');
+        console.log('   3. La URL debe terminar en .supabase.co:6543');
         await pool.end();
+        process.exit(1);
     }
 }
 
-checkColumns();
+testConnection();
