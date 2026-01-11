@@ -8,6 +8,7 @@ import adsHandler from './api/ads.js';
 import settingsHandler from './api/settings.js';
 import commentsHandler from './api/comments.js';
 import cronIncrementHandler from './api/cron-increment.js';
+import testDbHandler from './api/test-db.js';
 
 const app = express();
 const PORT = 3000;
@@ -40,6 +41,7 @@ app.all('/api/ads', adapt(adsHandler));
 app.all('/api/settings', adapt(settingsHandler));
 app.all('/api/comments', adapt(commentsHandler));
 app.all('/api/cron-increment', adapt(cronIncrementHandler));
+app.all('/api/test-db', adapt(testDbHandler));
 
 app.listen(PORT, () => {
     console.log(`✅ Local API Server running on http://localhost:${PORT}`);
