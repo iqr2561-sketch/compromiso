@@ -1881,59 +1881,84 @@ const Admin = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-white/5">
-                                        {(activeTab === 'news' ? filteredNews :
-                                            activeTab === 'scores' ? scores :
-                                                activeTab === 'ads' ? ads :
-                                                    activeTab === 'videos' ? videos :
-                                                        activeTab === 'categories' ? categories :
-                                                            flashTickers).map(item => (
-                                                                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                                                                    <td className="px-8 py-6">
-                                                                        <div className="flex items-center gap-4">
-                                                                            {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                                                            <div className="flex flex-col">
-                                                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
-                                                                                    {activeTab === 'ads' ? (
-                                                                                        item.type === 'premium' ? 'Publicidad Superior (Logo)' :
-                                                                                            item.type === 'sidebar_1' ? 'Barra Lateral 1 (Arriba)' :
-                                                                                                item.type === 'sidebar_2' ? 'Barra Lateral 2 (Medio)' :
-                                                                                                    item.type === 'sidebar_3' ? 'Barra Lateral 3 (Abajo)' :
-                                                                                                        item.type === 'footer_1' ? 'Pie de Página (Izquierda)' :
-                                                                                                            item.type === 'footer_2' ? 'Pie de Página (Derecha)' :
-                                                                                                                item.type === 'hero_1' ? 'Slot Portada 1' :
-                                                                                                                    item.type === 'hero_2' ? 'Slot Portada 2' :
-                                                                                                                        item.type === 'hero_3' ? 'Slot Portada 3' :
-                                                                                                                            `Anuncio ${item.type}`
-                                                                                    ) : (item.title || item.name || item.text || 'Sin título')}
-                                                                                </span>
-                                                                                <div className="flex gap-2 items-center mt-1">
-                                                                                    <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">
-                                                                                        {activeTab === 'ads' ? `Ubicación: ${item.type}` : (item.category || item.tag || 'Editorial')}
-                                                                                    </span>
-                                                                                    {item.active === false && <span className="text-[7px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Inactivo</span>}
-                                                                                    {item.active === true && <span className="text-[7px] bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Activo</span>}
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="px-8 py-6">
-                                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
-                                                                    </td>
-                                                                    <td className="px-8 py-6 text-right">
-                                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                                            <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
-                                                                            <button onClick={() => {
-                                                                                if (activeTab === 'news') deleteNews(item.id);
-                                                                                if (activeTab === 'ads') deleteAd(item.id);
-                                                                                if (activeTab === 'videos') deleteVideo(item.id);
-                                                                                if (activeTab === 'categories') deleteCategory(item.id);
-                                                                                if (activeTab === 'tickers') deleteTicker(item.id);
-                                                                                if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
-                                                                            }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
+                                        {(() => {
+                                            const items = activeTab === 'news' ? filteredNews :
+                                                activeTab === 'scores' ? scores :
+                                                    activeTab === 'ads' ? ads :
+                                                        activeTab === 'videos' ? videos :
+                                                            activeTab === 'categories' ? [] : // Categories are handled separately
+                                                                flashTickers;
+
+                                            let categoriesToRender = [];
+                                            if (activeTab === 'categories') {
+                                                // Filter parent categories (those without parent_id)
+                                                const parentCategories = categories.filter(c => !c.parent_id);
+                                                // Build hierarchical array
+                                                parentCategories.forEach(parent => {
+                                                    categoriesToRender.push({ ...parent, isParent: true });
+                                                    // Find and add children
+                                                    const children = categories.filter(c => c.parent_id === parent.id);
+                                                    children.forEach(child => {
+                                                        categoriesToRender.push({ ...child, isChild: true, parentName: parent.name });
+                                                    });
+                                                });
+                                                items.push(...categoriesToRender);
+                                            }
+
+                                            return items.map(item => (
+                                                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-4">
+                                                            {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
+                                                            <div className="flex flex-col">
+                                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                                                                    {activeTab === 'ads' ? (
+                                                                        item.type === 'premium' ? 'Publicidad Superior (Logo)' :
+                                                                            item.type === 'sidebar_1' ? 'Barra Lateral 1 (Arriba)' :
+                                                                                item.type === 'sidebar_2' ? 'Barra Lateral 2 (Medio)' :
+                                                                                    item.type === 'sidebar_3' ? 'Barra Lateral 3 (Abajo)' :
+                                                                                        item.type === 'footer_1' ? 'Pie de Página (Izquierda)' :
+                                                                                            item.type === 'footer_2' ? 'Pie de Página (Derecha)' :
+                                                                                                item.type === 'hero_1' ? 'Slot Portada 1' :
+                                                                                                    item.type === 'hero_2' ? 'Slot Portada 2' :
+                                                                                                        item.type === 'hero_3' ? 'Slot Portada 3' :
+                                                                                                            `Anuncio ${item.type}`
+                                                                    ) : (item.title || item.name || item.text || 'Sin título')}
+                                                                </span>
+                                                                <div className="flex gap-2 items-center mt-1">
+                                                                    {item.isChild && (
+                                                                        <span className="text-[9px] px-2 py-0.5 bg-primary/10 text-primary rounded-full uppercase font-black tracking-wider">
+                                                                            SUB DE {item.parentName}
+                                                                        </span>
+                                                                    )}
+                                                                    <span className="text-[9px] text-slate-500 dark:text-slate-600 uppercase font-black tracking-widest">
+                                                                        {activeTab === 'ads' ? `Ubicación: ${item.type}` : (item.category || item.tag || item.color || 'Editorial')}
+                                                                    </span>
+                                                                    {item.active === false && <span className="text-[7px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Inactivo</span>}
+                                                                    {item.active === true && <span className="text-[7px] bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Activo</span>}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                            <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
+                                                            <button onClick={() => {
+                                                                if (activeTab === 'news') deleteNews(item.id);
+                                                                if (activeTab === 'ads') deleteAd(item.id);
+                                                                if (activeTab === 'videos') deleteVideo(item.id);
+                                                                if (activeTab === 'categories') deleteCategory(item.id);
+                                                                if (activeTab === 'tickers') deleteTicker(item.id);
+                                                                if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
+                                                            }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        })()}
                                     </tbody>
                                 </table>
                             </div>
