@@ -61,6 +61,8 @@ export const NewsProvider = ({ children }) => {
         copyright: `© ${new Date().getFullYear()} Diario Digital Inc. Todos los derechos reservados.`
     });
 
+    const [cityHeroImages, setCityHeroImages] = useState([]);
+
     // Initial fetch
     useEffect(() => {
         fetchNews();
@@ -71,7 +73,51 @@ export const NewsProvider = ({ children }) => {
         fetchDuties();
         fetchComments();
         fetchAds();
+        fetchCityHeroImages();
     }, []);
+
+    const fetchCityHeroImages = async () => {
+        try {
+            const res = await fetch('/api/city-hero');
+            if (res.ok) {
+                const data = await res.json();
+                setCityHeroImages(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch city hero images:', err);
+        }
+    };
+
+    const addCityHeroImage = async (url) => {
+        try {
+            const res = await fetch('/api/city-hero', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+            if (res.ok) {
+                const newImg = await res.json();
+                setCityHeroImages(prev => [newImg, ...prev]);
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to add city hero image:', err);
+        }
+        return false;
+    };
+
+    const deleteCityHeroImage = async (id) => {
+        try {
+            const res = await fetch(`/api/city-hero?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setCityHeroImages(prev => prev.filter(img => img.id !== id));
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to delete city hero image:', err);
+        }
+        return false;
+    };
 
     const fetchAds = async () => {
         try {
@@ -610,7 +656,8 @@ export const NewsProvider = ({ children }) => {
             aiConfig, updateAiConfig,
             footerSettings, updateFooterSettings,
             fetchNews,
-            reorderCategories: setCategories
+            reorderCategories: setCategories,
+            cityHeroImages, addCityHeroImage, deleteCityHeroImage
         }}>
             {children}
         </NewsContext.Provider>

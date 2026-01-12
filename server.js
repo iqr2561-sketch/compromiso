@@ -9,6 +9,7 @@ import settingsHandler from './api/settings.js';
 import commentsHandler from './api/comments.js';
 import cronIncrementHandler from './api/cron-increment.js';
 import testDbHandler from './api/test-db.js';
+import cityHeroHandler from './api/city-hero.js';
 
 const app = express();
 const PORT = 3000;
@@ -16,20 +17,7 @@ const PORT = 3000;
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Helper to adapt Vercel/Next.js handler signature (req, res) to Express
-const adapt = (handler) => async (req, res) => {
-    // Vercel functions might expect req.body, req.query, etc. Express provides these.
-    // Ensure method is upper case for consistency
-    req.method = req.method.toUpperCase();
-    try {
-        await handler(req, res);
-    } catch (err) {
-        console.error('API Error:', err);
-        if (!res.headersSent) {
-            res.status(500).json({ error: err.message });
-        }
-    }
-};
+// ... (omitted adapt function)
 
 // Mount API routes
 app.all('/api/news', adapt(newsHandler));
@@ -42,6 +30,7 @@ app.all('/api/settings', adapt(settingsHandler));
 app.all('/api/comments', adapt(commentsHandler));
 app.all('/api/cron-increment', adapt(cronIncrementHandler));
 app.all('/api/test-db', adapt(testDbHandler));
+app.all('/api/city-hero', adapt(cityHeroHandler));
 
 app.listen(PORT, () => {
     console.log(`✅ Local API Server running on http://localhost:${PORT}`);

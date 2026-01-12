@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { useNews } from '../context/NewsContext';
+
 const CityHero = () => {
-    const images = [
-        '/dolores-panoramic.png',
-        // Add more city images here if available
-    ];
+    const { cityHeroImages } = useNews();
+
+    // Fallback if no images are loaded yet
+    const displayImages = cityHeroImages.length > 0
+        ? cityHeroImages.map(img => img.url)
+        : ['/dolores-panoramic.png'];
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Only set interval if > 1 image
     useEffect(() => {
-        if (images.length <= 1) return;
+        if (displayImages.length <= 1) return;
         const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % images.length);
+            setCurrentIndex((prev) => (prev + 1) % displayImages.length);
         }, 5000);
         return () => clearInterval(interval);
-    }, [images.length]);
+    }, [displayImages.length]);
 
     return (
         <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-[400px] md:h-[500px] -mt-6 mb-8 overflow-hidden">
@@ -30,7 +34,7 @@ const CityHero = () => {
                     className="absolute inset-0 w-full h-full"
                 >
                     <img
-                        src={images[currentIndex]}
+                        src={displayImages[currentIndex]}
                         alt="Dolores Panoramic"
                         className="w-full h-full object-cover"
                     />
