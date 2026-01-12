@@ -26,6 +26,8 @@
 *   **Routing**: React Router DOM
 
 ## Recent Updates (Jan 9, 2026)
+*   **Database Stability**: Fixed SSL connection issues for Vercel deployment (Jan 11, 2026).
+*   **Pharmacy Update**: Added comprehensive pharmacy list and duty management.
 *   **Memoria Histórica**: Refined "¿Te Acordás, Dolores?" section on the homepage. Now features a full-width, horizontal layout with enhanced visual effects, glassmorphism icons, and responsive design.
 
 ## Recent Updates (Jan 5, 2026)
@@ -43,6 +45,7 @@
 ## Critical Workflows
 *   **Adding News**: Admin Panel -> New Post.
 *   **Editing Ads**: Admin Panel -> Ads Manager.
+*   **Managing Pharmacies**: Admin Panel -> Pharmacies (Duties & List).
 *   **Deploy**: Automatic deployment via Vercel on `main` branch push.
 
 ---

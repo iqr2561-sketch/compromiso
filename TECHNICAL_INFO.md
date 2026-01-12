@@ -405,6 +405,7 @@ Ninguna requerida actualmente.
 - No hay autenticación implementada (admin público)
 - XSS prevention via React's escaping
 - HTTPS en producción (Vercel)
+- **DB Security**: Conexión SSL/TLS optimizada para Supabase (`rejectUnauthorized: false` en pool, `NODE_TLS_REJECT_UNAUTHORIZED='0'` en prod env para compatibilidad)
 - No se almacenan datos sensibles
 
 ### Próximas Mejoras de Seguridad

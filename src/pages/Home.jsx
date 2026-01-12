@@ -4,10 +4,62 @@ import FlashNews from '../components/FlashNews';
 import CategoryGrid from '../components/CategoryGrid';
 import Newsletter from '../components/Newsletter';
 import AdSection from '../components/AdSection';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { History, TrendingUp, Star, Bell, ArrowUpRight } from 'lucide-react';
 import { useNews } from '../context/NewsContext';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
+const CarouselSection = ({ footerSettings }) => {
+    const images = [
+        footerSettings.te_acordas_bg,
+        '/dolores-panoramic.png'
+    ].filter(Boolean); // Ensure valid URLs
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (images.length <= 1) return;
+        const interval = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % images.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [images.length]);
+
+    return (
+        <Link to="/categoria/¿Te Acordás Dolores?" className="block relative h-[300px] md:h-[450px] rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 bg-slate-900 group-hover:shadow-primary/20">
+            <AnimatePresence mode="wait">
+                <motion.img
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                    className="absolute inset-0 w-full h-full object-cover filter sepia-[0.15] brightness-75"
+                    alt="Memoria Histórica"
+                />
+            </AnimatePresence>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10"></div>
+
+            <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-row items-center justify-between gap-6 z-20">
+                <div className="flex items-center gap-5">
+                    <div className="size-16 rounded-[2rem] bg-primary/20 backdrop-blur-3xl border border-white/20 flex items-center justify-center shadow-2xl">
+                        <History className="text-primary" size={32} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-[10px] md:text-[12px] font-black text-white uppercase tracking-[0.6em] drop-shadow-lg opacity-80">Archivo Compromiso</span>
+                        <span className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg">¿Te Acordás, Dolores?</span>
+                    </div>
+                </div>
+                <div className="px-12 py-5 bg-white text-primary text-[11px] font-black uppercase tracking-widest rounded-[2rem] group-hover:bg-primary group-hover:text-white transition-all shadow-2xl flex items-center gap-4 hover:scale-[1.05] active:scale-[0.98]">
+                    Explorar Archivo <ArrowUpRight size={24} />
+                </div>
+            </div>
+        </Link>
+    );
+};
 
 const Home = () => {
     const { news, footerSettings } = useNews();
@@ -64,31 +116,10 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Full Width Historic Section - Breaking out of container */}
+            {/* Full Width Historic Section - Carousel */}
             <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-4 lg:px-8 group">
                 <div className="max-w-[1440px] mx-auto">
-                    <Link to="/categoria/¿Te Acordás Dolores?" className="block relative h-[300px] md:h-[450px] rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 bg-slate-900 group-hover:shadow-primary/20">
-                        <img
-                            src={footerSettings.te_acordas_bg}
-                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 filter sepia-[0.15] brightness-75"
-                            alt="Memoria Histórica"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                        <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-row items-center justify-between gap-6">
-                            <div className="flex items-center gap-5">
-                                <div className="size-16 rounded-[2rem] bg-primary/20 backdrop-blur-3xl border border-white/20 flex items-center justify-center shadow-2xl">
-                                    <History className="text-primary" size={32} />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] md:text-[12px] font-black text-white uppercase tracking-[0.6em] drop-shadow-lg opacity-80">Archivo Compromiso</span>
-                                    <span className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg">¿Te Acordás, Dolores?</span>
-                                </div>
-                            </div>
-                            <div className="px-12 py-5 bg-white text-primary text-[11px] font-black uppercase tracking-widest rounded-[2rem] group-hover:bg-primary group-hover:text-white transition-all shadow-2xl flex items-center gap-4 hover:scale-[1.05] active:scale-[0.98]">
-                                Explorar Archivo <ArrowUpRight size={24} />
-                            </div>
-                        </div>
-                    </Link>
+                    <CarouselSection footerSettings={footerSettings} />
                 </div>
             </div>
 
