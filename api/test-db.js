@@ -1,26 +1,50 @@
-import pool from './lib/db.js';
+import pg from 'pg';
+
+const { Pool } = pg;
 
 export default async function handler(req, res) {
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+    const dbUrl = process.env.DATABASE_URL;
+    const hasDbUrl = !!dbUrl;
+
+    // Debug info
+    const debugInfo = {
+        hasDbUrl,
+        urlPrefix: hasDbUrl ? dbUrl.substring(0, 15) + '...' : 'N/A',
+        nodeEnv: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+    };
+
+    if (!hasDbUrl) {
+        return res.status(500).json({
+            success: false,
+            message: 'DATABASE_URL environment variable is missing',
+            debug: debugInfo
+        });
     }
+
+    const pool = new Pool({
+        connectionString: dbUrl,
+        ssl: { rejectUnauthorized: false }
+    });
 
     try {
         const client = await pool.connect();
         const result = await client.query('SELECT NOW() as time, current_database() as db');
         client.release();
+        await pool.end();
 
         return res.status(200).json({
             success: true,
-            message: 'Conexión exitosa a la base de datos',
-            data: result.rows[0]
+            message: 'Connection Successful',
+            data: result.rows[0],
+            debug: debugInfo
         });
     } catch (error) {
-        console.error('Database connection test failed:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error de conexión a la base de datos',
-            error: error.message
+            message: 'Connection Failed',
+            error: error.message,
+            debug: debugInfo
         });
     }
 }
