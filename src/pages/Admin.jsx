@@ -29,6 +29,7 @@ const Admin = () => {
         footerSettings, updateFooterSettings,
         fetchNews,
         reorderCategories,
+        reorderPharmacies,
         cityHeroImages, addCityHeroImage, deleteCityHeroImage
     } = useNews();
 
@@ -955,35 +956,63 @@ const Admin = () => {
                                         </div>
 
                                         {pharmacyViewType === 'grid' ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                {pharmacies.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(phi => (
-                                                    <div key={phi.id} className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-lg group">
-                                                        <div className="flex justify-between items-start mb-6">
-                                                            <div className="size-12 rounded-xl bg-primary/10 dark:bg-white/5 flex items-center justify-center text-primary dark:text-white">
-                                                                <Crosshair size={24} />
-                                                            </div>
-                                                            <div className="flex gap-2 opacity-100 transition-opacity">
-                                                                <button onClick={() => handleEdit(phi)} className="size-9 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm" title="Editar">
-                                                                    <Edit3 size={16} />
-                                                                </button>
-                                                                <button onClick={() => deletePharmacy(phi.id)} className="size-9 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Eliminar">
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <h4 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight mb-4 leading-tight">{phi.name}</h4>
-                                                        <div className="flex flex-col gap-3">
-                                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
-                                                                <MapPin size={18} className="text-primary shrink-0" />
-                                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 truncate">{phi.address}</span>
-                                                            </div>
-                                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
-                                                                <Phone size={18} className="text-accent-green shrink-0" />
-                                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">{phi.phone}</span>
-                                                            </div>
-                                                        </div>
+                                            <div className="flex flex-col gap-4">
+                                                {!searchTerm && (
+                                                    <div className="flex items-center gap-2 px-6 py-3 bg-primary/5 rounded-xl border border-primary/10 text-primary mb-2">
+                                                        <Grid size={16} className="animate-pulse" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">Modo Ordenar Activo: Arrastra las tarjetas para cambiar su posición</span>
                                                     </div>
-                                                ))}
+                                                )}
+                                                <Reorder.Group
+                                                    axis="y"
+                                                    values={pharmacies}
+                                                    onReorder={reorderPharmacies}
+                                                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 list-none"
+                                                >
+                                                    {pharmacies.filter(p => !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(phi => (
+                                                        <Reorder.Item
+                                                            key={phi.id}
+                                                            value={phi}
+                                                            drag={!searchTerm}
+                                                            className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-lg group cursor-grab active:cursor-grabbing select-none"
+                                                        >
+                                                            <div className="flex justify-between items-start mb-6">
+                                                                <div className="size-12 rounded-xl bg-primary/10 dark:bg-white/5 flex items-center justify-center text-primary dark:text-white">
+                                                                    <Crosshair size={24} />
+                                                                </div>
+                                                                <div className="flex gap-2">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => { e.stopPropagation(); handleEdit(phi); }}
+                                                                        className="size-9 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm"
+                                                                        title="Editar"
+                                                                    >
+                                                                        <Edit3 size={16} />
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => { e.stopPropagation(); deletePharmacy(phi.id); }}
+                                                                        className="size-9 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                                                                        title="Eliminar"
+                                                                    >
+                                                                        <Trash2 size={16} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <h4 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight mb-4 leading-tight">{phi.name}</h4>
+                                                            <div className="flex flex-col gap-3">
+                                                                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                                                    <MapPin size={18} className="text-primary shrink-0" />
+                                                                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300 truncate">{phi.address}</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                                                    <Phone size={18} className="text-accent-green shrink-0" />
+                                                                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300">{phi.phone}</span>
+                                                                </div>
+                                                            </div>
+                                                        </Reorder.Item>
+                                                    ))}
+                                                </Reorder.Group>
                                             </div>
                                         ) : (
                                             <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-xl">

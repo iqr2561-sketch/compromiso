@@ -33,18 +33,29 @@ export default async function handler(req, res) {
                 }
             }
 
+            // Handle Reorder
+            if (type === 'reorder') {
+                if (method === 'POST') {
+                    const { items } = req.body;
+                    for (const item of items) {
+                        await client.query('UPDATE pharmacies SET position = $1 WHERE id = $2', [item.position, item.id]);
+                    }
+                    return res.status(200).json({ success: true });
+                }
+            }
+
             // Handle Pharmacies
             switch (method) {
                 case 'GET':
-                    const { rows } = await client.query('SELECT * FROM pharmacies ORDER BY name ASC');
+                    const { rows } = await client.query('SELECT * FROM pharmacies ORDER BY position ASC, name ASC');
                     res.status(200).json(rows);
                     break;
 
                 case 'POST':
-                    const { name, address, phone, city, lat, lng } = req.body;
+                    const { name, address, phone, city, lat, lng, position } = req.body;
                     const insertRes = await client.query(
-                        'INSERT INTO pharmacies (name, address, phone, city, lat, lng) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                        [name, address, phone, city || 'Central', lat || 0, lng || 0]
+                        'INSERT INTO pharmacies (name, address, phone, city, lat, lng, position) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+                        [name, address, phone, city || 'Central', lat || 0, lng || 0, position || 0]
                     );
                     res.status(201).json(insertRes.rows[0]);
                     break;
