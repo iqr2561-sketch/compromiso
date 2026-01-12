@@ -414,7 +414,8 @@ export const NewsProvider = ({ children }) => {
                 body: JSON.stringify({
                     name: cat.name,
                     color: cat.color,
-                    bg_image: cat.bgImage || cat.bg_image
+                    bg_image: cat.bgImage || cat.bg_image,
+                    parent_id: cat.parentId || cat.parent_id
                 })
             });
             if (res.ok) {
@@ -434,6 +435,9 @@ export const NewsProvider = ({ children }) => {
             if (res.ok) {
                 setCategories(prev => prev.filter(c => c.id !== id));
                 return true;
+            } else {
+                const errText = await res.text();
+                console.error('Failed to delete category. Status:', res.status, errText);
             }
         } catch (err) {
             console.error('Failed to delete category:', err);
@@ -450,7 +454,8 @@ export const NewsProvider = ({ children }) => {
                     id,
                     name: cat.name,
                     color: cat.color,
-                    bg_image: cat.bgImage || cat.bg_image
+                    bg_image: cat.bgImage || cat.bg_image,
+                    parent_id: cat.parentId || cat.parent_id
                 })
             });
             if (res.ok) {

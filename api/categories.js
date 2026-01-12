@@ -23,19 +23,19 @@ export default async function handler(req, res) {
                     }
                     return res.status(200).json({ success: true });
                 }
-                const { name, color, bg_image } = req.body;
+                const { name, color, bg_image, parent_id } = req.body;
                 const insertRes = await client.query(
-                    'INSERT INTO categories (name, color, bg_image) VALUES ($1, $2, $3) RETURNING *',
-                    [name, color, bg_image]
+                    'INSERT INTO categories (name, color, bg_image, parent_id) VALUES ($1, $2, $3, $4) RETURNING *',
+                    [name, color, bg_image, parent_id || null]
                 );
                 res.status(201).json(insertRes.rows[0]);
                 break;
 
             case 'PUT':
-                const { name: upName, color: upColor, bg_image: upBg } = req.body;
+                const { name: upName, color: upColor, bg_image: upBg, parent_id: upParent } = req.body;
                 const updateRes = await client.query(
-                    'UPDATE categories SET name = $1, color = $2, bg_image = $3 WHERE id = $4 RETURNING *',
-                    [upName, upColor, upBg, id || req.body.id]
+                    'UPDATE categories SET name = $1, color = $2, bg_image = $3, parent_id = $4 WHERE id = $5 RETURNING *',
+                    [upName, upColor, upBg, upParent || null, id || req.body.id]
                 );
                 res.status(200).json(updateRes.rows[0]);
                 break;
