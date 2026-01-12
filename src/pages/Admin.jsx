@@ -1761,119 +1761,127 @@ const Admin = () => {
                     {activeTab === 'settings' && (
                         <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <Layers size={14} className="text-primary" /> Portada y Edición
-                                    </h3>
-                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona el número de edición que se muestra en la cabecera. Se incrementará automáticamente cada día.</p>
+                                <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 md:col-span-2">
+                                    <div className="flex flex-col md:flex-row gap-8">
+                                        {/* Left Column: Edition & Cover Page Management */}
+                                        <div className="flex-1 flex flex-col gap-6">
+                                            <div>
+                                                <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                    <Layers size={14} className="text-primary" /> Portada y Edición
+                                                </h3>
+                                                <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona la edición impresa y el carrusel principal.</p>
 
-                                    <div className="flex items-center gap-4">
-                                        <button
-                                            onClick={() => updateEdition(parseInt(editionNumber) - 1)}
-                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                                            type="button"
-                                        >-</button>
-                                        <input
-                                            type="number"
-                                            className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic outline-none focus:border-primary transition-colors"
-                                            value={editionNumber}
-                                            onChange={(e) => updateEdition(e.target.value)}
-                                        />
-                                        <button
-                                            onClick={() => updateEdition(parseInt(editionNumber) + 1)}
-                                            className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                                            type="button"
-                                        >+</button>
-                                    </div>
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <button onClick={() => updateEdition(parseInt(editionNumber) - 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">-</button>
+                                                    <input type="number" className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic outline-none focus:border-primary transition-colors" value={editionNumber} onChange={(e) => updateEdition(e.target.value)} />
+                                                    <button onClick={() => updateEdition(parseInt(editionNumber) + 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">+</button>
+                                                </div>
 
-                                    <div className="mt-6">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest">Fecha de Publicación</label>
-                                            <button
-                                                onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])}
-                                                className="text-[9px] font-black uppercase text-primary hover:underline"
-                                                type="button"
-                                            >Fijar Hoy</button>
-                                        </div>
-                                        <div className="relative">
-                                            <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                            <input
-                                                type="date"
-                                                className="w-full bg-[#11141b] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors"
-                                                value={coverPage.date || ''}
-                                                onChange={(e) => updateCoverPage(coverPage.image, e.target.value)}
-                                                style={{ colorScheme: 'dark' }}
-                                            />
-                                        </div>
-                                    </div>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest">Fecha de Publicación</label>
+                                                    <button onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])} className="text-[9px] font-black uppercase text-primary hover:underline" type="button">Fijar Hoy</button>
+                                                </div>
+                                                <div className="relative mb-6">
+                                                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                                    <input type="date" className="w-full bg-[#11141b] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors" value={coverPage.date || ''} onChange={(e) => updateCoverPage(coverPage.image, e.target.value)} style={{ colorScheme: 'dark' }} />
+                                                </div>
 
-                                    <div className="mt-6 pt-6 border-t border-white/5">
-                                        <button
-                                            onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
-                                            className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
-                                            type="button"
-                                        >
-                                            Forzar Incremento Diario
-                                        </button>
-                                    </div>
-                                    <div className="mt-8 pt-6 border-t border-white/5">
-                                        <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
-                                            <ImageIcon size={12} className="text-primary" /> Carrusel Panorámico (Portada)
-                                        </h4>
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex gap-2">
-                                                <input
-                                                    id="cityHeroInput"
-                                                    className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
-                                                    placeholder="URL de imagen..."
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            addCityHeroImage(e.target.value).then(ok => {
-                                                                if (ok) {
-                                                                    showToast("Imagen agregada", "success");
-                                                                    e.target.value = '';
-                                                                }
-                                                            });
-                                                        }
-                                                    }}
-                                                />
-                                                <button
-                                                    onClick={() => {
-                                                        const input = document.getElementById('cityHeroInput');
-                                                        if (input && input.value) {
-                                                            addCityHeroImage(input.value).then(ok => {
-                                                                if (ok) {
-                                                                    showToast("Imagen agregada", "success");
-                                                                    input.value = '';
-                                                                }
-                                                            });
-                                                        }
-                                                    }}
-                                                    className="p-3 bg-primary text-white rounded-xl hover:bg-primary/80 transition-all font-bold text-xs uppercase tracking-wider"
-                                                >
-                                                    <Plus size={16} />
-                                                </button>
+                                                <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest mb-2">Imagen Tapa del Día (URL)</label>
+                                                <div className="flex gap-2 mb-4">
+                                                    <input
+                                                        className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
+                                                        value={coverPage.image || ''}
+                                                        onChange={e => updateCoverPage(e.target.value, coverPage.date)}
+                                                        placeholder="https://..."
+                                                    />
+                                                </div>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-3 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
-                                                {cityHeroImages && cityHeroImages.map((img) => (
-                                                    <div key={img.id} className="relative group rounded-lg overflow-hidden aspect-video border border-white/10 bg-black/20">
-                                                        <img src={img.url} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Carousel" />
-                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <button
-                                                                onClick={() => deleteCityHeroImage(img.id)}
-                                                                className="p-1.5 bg-red-500/80 text-white rounded-full hover:scale-110 transition-transform backdrop-blur-sm"
-                                                            >
-                                                                <Trash2 size={12} />
-                                                            </button>
+                                            {/* Cover Page Preview (The 'Big Image' in Admin) */}
+                                            {coverPage.image && (
+                                                <div className="relative w-full aspect-[3/4] bg-slate-900 rounded-xl overflow-hidden border border-white/10 shadow-2xl group">
+                                                    <img src={coverPage.image} className="w-full h-full object-contain" alt="Tapa Preview" />
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white uppercase font-black tracking-widest text-xs">
+                                                        Vista Previa Tapa
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Right Column: City Hero Carousel */}
+                                        <div className="flex-1 border-l border-white/5 pl-8">
+                                            <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
+                                                <ImageIcon size={12} className="text-primary" /> Carrusel Panorámico (Portada)
+                                            </h4>
+
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        id="cityHeroInput"
+                                                        className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
+                                                        placeholder="URL de imagen..."
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                addCityHeroImage(e.target.value).then(ok => {
+                                                                    if (ok) {
+                                                                        showToast("Imagen agregada", "success");
+                                                                        e.target.value = '';
+                                                                    }
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                    <button
+                                                        onClick={() => {
+                                                            const input = document.getElementById('cityHeroInput');
+                                                            if (input && input.value) {
+                                                                addCityHeroImage(input.value).then(ok => {
+                                                                    if (ok) {
+                                                                        showToast("Imagen agregada", "success");
+                                                                        input.value = '';
+                                                                    }
+                                                                });
+                                                            }
+                                                        }}
+                                                        className="p-3 bg-primary text-white rounded-xl hover:bg-primary/80 transition-all font-bold text-xs uppercase tracking-wider"
+                                                    >
+                                                        <Plus size={16} />
+                                                    </button>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
+                                                    {cityHeroImages && cityHeroImages.map((img) => (
+                                                        <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-video border border-white/10 bg-black/20 shrink-0">
+                                                            <img src={img.url} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Carousel" />
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                <button
+                                                                    onClick={() => deleteCityHeroImage(img.id)}
+                                                                    className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform backdrop-blur-sm shadow-xl"
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
+                                                            </div>
+                                                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-[8px] font-mono text-white/50 truncate max-w-full">
+                                                                {img.url}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))}
-                                                {(!cityHeroImages || cityHeroImages.length === 0) && (
-                                                    <div className="col-span-2 py-4 text-center text-slate-600 text-[8px] uppercase font-bold tracking-widest border border-dashed border-white/10 rounded-lg">
-                                                        Sin imágenes (Default)
-                                                    </div>
-                                                )}
+                                                    ))}
+                                                    {(!cityHeroImages || cityHeroImages.length === 0) && (
+                                                        <div className="py-12 text-center text-slate-600 text-[10px] uppercase font-bold tracking-widest border border-dashed border-white/10 rounded-xl">
+                                                            Sin imágenes personalizadas (Se muestra la default)
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-8 pt-6 border-t border-white/5">
+                                                <button
+                                                    onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
+                                                    className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                                    type="button"
+                                                >
+                                                    Forzar Incremento Diario
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
