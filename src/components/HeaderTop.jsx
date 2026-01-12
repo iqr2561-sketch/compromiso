@@ -242,11 +242,11 @@ const HeaderTop = () => {
                                 whileTap={{ scale: 0.9 }}
                                 onClick={async () => {
                                     try {
-                                        const res = await fetch('/api/test-db');
+                                        const res = await fetch('/api/settings?test=true');
                                         const data = await res.json();
-                                        alert(data.message + '\nLatencia: ' + (data.latency || 'N/A'));
+                                        alert(data.message + (data.data?.time ? '\nServidor OK' : ''));
                                     } catch (err) {
-                                        alert('Error al conectar con la base de datos. Asegúrate de estar corriendo en un entorno que soporte /api (como vercel dev).');
+                                        alert('Error al conectar con la base de datos.');
                                     }
                                 }}
                                 className="ml-3 size-8 flex-shrink-0 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/20 transition-all group"

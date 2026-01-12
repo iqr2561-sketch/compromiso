@@ -28,7 +28,8 @@ const Admin = () => {
         comments, deleteComment, updateCommentStatus,
         footerSettings, updateFooterSettings,
         fetchNews,
-        reorderCategories
+        reorderCategories,
+        cityHeroImages, addCityHeroImage, deleteCityHeroImage
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
