@@ -14,6 +14,23 @@ export default async function handler(req, res) {
     try {
         const client = await pool.connect();
 
+        const { test } = req.query;
+
+        // DB Connection Test
+        if (test === 'true') {
+            const result = await client.query('SELECT NOW() as time, current_database() as db');
+            client.release();
+            return res.status(200).json({
+                success: true,
+                message: 'Conexión exitosa con Supabase',
+                data: {
+                    time: result.rows[0].time,
+                    db: result.rows[0].db,
+                    env: process.env.NODE_ENV || 'development'
+                }
+            });
+        }
+
         switch (method) {
             case 'GET':
                 const { rows } = await client.query('SELECT * FROM settings');

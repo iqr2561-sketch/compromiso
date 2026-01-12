@@ -231,7 +231,7 @@ export const NewsProvider = ({ children }) => {
 
     const fetchDuties = async () => {
         try {
-            const res = await fetch('/api/pharmacy-duties');
+            const res = await fetch('/api/pharmacies?type=duty');
             if (res.ok) {
                 const data = await res.json();
                 setPharmacyDuty(data);
@@ -570,7 +570,7 @@ export const NewsProvider = ({ children }) => {
 
     const setDuty = async (date, pharmacyId) => {
         try {
-            const res = await fetch('/api/pharmacy-duties', {
+            const res = await fetch('/api/pharmacies?type=duty', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ date, pharmacyId })

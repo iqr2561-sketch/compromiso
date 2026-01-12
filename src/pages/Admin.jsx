@@ -179,7 +179,7 @@ const Admin = () => {
     const testDbConnection = async () => {
         setDbStatus({ loading: true });
         try {
-            const res = await fetch('/api/test-db');
+            const res = await fetch('/api/settings?test=true');
             const data = await res.json();
             setDbStatus(data);
             if (data.success) {
