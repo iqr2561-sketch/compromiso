@@ -6,25 +6,29 @@ import { Calendar, Clock, ArrowRight, Trophy, Cpu, Zap, MapPin } from 'lucide-re
 import AdSection from '../components/AdSection';
 
 const Category = () => {
-    const { categoryName } = useParams();
+    const { categoryName, subCategoryName } = useParams();
     const { news, scores, categories } = useNews();
+
+    // Determine the active category name for filtering and display
+    const activeCategoryName = subCategoryName || categoryName;
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [categoryName]);
+    }, [categoryName, subCategoryName]);
 
     // Find full category object from context
-    const currentCategory = categories.find(c => c.name.toLowerCase() === categoryName.toLowerCase()) || {
-        name: categoryName,
+    const currentCategory = categories.find(c => c.name.toLowerCase() === activeCategoryName.toLowerCase()) || {
+        name: activeCategoryName,
         color: 'primary',
         bgImage: 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=1600'
     };
 
     // Normalize and filter news - FIXED FILTERING
-    const categoryNews = news.filter(n =>
-        n.category.toLowerCase().includes(categoryName.toLowerCase()) ||
-        categoryName.toLowerCase().includes(n.category.toLowerCase())
-    );
+    const categoryNews = news.filter(n => {
+        const catName = n.category.toLowerCase();
+        const target = activeCategoryName.toLowerCase();
+        return catName.includes(target) || target.includes(catName);
+    });
 
     const getStyles = (cat) => {
         const name = cat.toLowerCase();
@@ -35,10 +39,10 @@ const Category = () => {
         return { color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200', accent: 'from-slate-500/60', to: 'to-slate-400/60', icon: <Zap size={24} /> };
     };
 
-    const styles = getStyles(categoryName);
+    const styles = getStyles(activeCategoryName);
 
     // Overriding specific category images for better visual impact (Stadium for Sports)
-    const categoryBg = categoryName.toLowerCase().includes('deportes')
+    const categoryBg = activeCategoryName.toLowerCase().includes('deportes')
         ? 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop'
         : currentCategory.bgImage;
 
@@ -81,7 +85,7 @@ const Category = () => {
                             transition={{ delay: 0.4 }}
                             className={`text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] ${styles.color} mb-0.5 block drop-shadow-lg`}
                         >
-                            Compromiso Diario • Sección
+                            Compromiso Diario • {subCategoryName ? categoryName : 'Sección'}
                         </motion.span>
                         <motion.h1
                             initial={{ y: 30, opacity: 0 }}
@@ -89,7 +93,7 @@ const Category = () => {
                             transition={{ delay: 0.5 }}
                             className="text-4xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl"
                         >
-                            {categoryName}
+                            {activeCategoryName}
                         </motion.h1>
                     </div>
                 </div>
@@ -122,7 +126,7 @@ const Category = () => {
                                             {item.title}
                                         </h2>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
-                                            {item.content?.length > 150 ? item.content.substring(0, 150) + "..." : item.content || "Análisis profundo sobre los eventos que marcan la agenda en la sección de " + categoryName + "."}
+                                            {item.content?.length > 150 ? item.content.substring(0, 150) + "..." : item.content || "Análisis profundo sobre los eventos que marcan la agenda en la sección de " + activeCategoryName + "."}
                                         </p>
                                         <div className="flex items-center justify-between border-t border-gray-100 dark:border-white/10 pt-4 mt-2">
                                             <span className="text-[9px] font-black italic tracking-widest text-primary uppercase flex items-center gap-2 group-hover:translate-x-2 transition-transform">
@@ -140,14 +144,14 @@ const Category = () => {
                         <div className="flex flex-col items-center justify-center py-20 text-center gap-6 bg-[#11141b] rounded-3xl border border-white/5 shadow-2xl">
                             <Zap size={32} className="text-primary opacity-20" />
                             <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Nuevas crónicas en camino</h3>
-                            <p className="text-slate-500 font-bold uppercase text-[9px] tracking-widest">Validando contenidos para {categoryName}.</p>
+                            <p className="text-slate-500 font-bold uppercase text-[9px] tracking-widest">Validando contenidos para {activeCategoryName}.</p>
                             <Link to="/" className="px-6 py-2.5 bg-primary text-white rounded-xl font-black text-[9px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">Inicio</Link>
                         </div>
                     )}
                 </div>
 
                 <div className="lg:col-span-4 flex flex-col gap-8">
-                    {categoryName.toLowerCase().includes('deportes') && (
+                    {activeCategoryName.toLowerCase().includes('deportes') && (
                         <div className="bg-[#11141b] rounded-3xl p-6 md:p-8 border border-white/5 shadow-2xl">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white flex items-center gap-3 mb-6">
                                 <Trophy size={16} className="text-accent-orange" /> Resultados Directos
@@ -188,7 +192,7 @@ const Category = () => {
                                 <div key={i} className="flex gap-4 group/item cursor-pointer">
                                     <span className="text-3xl font-black text-white/5 group-hover/item:text-primary transition-colors italic leading-none">0{i}</span>
                                     <div className="flex flex-col gap-1">
-                                        <h5 className="text-xs font-black italic leading-tight group-hover/item:text-primary transition-colors uppercase tracking-widest">Especial: {categoryName} al Día</h5>
+                                        <h5 className="text-xs font-black italic leading-tight group-hover/item:text-primary transition-colors uppercase tracking-widest">Especial: {activeCategoryName} al Día</h5>
                                     </div>
                                 </div>
                             ))}

@@ -45,6 +45,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/categoria/:categoryName" element={<Category />} />
+                        <Route path="/categoria/:categoryName/:subCategoryName" element={<Category />} />
                         <Route path="/noticia/:id" element={<Post />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/tapa-de-hoy" element={<TodayCover />} />

@@ -21,41 +21,42 @@ const Navbar = () => {
         }
     };
 
-    const staticSubmenus = {
-        'Locales': [
-            { name: 'Diario de Sesión', path: '/categoria/Locales/Sesion' },
-            { name: 'Correo de Lectores', path: '/categoria/Locales/Correo-de-Lectores' },
-            { name: 'Policiales', path: '/categoria/Locales/Policiales' },
-            { name: 'Judiciales', path: '/categoria/Locales/Judiciales' }
-        ],
-        '¿Te Acordás Dolores?': [
-            { name: 'Galería Histórica', path: '/categoria/Te-Acordas/Galeria' },
-            { name: 'Personajes', path: '/categoria/Te-Acordas/Personajes' },
-            { name: 'Arquitectura', path: '/categoria/Te-Acordas/Arquitectura' }
-        ],
-        'Actualidad': [
-            { name: 'Interés General', path: '/categoria/Actualidad/Interes-General' },
-            { name: 'Cocina', path: '/categoria/Actualidad/Cocina' },
-            { name: 'Tecnología', path: '/categoria/Actualidad/Tecnologia' }
-        ]
-    };
+    // Excluded categories from main menu
+    const excludedCategories = [
+        '¿Te Acordás Dolores?', 'Te Acordás Dolores', 'TE ACORDÁS DOLORES???', 'Memoria', 'Tapa del día'
+    ];
 
-    const navLinks = [
-        { name: 'Inicio', path: '/' },
-        ...categories
-            .filter(cat => !['¿Te Acordás Dolores?', 'Memoria', 'Te Acordás Dolores'].includes(cat.name))
+    // Helper to build hierarchy
+    const buildMenu = () => {
+        // 1. Get parents
+        const parents = categories
+            .filter(c => !c.parent_id && !excludedCategories.includes(c.name))
             .sort((a, b) => {
-                const priority = { 'Locales': 1, 'Deportes': 2 };
+                const priority = { 'Locales': 1, 'Deportes': 2, 'Actualidad': 3 };
                 const pA = priority[a.name] || 99;
                 const pB = priority[b.name] || 99;
                 return pA - pB;
+            });
+
+        // 2. Map parents to menu items with children
+        return [
+            { name: 'Inicio', path: '/' },
+            ...parents.map(parent => {
+                const children = categories.filter(c => c.parent_id === parent.id);
+
+                return {
+                    name: parent.name,
+                    path: `/categoria/${parent.name}`,
+                    submenu: children.length > 0 ? children.map(child => ({
+                        name: child.name,
+                        path: `/categoria/${parent.name}/${child.name}` // Using nested route convention if needed, or just unique slug
+                    })) : null
+                };
             })
-            .map(cat => ({
-                name: cat.name,
-                path: `/categoria/${cat.name}`,
-                submenu: staticSubmenus[cat.name] || null
-            }))
-    ];
+        ];
+    };
+
+    const navLinks = buildMenu();
 
     const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
