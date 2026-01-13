@@ -25,19 +25,23 @@ const HeroSection = () => {
 
     const heroNews = heroNewsList[currentIndex];
 
-    // Generate random news for the top sidebar slots
-    const randomTopNews = React.useMemo(() => {
-        // Try to get non-hero, non-flash news first
-        let pool = news.filter(n => !n.isHero && !n.isFlash);
-
-        // Fallback: if not enough specific news, use any news except the current main hero
-        if (pool.length < 2) {
-            pool = news.filter(n => n.id !== (heroNews?.id));
+    // Static news for visual layout (temporary)
+    const staticTopNews = [
+        {
+            id: 'static-1',
+            title: 'Nuevos proyectos de infraestructura avanzan según lo planeado en la zona céntrica',
+            category: 'Obras Públicas',
+            image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop',
+            date: 'Hace 2 horas'
+        },
+        {
+            id: 'static-2',
+            title: 'Gran convocatoria en el festival cultural de fin de semana',
+            category: 'Cultura',
+            image: 'https://images.unsplash.com/photo-1514525253440-b393452e8d03?q=80&w=1000&auto=format&fit=crop',
+            date: 'Hace 5 horas'
         }
-
-        // Shuffle and slice
-        return [...pool].sort(() => 0.5 - Math.random()).slice(0, 2);
-    }, [news, heroNews]);
+    ];
 
     return (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto">
@@ -149,17 +153,17 @@ const HeroSection = () => {
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News - Random Selection above Cover */}
+                {/* Lateral News - Static Selection above Cover */}
                 <div className="flex flex-col gap-4">
-                    {randomTopNews.map((item, idx) => (
+                    {staticTopNews.map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative h-32 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-40 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
-                            <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
+                            <div className="absolute inset-0 block">
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
                                     style={{ backgroundImage: `url(${item.image})` }}
@@ -172,7 +176,7 @@ const HeroSection = () => {
                                                 {item.category}
                                             </span>
                                             <span className="text-[8px] text-white/60 uppercase tracking-wider font-black">
-                                                FLASH
+                                                {item.date}
                                             </span>
                                         </div>
                                         <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight line-clamp-2">
@@ -180,7 +184,7 @@ const HeroSection = () => {
                                         </h3>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         </motion.div>
                     ))}
                 </div>
