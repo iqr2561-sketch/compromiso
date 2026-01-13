@@ -78,10 +78,74 @@ const Admin = () => {
         password: ''
     });
 
+    const [users, setUsers] = useState([]);
+    const [userFormData, setUserFormData] = useState({
+        username: '',
+        password: '',
+        name: '',
+        recovery_code: 'COMPROMISO-2026'
+    });
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch('/api/admins');
+            if (res.ok) {
+                const data = await res.json();
+                setUsers(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch users:', err);
+        }
+    };
+
+    const handleSaveUser = async (e) => {
+        e.preventDefault();
+        const isEditing = userFormData.id;
+        const url = isEditing ? `/api/admins?id=${userFormData.id}` : '/api/admins';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userFormData)
+            });
+
+            if (res.ok) {
+                showToast(isEditing ? 'Usuario actualizado' : 'Usuario creado', 'success');
+                setIsEditing(false);
+                setUserFormData({ username: '', password: '', name: '', recovery_code: 'COMPROMISO-2026' });
+                fetchUsers();
+            } else {
+                const data = await res.json();
+                showToast(data.message || 'Error al guardar usuario', 'error');
+            }
+        } catch (err) {
+            showToast('Error de conexión', 'error');
+        }
+    };
+
+    const deleteUser = async (id) => {
+        if (!confirm('¿Seguro que quieres eliminar este administrador?')) return;
+        try {
+            const res = await fetch(`/api/admins?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                showToast('Usuario eliminado', 'success');
+                fetchUsers();
+            } else {
+                const data = await res.json();
+                showToast(data.message || 'Error al eliminar', 'error');
+            }
+        } catch (err) {
+            showToast('Error de conexión', 'error');
+        }
+    };
+
     useEffect(() => {
         const savedAuth = localStorage.getItem('compromiso_auth');
         if (savedAuth === 'true') {
             setIsAuthenticated(true);
+            fetchUsers();
         }
     }, []);
 
@@ -421,6 +485,7 @@ const Admin = () => {
         { id: 'gallery', label: 'Galería', icon: ImageIcon },
         { id: 'pharmacies', label: 'Farmacias', icon: MapPin },
         { id: 'cover', label: 'Tapa Diaria', icon: Eye },
+        { id: 'users', label: 'Usuarios', icon: Users },
         { id: 'settings', label: 'Ajustes', icon: Settings },
     ];
 
@@ -2208,9 +2273,134 @@ const Admin = () => {
                         )
                     }
 
+                    {/* Users View */}
+                    {
+                        activeTab === 'users' && (
+                            <div className="flex flex-col gap-8">
+                                <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 p-10 shadow-2xl">
+                                    <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter mb-6 flex items-center gap-3">
+                                        <div className="size-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                                            <Users size={20} />
+                                        </div>
+                                        {isEditing ? 'Editar Administrador' : 'Nuevo Administrador'}
+                                    </h3>
+                                    <form onSubmit={handleSaveUser} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Nombre Completo</label>
+                                            <input
+                                                required
+                                                className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all"
+                                                value={userFormData.name}
+                                                onChange={e => setUserFormData({ ...userFormData, name: e.target.value })}
+                                                placeholder="Ej: Juan Pérez"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Usuario</label>
+                                            <input
+                                                required
+                                                className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all"
+                                                value={userFormData.username}
+                                                onChange={e => setUserFormData({ ...userFormData, username: e.target.value })}
+                                                placeholder="Ej: jperez"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">{isEditing ? 'Nueva Contraseña (Opcional)' : 'Contraseña'}</label>
+                                            <input
+                                                type="password"
+                                                required={!isEditing}
+                                                className="bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary transition-all"
+                                                value={userFormData.password}
+                                                onChange={e => setUserFormData({ ...userFormData, password: e.target.value })}
+                                                placeholder="••••••••"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Acción</label>
+                                            <div className="flex gap-2">
+                                                <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">
+                                                    {isEditing ? 'Actualizar' : 'Crear Usuario'}
+                                                </button>
+                                                {isEditing && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setIsEditing(false);
+                                                            setUserFormData({ username: '', password: '', name: '', recovery_code: 'COMPROMISO-2026' });
+                                                        }}
+                                                        className="px-4 bg-slate-100 dark:bg-white/5 text-slate-500 rounded-2xl hover:bg-slate-200 transition-all"
+                                                    >
+                                                        <X size={20} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div className="bg-white dark:bg-[#11141b] rounded-[2.5rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-slate-50 dark:bg-[#14171d]">
+                                            <tr>
+                                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Administrador</th>
+                                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Usuario</th>
+                                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Estado</th>
+                                                <th className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-slate-500">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                                            {users.map(u => (
+                                                <tr key={u.id} className="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                                                    <td className="px-10 py-6">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="size-10 rounded-xl bg-gradient-to-br from-primary/10 to-accent-purple/10 flex items-center justify-center font-black text-primary uppercase italic text-xs">
+                                                                {u.name.charAt(0)}
+                                                            </div>
+                                                            <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter">{u.name}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-10 py-6">
+                                                        <span className="text-xs font-bold text-slate-500">{u.username}</span>
+                                                    </td>
+                                                    <td className="px-10 py-6">
+                                                        {u.locked_until && new Date(u.locked_until) > new Date() ? (
+                                                            <span className="px-3 py-1 bg-red-500/10 text-red-500 rounded-full text-[8px] font-black uppercase tracking-widest">Bloqueado</span>
+                                                        ) : (
+                                                            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[8px] font-black uppercase tracking-widest">Activo</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-10 py-6 text-right">
+                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setIsEditing(true);
+                                                                    setUserFormData({ ...u, password: '' });
+                                                                }}
+                                                                className="p-2 text-slate-400 hover:text-primary transition-colors"
+                                                            >
+                                                                <Edit3 size={18} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deleteUser(u.id)}
+                                                                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                                            >
+                                                                <Trash2 size={18} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )
+                    }
+
                     {/* Generic Table View (for News, Ads, etc.) */}
                     {
-                        activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && (
+                        activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && activeTab !== 'users' && (
                             <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 dark:bg-[#14171d]">
