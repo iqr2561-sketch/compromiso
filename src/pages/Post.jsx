@@ -36,7 +36,8 @@ const Post = () => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col gap-10"
+            onContextMenu={(e) => e.preventDefault()}
+            className="flex flex-col gap-10 select-none"
         >
             {/* Header / Breadcrumb */}
             <div className="flex items-center justify-between py-4">
@@ -56,18 +57,8 @@ const Post = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 {/* Main Content */}
                 <article className="lg:col-span-8 flex flex-col gap-8">
-                    {/* Hero Image */}
-                    <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl shadow-black/10">
-                        <img src={post.image} className="w-full h-full object-cover" alt={post.title} />
-                        <div className="absolute top-8 left-8">
-                            <span className="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
-                                {post.category}
-                            </span>
-                        </div>
-                    </div>
-
                     <div className="flex flex-col gap-6">
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
+                        <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
                             {post.title ? post.title.charAt(0).toUpperCase() + post.title.slice(1).toLowerCase() : ''}
                         </h1>
 
@@ -78,6 +69,16 @@ const Post = () => {
                                     {new Date(post.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Hero Image */}
+                    <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl shadow-black/10">
+                        <img src={post.image} className="w-full h-full object-cover" alt={post.title} />
+                        <div className="absolute top-8 left-8">
+                            <span className="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
+                                {post.category}
+                            </span>
                         </div>
                     </div>
 
