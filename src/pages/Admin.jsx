@@ -700,7 +700,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.0-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.1-RELEASE</span>
                     </div>
                 </div>
 
@@ -1750,9 +1750,11 @@ const Admin = () => {
                                                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                                                     <button
                                                                         onClick={() => {
-                                                                            if (confirm('¿Eliminar este anuncio?')) {
-                                                                                if (existingAd.id) deleteAd(existingAd.id);
-                                                                            }
+                                                                            showConfirm(
+                                                                                'Eliminar Anuncio',
+                                                                                '¿Deseas eliminar este anuncio de la portada?',
+                                                                                () => { if (existingAd.id) deleteAd(existingAd.id); }
+                                                                            );
                                                                         }}
                                                                         className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"
                                                                     >
@@ -1807,7 +1809,13 @@ const Admin = () => {
                                                     <p className="text-xs font-bold text-slate-300 truncate">{ad.link}</p>
                                                     <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                        <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                        <button onClick={() => {
+                                                            showConfirm(
+                                                                'Eliminar Publicidad',
+                                                                '¿Deseas eliminar este anuncio premium?',
+                                                                () => deleteAd(ad.id)
+                                                            );
+                                                        }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1836,7 +1844,13 @@ const Admin = () => {
                                                 </div>
                                                 <div className="flex gap-2 mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button onClick={() => handleEdit(ad)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={14} /></button>
-                                                    <button onClick={() => deleteAd(ad.id)} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+                                                    <button onClick={() => {
+                                                        showConfirm(
+                                                            'Eliminar Publicidad',
+                                                            '¿Deseas eliminar este anuncio horizontal?',
+                                                            () => deleteAd(ad.id)
+                                                        );
+                                                    }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
                                                 </div>
                                             </div>
                                         ))}
@@ -1870,7 +1884,13 @@ const Admin = () => {
                                                                     </div>
                                                                 )}
                                                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                                                                    <button onClick={() => { if (confirm('¿Eliminar?')) deleteAd(existingAd.id); }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
+                                                                    <button onClick={() => {
+                                                                        showConfirm(
+                                                                            'Eliminar Publicidad',
+                                                                            '¿Deseas eliminar este anuncio de la barra lateral?',
+                                                                            () => deleteAd(existingAd.id)
+                                                                        );
+                                                                    }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
                                                                     <button onClick={() => { setEditingId(existingAd.id); setFormData({ ...existingAd }); setIsAdding(true); }} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={16} /></button>
                                                                 </div>
                                                             </>
@@ -1911,7 +1931,13 @@ const Admin = () => {
                                                                     </div>
                                                                 )}
                                                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                                                                    <button onClick={() => { if (confirm('¿Eliminar?')) deleteAd(existingAd.id); }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
+                                                                    <button onClick={() => {
+                                                                        showConfirm(
+                                                                            'Eliminar Publicidad',
+                                                                            '¿Deseas eliminar este anuncio del pie?',
+                                                                            () => deleteAd(existingAd.id)
+                                                                        );
+                                                                    }} className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white"><Trash2 size={16} /></button>
                                                                     <button onClick={() => { setEditingId(existingAd.id); setFormData({ ...existingAd }); setIsAdding(true); }} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white hover:text-black"><Edit3 size={16} /></button>
                                                                 </div>
                                                             </>
@@ -2003,11 +2029,15 @@ const Admin = () => {
                                                     </button>
                                                     <button
                                                         onClick={async () => {
-                                                            if (window.confirm(`¿Estás seguro de que deseas eliminar la categoría "${cat.name}"?`)) {
-                                                                const success = await deleteCategory(cat.id);
-                                                                if (success) showToast("Categoría eliminada con éxito", "success");
-                                                                else showToast("Error al eliminar la categoría", "error");
-                                                            }
+                                                            showConfirm(
+                                                                'Eliminar Categoría',
+                                                                `¿Estás seguro de que deseas eliminar la categoría "${cat.name}"?`,
+                                                                async () => {
+                                                                    const success = await deleteCategory(cat.id);
+                                                                    if (success) showToast("Categoría eliminada con éxito", "success");
+                                                                    else showToast("Error al eliminar la categoría", "error");
+                                                                }
+                                                            );
                                                         }}
                                                         className="p-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                                         title="Eliminar"
