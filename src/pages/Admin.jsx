@@ -1891,13 +1891,19 @@ const Admin = () => {
 
                                             let categoriesToRender = [];
                                             if (activeTab === 'categories') {
-                                                // Filter parent categories (those without parent_id)
-                                                const parentCategories = categories.filter(c => !c.parent_id);
+                                                // Filter parent categories (those without parent_id) and sort alphabetically
+                                                const parentCategories = categories
+                                                    .filter(c => !c.parent_id)
+                                                    .sort((a, b) => a.name.localeCompare(b.name));
+
                                                 // Build hierarchical array
                                                 parentCategories.forEach(parent => {
                                                     categoriesToRender.push({ ...parent, isParent: true });
-                                                    // Find and add children
-                                                    const children = categories.filter(c => c.parent_id === parent.id);
+                                                    // Find and add children, sorted alphabetically
+                                                    const children = categories
+                                                        .filter(c => c.parent_id === parent.id)
+                                                        .sort((a, b) => a.name.localeCompare(b.name));
+
                                                     children.forEach(child => {
                                                         categoriesToRender.push({ ...child, isChild: true, parentName: parent.name });
                                                     });
