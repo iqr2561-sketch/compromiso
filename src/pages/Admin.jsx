@@ -67,6 +67,12 @@ const Admin = () => {
     const [loginError, setLoginError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(true);
+    const [isRecovering, setIsRecovering] = useState(false);
+    const [recoveryData, setRecoveryData] = useState({
+        username: '',
+        recoveryCode: '',
+        newPassword: ''
+    });
     const [loginData, setLoginData] = useState({
         username: localStorage.getItem('compromiso_user') || '',
         password: ''
@@ -100,7 +106,7 @@ const Admin = () => {
                     localStorage.setItem('compromiso_user', loginData.username);
                 } else {
                     localStorage.removeItem('compromiso_auth');
-                    localStorage.removeItem('compromiso_user');
+                    // localStorage.removeItem('compromiso_user'); // Keep username for next time if they want
                 }
                 showToast(`¡Bienvenido, ${data.user.username}!`, 'success');
             } else {
@@ -108,6 +114,35 @@ const Admin = () => {
             }
         } catch (err) {
             console.error('Login error:', err);
+            setLoginError('Error de conexión con el servidor');
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
+    const handleRecovery = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+        setLoginError('');
+
+        try {
+            const res = await fetch('/api/recover', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(recoveryData)
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('Contraseña restablecida correctamente', 'success');
+                setIsRecovering(false);
+                setLoginData({ ...loginData, username: recoveryData.username });
+            } else {
+                setLoginError(data.message || 'Error en la recuperación');
+            }
+        } catch (err) {
+            console.error('Recovery error:', err);
             setLoginError('Error de conexión con el servidor');
         } finally {
             setIsLoggingIn(false);
@@ -417,11 +452,15 @@ const Admin = () => {
                         <div className="size-20 bg-primary/20 rounded-3xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-primary/10">
                             <Newspaper className="text-primary" size={40} />
                         </div>
-                        <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none mb-2">Panel Admin</h2>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ingrese sus credenciales de acceso</p>
+                        <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none mb-2">
+                            {isRecovering ? 'Recuperar' : 'Panel Admin'}
+                        </h2>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                            {isRecovering ? 'Introduce tu código de seguridad' : 'Ingrese sus credenciales de acceso'}
+                        </p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="p-10 flex flex-col gap-6">
+                    <form onSubmit={isRecovering ? handleRecovery : handleLogin} className="p-10 flex flex-col gap-6">
                         {loginError && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
@@ -432,52 +471,125 @@ const Admin = () => {
                             </motion.div>
                         )}
 
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Usuario</label>
-                            <div className="relative group">
-                                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
-                                <input
-                                    type="text"
-                                    required
-                                    className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
-                                    value={loginData.username}
-                                    onChange={e => setLoginData({ ...loginData, username: e.target.value })}
-                                    placeholder="Nombre de usuario"
-                                />
-                            </div>
-                        </div>
+                        {isRecovering ? (
+                            <>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Usuario</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                        <input
+                                            type="text"
+                                            required
+                                            className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                            value={recoveryData.username}
+                                            onChange={e => setRecoveryData({ ...recoveryData, username: e.target.value })}
+                                            placeholder="Nombre de usuario"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Código de Seguridad</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                        <input
+                                            type="text"
+                                            required
+                                            className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                            value={recoveryData.recoveryCode}
+                                            onChange={e => setRecoveryData({ ...recoveryData, recoveryCode: e.target.value })}
+                                            placeholder="Código de recuperación"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Nueva Contraseña</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                        <input
+                                            type="password"
+                                            required
+                                            className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                            value={recoveryData.newPassword}
+                                            onChange={e => setRecoveryData({ ...recoveryData, newPassword: e.target.value })}
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Usuario</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                        <input
+                                            type="text"
+                                            required
+                                            className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                            value={loginData.username}
+                                            onChange={e => setLoginData({ ...loginData, username: e.target.value })}
+                                            placeholder="Nombre de usuario"
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Contraseña</label>
-                            <div className="relative group">
-                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-14 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
-                                    value={loginData.password}
-                                    onChange={e => setLoginData({ ...loginData, password: e.target.value })}
-                                    placeholder="••••••••"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Contraseña</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-14 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                            value={loginData.password}
+                                            onChange={e => setLoginData({ ...loginData, password: e.target.value })}
+                                            placeholder="••••••••"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
                         <div className="flex items-center justify-between px-2">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${rememberMe ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
-                                    {rememberMe && <div className="size-2 bg-white rounded-sm" />}
-                                </div>
-                                <input type="checkbox" className="hidden" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
-                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-300 transition-colors tracking-widest">Recordarme</span>
-                            </label>
-                            <Link to="/" className="text-[10px] font-black uppercase text-slate-600 hover:text-primary transition-colors tracking-widest">Volver al sitio</Link>
+                            {!isRecovering ? (
+                                <>
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${rememberMe ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                            {rememberMe && <div className="size-2 bg-white rounded-sm" />}
+                                        </div>
+                                        <input type="checkbox" className="hidden" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
+                                        <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-300 transition-colors tracking-widest">Recordarme</span>
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsRecovering(true);
+                                            setLoginError('');
+                                        }}
+                                        className="text-[10px] font-black uppercase text-slate-600 hover:text-primary transition-colors tracking-widest"
+                                    >
+                                        ¿Olvidaste tu contraseña?
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsRecovering(false);
+                                        setLoginError('');
+                                    }}
+                                    className="text-[10px] font-black uppercase text-slate-600 hover:text-primary transition-colors tracking-widest flex items-center gap-2"
+                                >
+                                    <ChevronLeft size={14} /> Volver al login
+                                </button>
+                            )}
                         </div>
 
                         <button
@@ -488,11 +600,11 @@ const Admin = () => {
                             {isLoggingIn ? (
                                 <>
                                     <div className="size-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                    <span>Verificando...</span>
+                                    <span>{isRecovering ? 'Procesando...' : 'Verificando...'}</span>
                                 </>
                             ) : (
                                 <>
-                                    <span>Ingresar al Sistema</span>
+                                    <span>{isRecovering ? 'Restablecer Contraseña' : 'Ingresar al Sistema'}</span>
                                     <ArrowRight size={16} />
                                 </>
                             )}
