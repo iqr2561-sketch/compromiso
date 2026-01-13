@@ -100,8 +100,7 @@ const Home = () => {
                 ))}
             </div>
 
-            {/* Premium Ad below Hero */}
-            <AdSection type="premium" className="shadow-2xl shadow-primary/5" />
+
 
             <CityHero />
 
