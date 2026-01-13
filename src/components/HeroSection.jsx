@@ -161,7 +161,7 @@ const HeroSection = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative h-[170px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-[190px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <div className="absolute inset-0 block">
                                 <div
