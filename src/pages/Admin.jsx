@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.3");
+    console.log("Admin Component Loaded - Version 4.8.4");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -424,12 +424,50 @@ const Admin = () => {
         setIsAdding(true);
     };
 
-    const handleFileUpload = (e) => {
+    const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxWidth) {
+                            width *= maxWidth / height;
+                            height = maxWidth;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Use jpeg for compression benefits
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressedBase64);
+                };
+            };
+        });
+    };
+
+    const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64 = reader.result;
+            try {
+                // Show a "Processing" message if needed, or just proceed
+                const base64 = await compressImage(file);
+
                 if (galleryTarget === 'cityHero') {
                     addCityHeroImage(base64).then(ok => {
                         if (ok) showToast("Imagen de portada agregada", "success");
@@ -451,20 +489,24 @@ const Admin = () => {
                     setFormData(prev => ({ ...prev, image: base64, bgImage: base64 }));
                     addToGallery(base64, file.name);
                 }
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+                console.error("Compression error:", err);
+                showToast("Error al procesar la imagen", "error");
+            }
         }
     };
 
-    const handleGalleryUpload = (e) => {
+    const handleGalleryUpload = async (e) => {
         const files = Array.from(e.target.files);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                addToGallery(reader.result);
-            };
-            reader.readAsDataURL(file);
-        });
+        for (const file of files) {
+            try {
+                const base64 = await compressImage(file);
+                addToGallery(base64, file.name || 'gallery-image');
+            } catch (err) {
+                console.error("Gallery upload error:", err);
+            }
+        }
+        showToast(`${files.length} imágenes procesadas y añadidas`);
     };
 
     const handleDragOver = (e) => {
@@ -701,7 +743,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.3-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.4-RELEASE</span>
                     </div>
                 </div>
 
