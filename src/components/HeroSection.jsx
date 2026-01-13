@@ -27,9 +27,17 @@ const HeroSection = () => {
 
     // Generate random news for the top sidebar slots
     const randomTopNews = React.useMemo(() => {
-        const available = news.filter(n => !n.isHero && !n.isFlash);
-        return [...available].sort(() => 0.5 - Math.random()).slice(0, 2);
-    }, [news]);
+        // Try to get non-hero, non-flash news first
+        let pool = news.filter(n => !n.isHero && !n.isFlash);
+
+        // Fallback: if not enough specific news, use any news except the current main hero
+        if (pool.length < 2) {
+            pool = news.filter(n => n.id !== (heroNews?.id));
+        }
+
+        // Shuffle and slice
+        return [...pool].sort(() => 0.5 - Math.random()).slice(0, 2);
+    }, [news, heroNews]);
 
     return (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto">
