@@ -30,7 +30,11 @@ const Navbar = () => {
     const buildMenu = () => {
         // 1. Get parents
         const parents = categories
-            .filter(c => !c.parent_id && !excludedCategories.includes(c.name))
+            .filter(c =>
+                !c.parent_id &&
+                !excludedCategories.includes(c.name) &&
+                !c.name.toUpperCase().includes('TE ACORDÁS DOLORES')
+            )
             .sort((a, b) => {
                 const priority = { 'Locales': 1, 'Deportes': 2, 'Actualidad': 3 };
                 const pA = priority[a.name] || 99;
