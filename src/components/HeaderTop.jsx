@@ -269,7 +269,7 @@ const HeaderTop = () => {
                                             initial={{ opacity: 0, y: 15, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                                            className="absolute top-10 right-0 w-72 bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
+                                            className="absolute top-10 right-0 w-72 md:w-[400px] bg-[#1e293b] border border-white/10 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] z-[120] overflow-hidden"
                                         >
                                             <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-5 flex flex-col gap-1">
                                                 <div className="flex justify-between items-center">
