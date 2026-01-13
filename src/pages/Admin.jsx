@@ -2042,12 +2042,12 @@ const Admin = () => {
                         <div className="flex flex-col gap-8 pb-20">
                             {/* Header of Settings */}
                             <div className="flex flex-col gap-2">
-                                <h2 className="text-3xl font-black text-white italic tracking-tighter">CONFIGURACIÓN GLOBAL</h2>
+                                <h2 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter">CONFIGURACIÓN GLOBAL</h2>
                                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.3em]">Gestión integral del sistema y módulos activos</p>
                             </div>
 
                             {/* Settings Sub-navigation */}
-                            <div className="flex flex-wrap gap-2 p-1.5 bg-white/5 rounded-[2rem] border border-white/5 backdrop-blur-md sticky top-0 z-20">
+                            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 dark:bg-white/5 rounded-[2rem] border border-gray-200 dark:border-white/5 backdrop-blur-md sticky top-0 z-20">
                                 {[
                                     { id: 'edition', label: 'Edición y Tapa', icon: Layers },
                                     { id: 'carousel', label: 'Explorar Ciudad', icon: ImageIcon },
@@ -2061,7 +2061,7 @@ const Admin = () => {
                                         onClick={() => setSettingsTab(tab.id)}
                                         className={`flex items-center gap-3 px-6 py-3 rounded-[1.4rem] text-[10px] font-black uppercase tracking-widest transition-all ${settingsTab === tab.id
                                             ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105'
-                                            : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
                                             }`}
                                     >
                                         <tab.icon size={16} />
@@ -2222,15 +2222,15 @@ const Admin = () => {
 
                                                 <div className="flex flex-col gap-4">
                                                     <div className="flex justify-between items-center px-1">
-                                                        <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">WeatherAPI Key (V0)</label>
-                                                        <a href="https://www.weatherapi.com/signup.aspx" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase text-yellow-500 hover:underline flex items-center gap-2">
+                                                        <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">OpenWeatherMap API Key</label>
+                                                        <a href="https://home.openweathermap.org/api_keys" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase text-yellow-500 hover:underline flex items-center gap-2">
                                                             Obtener API Key <ArrowRight size={12} />
                                                         </a>
                                                     </div>
                                                     <input
                                                         type="password"
-                                                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
-                                                        placeholder="Pega aquí tu clave privada..."
+                                                        className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
+                                                        placeholder="Pega aquí tu AppID de OpenWeatherMap..."
                                                         defaultValue={weatherConfig?.apiKey}
                                                         onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
                                                     />
@@ -2259,9 +2259,9 @@ const Admin = () => {
                                                     </div>
                                                 </div>
                                                 <ul className="flex flex-col gap-4 text-xs font-bold text-slate-500">
-                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">1</div> Crea una cuenta gratuita en <strong className="text-yellow-500/80 underline ml-1">weatherapi.com</strong></li>
-                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">2</div> Copia la clave (API Key) y pégala aquí.</li>
-                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">3</div> Define tu ciudad y activa el "Estado del Servicio".</li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">1</div> Crea una cuenta en <strong className="text-yellow-600 dark:text-yellow-500/80 underline ml-1">openweathermap.org</strong></li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">2</div> Genera una API Key (AppID) en tu perfil.</li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">3</div> Define tu ciudad y activa el "Estado del Servicio".</li>
                                                 </ul>
                                             </div>
                                         </div>

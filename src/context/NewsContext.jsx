@@ -97,14 +97,64 @@ export const NewsProvider = ({ children }) => {
     const fetchWeatherData = async (config) => {
         const activeConfig = config || weatherConfig;
         if (!activeConfig?.apiKey || !activeConfig?.enabled) return;
+
         try {
-            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${activeConfig.apiKey}&q=${activeConfig.city}&days=3&aqi=no&alerts=no&lang=es`);
-            if (res.ok) {
-                const data = await res.json();
-                setWeatherData(data);
+            // Fetch Current Weather
+            const currentRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${activeConfig.city}&appid=${activeConfig.apiKey}&units=metric&lang=es`);
+
+            // Fetch 5-day / 3-hour Forecast
+            const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${activeConfig.city}&appid=${activeConfig.apiKey}&units=metric&lang=es`);
+
+            if (currentRes.ok && forecastRes.ok) {
+                const currentData = await currentRes.json();
+                const forecastData = await forecastRes.json();
+
+                // Process forecast data to get daily summaries (WeatherAPI style)
+                const dailyForecasts = [];
+                const seenDates = new Set();
+
+                forecastData.list.forEach(item => {
+                    const date = item.dt_txt.split(' ')[0];
+                    if (!seenDates.has(date) && dailyForecasts.length < 3) {
+                        // Priority for mid-day data (12:00:00)
+                        if (item.dt_txt.includes('12:00:00') || seenDates.size === 0) {
+                            dailyForecasts.push({
+                                date: date,
+                                day: {
+                                    maxtemp_c: item.main.temp_max,
+                                    mintemp_c: item.main.temp_min,
+                                    condition: {
+                                        text: item.weather[0].description,
+                                        icon: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
+                                    }
+                                }
+                            });
+                            seenDates.add(date);
+                        }
+                    }
+                });
+
+                // Normalize to match app's expectation (WeatherAPI format)
+                const normalizedData = {
+                    location: { name: currentData.name },
+                    current: {
+                        temp_c: currentData.main.temp,
+                        condition: {
+                            text: currentData.weather[0].description,
+                            icon: `https://openweathermap.org/img/wn/${currentData.weather[0].icon}@2x.png`
+                        },
+                        humidity: currentData.main.humidity,
+                        wind_kph: currentData.wind.speed * 3.6
+                    },
+                    forecast: {
+                        forecastday: dailyForecasts
+                    }
+                };
+
+                setWeatherData(normalizedData);
             }
         } catch (err) {
-            console.error('Failed to fetch weather data:', err);
+            console.error('Failed to fetch weather data from OpenWeatherMap:', err);
         }
     };
 
