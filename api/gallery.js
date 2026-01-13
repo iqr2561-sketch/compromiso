@@ -1,66 +1,56 @@
 import pool from './lib/db.js';
 
 export default async function handler(req, res) {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    const { method } = req;
+    const { id, type } = req.query;
 
     try {
         const client = await pool.connect();
 
         try {
-            // GET - Fetch all gallery images
-            if (req.method === 'GET') {
-                const { rows } = await client.query('SELECT * FROM gallery ORDER BY created_at DESC');
-                res.status(200).json(rows);
-                return;
-            }
-
-            // POST - Add new image to gallery
-            if (req.method === 'POST') {
-                const { url, filename, alt_text } = req.body;
-
-                if (!url) {
-                    res.status(400).json({ error: 'URL is required' });
-                    return;
+            if (type === 'city-hero') {
+                switch (method) {
+                    case 'GET':
+                        const { rows: cityRows } = await client.query('SELECT * FROM city_hero_images ORDER BY created_at DESC');
+                        return res.status(200).json(cityRows);
+                    case 'POST':
+                        const { url: cityUrl } = req.body;
+                        if (!cityUrl) return res.status(400).json({ error: 'URL is required' });
+                        const cityInsert = await client.query('INSERT INTO city_hero_images (url) VALUES ($1) RETURNING *', [cityUrl]);
+                        return res.status(201).json(cityInsert.rows[0]);
+                    case 'DELETE':
+                        if (!id) return res.status(400).json({ error: 'ID is required' });
+                        await client.query('DELETE FROM city_hero_images WHERE id = $1', [id]);
+                        return res.status(200).json({ success: true });
+                    default:
+                        return res.status(405).end();
                 }
-
-                const { rows } = await client.query(
-                    'INSERT INTO gallery (url, filename, alt_text) VALUES ($1, $2, $3) RETURNING *',
-                    [url, filename || null, alt_text || null]
-                );
-
-                res.status(201).json(rows[0]);
-                return;
             }
 
-            // DELETE - Remove image from gallery
-            if (req.method === 'DELETE') {
-                const { id } = req.query;
-
-                if (!id) {
-                    res.status(400).json({ error: 'ID is required' });
-                    return;
-                }
-
-                await client.query('DELETE FROM gallery WHERE id = $1', [id]);
-                res.status(200).json({ message: 'Image deleted successfully' });
-                return;
+            // Default: Standard Gallery
+            switch (method) {
+                case 'GET':
+                    const { rows } = await client.query('SELECT * FROM gallery ORDER BY created_at DESC');
+                    return res.status(200).json(rows);
+                case 'POST':
+                    const { url, filename, alt_text } = req.body;
+                    if (!url) return res.status(400).json({ error: 'URL is required' });
+                    const { rows: postRows } = await client.query(
+                        'INSERT INTO gallery (url, filename, alt_text) VALUES ($1, $2, $3) RETURNING *',
+                        [url, filename || null, alt_text || null]
+                    );
+                    return res.status(201).json(postRows[0]);
+                case 'DELETE':
+                    if (!id) return res.status(400).json({ error: 'ID is required' });
+                    await client.query('DELETE FROM gallery WHERE id = $1', [id]);
+                    return res.status(200).json({ message: 'Image deleted successfully' });
+                default:
+                    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+                    return res.status(405).json({ error: 'Method not allowed' });
             }
-
-            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-            res.status(405).json({ error: 'Method not allowed' });
-
         } finally {
             client.release();
         }
-
     } catch (error) {
         console.error('Gallery API Error:', error);
         res.status(500).json({ error: error.message });

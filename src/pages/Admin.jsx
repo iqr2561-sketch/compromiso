@@ -166,7 +166,7 @@ const Admin = () => {
         setLoginError('');
 
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch('/api/admins?action=login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(loginData)
@@ -201,7 +201,7 @@ const Admin = () => {
         setLoginError('');
 
         try {
-            const res = await fetch('/api/recover', {
+            const res = await fetch('/api/admins?action=recover', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(recoveryData)

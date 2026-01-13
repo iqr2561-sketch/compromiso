@@ -84,7 +84,7 @@ export const NewsProvider = ({ children }) => {
 
     const fetchCityHeroImages = async () => {
         try {
-            const res = await fetch('/api/city-hero');
+            const res = await fetch('/api/gallery?type=city-hero');
             if (res.ok) {
                 const data = await res.json();
                 setCityHeroImages(data);
@@ -193,7 +193,7 @@ export const NewsProvider = ({ children }) => {
 
     const addCityHeroImage = async (url) => {
         try {
-            const res = await fetch('/api/city-hero', {
+            const res = await fetch('/api/gallery?type=city-hero', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url })
@@ -211,7 +211,9 @@ export const NewsProvider = ({ children }) => {
 
     const deleteCityHeroImage = async (id) => {
         try {
-            const res = await fetch(`/api/city-hero?id=${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/gallery?type=city-hero&id=${id}`, {
+                method: 'DELETE'
+            });
             if (res.ok) {
                 setCityHeroImages(prev => prev.filter(img => img.id !== id));
                 return true;
