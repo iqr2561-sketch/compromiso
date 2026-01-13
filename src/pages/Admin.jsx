@@ -56,6 +56,7 @@ const Admin = () => {
     const [toast, setToast] = useState(null); // { message, type }
     const [isScheduling, setIsScheduling] = useState(false);
     const [dbStatus, setDbStatus] = useState(null); // { success, message, data }
+    const [settingsTab, setSettingsTab] = useState('edition');
     const fileInputRef = useRef(null);
     const galleryInputRef = useRef(null);
 
@@ -2037,289 +2038,396 @@ const Admin = () => {
                     }
 
                     {/* Settings Tab */}
-                    {
-                        activeTab === 'settings' && (
-                            <div className="flex flex-col gap-8 pb-20">
-                                {/* Header of Settings */}
-                                <div className="flex flex-col gap-2">
-                                    <h2 className="text-3xl font-black text-white italic tracking-tighter">CONFIGURACIÓN GLOBAL</h2>
-                                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.3em]">Gestión integral del sistema y módulos activos</p>
-                                </div>
+                    {activeTab === 'settings' && (
+                        <div className="flex flex-col gap-8 pb-20">
+                            {/* Header of Settings */}
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-3xl font-black text-white italic tracking-tighter">CONFIGURACIÓN GLOBAL</h2>
+                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.3em]">Gestión integral del sistema y módulos activos</p>
+                            </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {/* 1. Edición y Tapa */}
-                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Layers size={80} />
+                            {/* Settings Sub-navigation */}
+                            <div className="flex flex-wrap gap-2 p-1.5 bg-white/5 rounded-[2rem] border border-white/5 backdrop-blur-md sticky top-0 z-20">
+                                {[
+                                    { id: 'edition', label: 'Edición y Tapa', icon: Layers },
+                                    { id: 'carousel', label: 'Explorar Ciudad', icon: ImageIcon },
+                                    { id: 'weather', label: 'Clima Real', icon: CloudSun },
+                                    { id: 'ai', label: 'Inteligencia Artificial', icon: Cpu },
+                                    { id: 'visual', label: 'Identidad Visual', icon: Sparkles },
+                                    { id: 'system', label: 'Sistema Central', icon: Globe },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setSettingsTab(tab.id)}
+                                        className={`flex items-center gap-3 px-6 py-3 rounded-[1.4rem] text-[10px] font-black uppercase tracking-widest transition-all ${settingsTab === tab.id
+                                            ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105'
+                                            : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                            }`}
+                                    >
+                                        <tab.icon size={16} />
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <motion.div
+                                key={settingsTab}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className="w-full"
+                            >
+                                {settingsTab === 'edition' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Layers size={200} />
                                         </div>
                                         <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                                                    <Layers size={18} />
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
+                                                    <Layers size={24} />
                                                 </div>
-                                                Edición y Tapa
+                                                Edición y Tapa del Diario
                                             </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Control de numeración y fecha editorial.</p>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Control maestro de numeración y fecha editorial para el flujo de la portada.</p>
                                         </div>
 
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/5">
-                                                <button onClick={() => updateEdition(parseInt(editionNumber) - 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">-</button>
-                                                <input type="number" className="flex-1 bg-transparent text-lg font-black text-center text-primary italic outline-none" value={editionNumber} onChange={(e) => updateEdition(e.target.value)} />
-                                                <button onClick={() => updateEdition(parseInt(editionNumber) + 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">+</button>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Número de Edición Actual</label>
+                                                <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 shadow-inner">
+                                                    <button onClick={() => updateEdition(parseInt(editionNumber) - 1)} className="size-14 rounded-2xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-all text-xl font-bold shadow-lg" type="button">-</button>
+                                                    <input type="number" className="flex-1 bg-transparent text-4xl font-black text-center text-primary italic outline-none" value={editionNumber} onChange={(e) => updateEdition(e.target.value)} />
+                                                    <button onClick={() => updateEdition(parseInt(editionNumber) + 1)} className="size-14 rounded-2xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-all text-xl font-bold shadow-lg" type="button">+</button>
+                                                </div>
                                             </div>
 
-                                            <div className="flex flex-col gap-2">
+                                            <div className="flex flex-col gap-4">
                                                 <div className="flex justify-between items-center px-1">
-                                                    <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Fecha de Publicación</label>
-                                                    <button onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])} className="text-[8px] font-black uppercase text-primary hover:underline">Hoy</button>
+                                                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Fecha de Publicación en Tapa</label>
+                                                    <button onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])} className="text-[10px] font-black uppercase text-primary hover:underline bg-primary/10 px-3 py-1 rounded-full px-4">Utilizar Hoy</button>
                                                 </div>
-                                                <div className="relative">
-                                                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                                    <input type="date" className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors" value={coverPage.date || ''} onChange={(e) => updateCoverPage(coverPage.image, e.target.value)} style={{ colorScheme: 'dark' }} />
+                                                <div className="relative h-full flex items-center">
+                                                    <CalendarIcon className="absolute left-6 text-slate-500" size={20} />
+                                                    <input type="date" className="w-full h-full bg-white/5 border border-white/10 rounded-[2rem] pl-16 pr-6 py-6 text-lg font-black text-white outline-none focus:border-primary transition-all shadow-inner" value={coverPage.date || ''} onChange={(e) => updateCoverPage(coverPage.image, e.target.value)} style={{ colorScheme: 'dark' }} />
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Imagen de Tapa (URL)</label>
-                                                <div className="flex gap-2">
+                                            <div className="flex flex-col gap-4 md:col-span-2">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">URL de Imagen de Portada (Tapa Principal)</label>
+                                                <div className="flex gap-4">
                                                     <input
-                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
                                                         value={coverPage.image || ''}
                                                         onChange={e => updateCoverPage(e.target.value, coverPage.date)}
-                                                        placeholder="https://..."
+                                                        placeholder="Pega aquí el enlace directo de la imagen (.jpg, .png, .webp)"
                                                     />
-                                                    <button onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={18} /></button>
+                                                    <button onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="px-8 bg-white/5 text-slate-400 rounded-[2rem] border border-white/10 hover:text-primary hover:bg-white/10 transition-all flex items-center gap-3">
+                                                        <ImageIcon size={20} />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">Abrir Galería</span>
+                                                    </button>
                                                 </div>
+                                                <p className="text-[10px] text-slate-600 font-medium italic mt-2 ml-4">Esta imagen se mostrará automáticamente en la sección "Tapa de Hoy" de la web pública.</p>
                                             </div>
                                         </div>
                                     </section>
+                                )}
 
-                                    {/* 2. Carrusel Panorámico */}
-                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <ImageIcon size={80} />
+                                {settingsTab === 'carousel' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <ImageIcon size={200} />
                                         </div>
                                         <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                                                    <ImageIcon size={18} />
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                <div className="size-12 rounded-2xl bg-accent-purple/20 flex items-center justify-center text-accent-purple shadow-lg shadow-accent-purple/10">
+                                                    <ImageIcon size={24} />
                                                 </div>
-                                                Explorar la Ciudad
+                                                Explorar la Ciudad (Carrusel Panorámico)
                                             </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Imágenes panorámicas de la portada.</p>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Gestión de imágenes panorámicas que decoran la cabecera del portal.</p>
                                         </div>
 
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex gap-2">
-                                                <input
-                                                    id="cityHeroInput"
-                                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
-                                                    placeholder="URL imagen..."
-                                                />
-                                                <button
-                                                    onClick={() => {
-                                                        const input = document.getElementById('cityHeroInput');
-                                                        if (input.value) { addCityHeroImage(input.value).then(() => { input.value = ''; showToast('Imagen añadida'); }); }
-                                                    }}
-                                                    className="p-3 bg-primary text-white rounded-xl hover:scale-105 transition-all"
-                                                >
-                                                    <Plus size={18} />
-                                                </button>
+                                        <div className="flex flex-col gap-8">
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Nueva Imagen Panorámica</label>
+                                                <div className="flex gap-4">
+                                                    <input
+                                                        id="cityHeroInput"
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                        placeholder="URL de la nueva captura panorámica..."
+                                                    />
+                                                    <button
+                                                        onClick={() => {
+                                                            const input = document.getElementById('cityHeroInput');
+                                                            if (input.value) { addCityHeroImage(input.value).then(() => { input.value = ''; showToast('Imagen panorámica añadida'); }); }
+                                                        }}
+                                                        className="px-10 bg-primary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-primary/20 flex items-center gap-3"
+                                                    >
+                                                        <Plus size={20} /> Añadir al Carrusel
+                                                    </button>
+                                                </div>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-1 select-none custom-scrollbar">
+                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 select-none">
                                                 {cityHeroImages.map((img) => (
-                                                    <div key={img.id} className="relative aspect-video rounded-xl overflow-hidden group/item border border-white/10">
-                                                        <img src={img.url} className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <button onClick={() => deleteCityHeroImage(img.id)} className="p-2 bg-red-500 text-white rounded-lg hover:scale-110 transition-all"><Trash2 size={14} /></button>
+                                                    <div key={img.id} className="relative aspect-[21/9] rounded-[2rem] overflow-hidden group/item border-2 border-white/5 hover:border-primary transition-all shadow-xl">
+                                                        <img src={img.url} className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button onClick={() => deleteCityHeroImage(img.id)} className="px-6 py-2 bg-red-500 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:scale-110 transition-all shadow-2xl">Eliminar Imagen</button>
                                                         </div>
                                                     </div>
                                                 ))}
+                                                {cityHeroImages.length === 0 && (
+                                                    <div className="col-span-full py-20 bg-white/5 rounded-[2.5rem] border border-dashed border-white/10 flex flex-col items-center justify-center gap-4 text-slate-500">
+                                                        <ImageIcon size={48} className="opacity-20" />
+                                                        <p className="text-xs font-black uppercase tracking-widest">No hay imágenes en el carrusel</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </section>
+                                )}
 
-                                    {/* 3. Clima Real (NUEVO) */}
-                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <CloudSun size={80} />
+                                {settingsTab === 'weather' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <CloudSun size={200} />
                                         </div>
                                         <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-500">
-                                                    <CloudSun size={18} />
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                <div className="size-12 rounded-2xl bg-yellow-500/20 flex items-center justify-center text-yellow-500 shadow-lg shadow-yellow-500/10">
+                                                    <CloudSun size={24} />
                                                 </div>
-                                                Clima Real
+                                                Módulo de Clima en Tiempo Real
                                             </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Datos en tiempo real de WeatherAPI.</p>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Configuración del servicio meteorológico dinámico integrado con WeatherAPI.</p>
                                         </div>
 
-                                        <div className="flex flex-col gap-4">
-                                            <label className="flex items-center gap-3 cursor-pointer group/label bg-white/5 p-3 rounded-xl border border-white/5">
-                                                <input type="checkbox" checked={weatherConfig?.enabled} onChange={e => updateWeatherConfig({ ...weatherConfig, enabled: e.target.checked })} className="size-4 accent-yellow-500" />
-                                                <span className="text-[10px] font-black uppercase text-slate-400 group-hover/label:text-white transition-colors">Estado del Tiempo Activo</span>
-                                            </label>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">API Key (weatherapi.com)</label>
-                                                <input
-                                                    type="password"
-                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-yellow-500 transition-all"
-                                                    placeholder="Tu API Key..."
-                                                    defaultValue={weatherConfig?.apiKey}
-                                                    onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Ciudad / Ubicación</label>
-                                                <input
-                                                    type="text"
-                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-yellow-500 transition-all"
-                                                    placeholder="Ej: Dolores, Argentina"
-                                                    defaultValue={weatherConfig?.city}
-                                                    onBlur={e => updateWeatherConfig({ ...weatherConfig, city: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    {/* 4. Inteligencia Artificial */}
-                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Cpu size={80} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-                                                    <Cpu size={18} />
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                            <div className="flex flex-col gap-8">
+                                                <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/5 shadow-inner">
+                                                    <label className="flex items-center gap-4 cursor-pointer group/label">
+                                                        <div className={`size-8 rounded-xl border-2 flex items-center justify-center transition-all ${weatherConfig?.enabled ? 'bg-yellow-500 border-yellow-500 shadow-lg shadow-yellow-500/30' : 'border-white/10'}`}>
+                                                            {weatherConfig?.enabled && <Zap size={16} className="text-white" />}
+                                                            <input type="checkbox" className="hidden" checked={weatherConfig?.enabled} onChange={e => updateWeatherConfig({ ...weatherConfig, enabled: e.target.checked })} />
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-black uppercase text-white tracking-widest group-hover/label:text-yellow-500 transition-colors">Estado del Servicio</span>
+                                                            <span className="text-[10px] font-bold text-slate-500">{weatherConfig?.enabled ? 'ACTIVADO: El clima se muestra en el header' : 'DESACTIVADO: Se oculta el widget del tiempo'}</span>
+                                                        </div>
+                                                    </label>
                                                 </div>
-                                                Inteligencia Artificial
-                                            </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Asistente de redacción y análisis.</p>
-                                        </div>
 
-                                        <div className="flex flex-col gap-4">
-                                            <label className="flex items-center gap-3 cursor-pointer group/label bg-white/5 p-3 rounded-xl border border-white/5">
-                                                <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
-                                                <span className="text-[10px] font-black uppercase text-slate-400 group-hover/label:text-white transition-colors">Habilitar IA Editorial</span>
-                                            </label>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">API Key</label>
-                                                <input
-                                                    type="password"
-                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-all"
-                                                    placeholder="Clave de la API..."
-                                                    defaultValue={aiConfig.apiKey}
-                                                    onBlur={e => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Modelo Activo</label>
-                                                <select
-                                                    className="w-full bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-all appearance-none"
-                                                    value={aiConfig.model}
-                                                    onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
-                                                >
-                                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash (Más rápido)</option>
-                                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Más potente)</option>
-                                                    <option value="gpt-4o">OpenAI GPT-4o</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    {/* 5. Identidad Visual (Footer/Fondo Histórico) */}
-                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Sparkles size={80} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-500">
-                                                    <Sparkles size={18} />
-                                                </div>
-                                                Identidad Visual
-                                            </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Personalización gráfica del sitio.</p>
-                                        </div>
-
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Fondo "Te Acordás Dolores"</label>
-                                                <div className="flex gap-2">
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex justify-between items-center px-1">
+                                                        <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">WeatherAPI Key (V0)</label>
+                                                        <a href="https://www.weatherapi.com/signup.aspx" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase text-yellow-500 hover:underline flex items-center gap-2">
+                                                            Obtener API Key <ArrowRight size={12} />
+                                                        </a>
+                                                    </div>
                                                     <input
-                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                        type="password"
+                                                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
+                                                        placeholder="Pega aquí tu clave privada..."
+                                                        defaultValue={weatherConfig?.apiKey}
+                                                        onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                <div className="flex flex-col gap-4">
+                                                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Ciudad / Geo-localización</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
+                                                        placeholder="Cualquier parte del mundo (ej: Dolores, Buenos Aires)"
+                                                        defaultValue={weatherConfig?.city}
+                                                        onBlur={e => updateWeatherConfig({ ...weatherConfig, city: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-6 p-8 bg-yellow-500/5 rounded-[2.5rem] border border-yellow-500/10 justify-center">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="size-16 rounded-[2rem] bg-yellow-500/20 flex items-center justify-center text-yellow-500">
+                                                        <Sun size={32} />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">Configuración Rápida</span>
+                                                        <span className="text-xs text-slate-400 font-medium">Sigue estos pasos para activar el clima:</span>
+                                                    </div>
+                                                </div>
+                                                <ul className="flex flex-col gap-4 text-xs font-bold text-slate-500">
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">1</div> Crea una cuenta gratuita en <strong className="text-yellow-500/80 underline ml-1">weatherapi.com</strong></li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">2</div> Copia la clave (API Key) y pégala aquí.</li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0">3</div> Define tu ciudad y activa el "Estado del Servicio".</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </section>
+                                )}
+
+                                {settingsTab === 'ai' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Cpu size={200} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 shadow-lg shadow-emerald-500/10">
+                                                    <Cpu size={24} />
+                                                </div>
+                                                Cerebro de Inteligencia Artificial
+                                            </h3>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Asistente avanzado de redacción, síntesis y optimización de noticias.</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                            <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 flex flex-col gap-6 md:col-span-1">
+                                                <label className="flex items-center gap-4 cursor-pointer group/label">
+                                                    <div className={`size-8 rounded-xl border-2 flex items-center justify-center transition-all ${aiConfig.enabled ? 'bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/30' : 'border-white/10'}`}>
+                                                        {aiConfig.enabled && <Zap size={16} className="text-white" />}
+                                                        <input type="checkbox" className="hidden" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} />
+                                                    </div>
+                                                    <span className="text-sm font-black uppercase text-white tracking-widest group-hover/label:text-emerald-500 transition-colors">Activar Asistente</span>
+                                                </label>
+                                                <hr className="border-white/5" />
+                                                <div className="flex flex-col gap-3">
+                                                    <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Estado Maestro</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`size-2 rounded-full ${aiConfig.enabled ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+                                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${aiConfig.enabled ? 'text-emerald-500' : 'text-red-500'}`}>{aiConfig.enabled ? 'Sistemas Operativos' : 'Sistemas Apagados'}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div className="flex flex-col gap-4">
+                                                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Clave de Acceso (API Key)</label>
+                                                    <input
+                                                        type="password"
+                                                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all shadow-inner"
+                                                        placeholder="Gemini / GPT Key..."
+                                                        defaultValue={aiConfig.apiKey}
+                                                        onBlur={e => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                <div className="flex flex-col gap-4">
+                                                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Neurona Activa (Modelo)</label>
+                                                    <div className="relative">
+                                                        <select
+                                                            className="w-full bg-white/5 border border-white/10 rounded-[2.2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer shadow-inner"
+                                                            value={aiConfig.model}
+                                                            onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
+                                                        >
+                                                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Velocidad)</option>
+                                                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (Precision)</option>
+                                                            <option value="gpt-4o">OpenAI GPT-4o (Standard)</option>
+                                                        </select>
+                                                        <ChevronRight size={18} className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none rotate-90" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                )}
+
+                                {settingsTab === 'visual' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Sparkles size={200} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                <div className="size-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-500 shadow-lg shadow-pink-500/10">
+                                                    <Sparkles size={24} />
+                                                </div>
+                                                Identidad Visual y Pie de Página
+                                            </h3>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Personalización de elementos gráficos y secciones secundarias del portal.</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Fondo "Te Acordás Dolores"</label>
+                                                <div className="flex gap-4">
+                                                    <input
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
                                                         value={footerSettings.te_acordas_bg || ''}
                                                         onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
-                                                        placeholder="URL de fondo..."
+                                                        placeholder="URL de fondo histórico..."
                                                     />
-                                                    <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={18} /></button>
+                                                    <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="px-6 bg-white/5 text-slate-400 rounded-full border border-white/10 hover:text-primary transition-all"><ImageIcon size={20} /></button>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Títulos Pie de Página</label>
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Título Columna Servicios (Footer)</label>
                                                 <input
-                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
                                                     value={footerSettings.column_2_title || ''}
                                                     onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
-                                                    placeholder="Título Columna 2..."
+                                                    placeholder="Ej: Servicios Útiles..."
                                                 />
                                             </div>
                                         </div>
                                     </section>
+                                )}
 
-                                    {/* 6. Sistema y Base de Datos */}
-                                    <section className="p-8 bg-slate-900 rounded-[2.5rem] border border-white/10 flex flex-col gap-6 shadow-2xl relative overflow-hidden group lg:col-span-2">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Globe size={120} />
+                                {settingsTab === 'system' && (
+                                    <section className="p-10 bg-slate-900 rounded-[3rem] border border-white/10 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Globe size={240} />
                                         </div>
-                                        <div>
-                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
-                                                <div className="size-8 rounded-xl bg-primary/30 flex items-center justify-center text-primary">
-                                                    <Globe size={18} />
-                                                </div>
-                                                Sistema Central
-                                            </h3>
-                                            <p className="text-[10px] text-slate-500 font-bold">Estado de servicios y copias de seguridad.</p>
+                                        <div className="flex items-center justify-between flex-wrap gap-6">
+                                            <div>
+                                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                    <div className="size-12 rounded-2xl bg-white/5 flex items-center justify-center text-white shadow-lg">
+                                                        <Globe size={24} />
+                                                    </div>
+                                                    Sistema y Núcleo de Red
+                                                </h3>
+                                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Monitoreo de latencia, estado de base de datos y copias de seguridad.</p>
+                                            </div>
+                                            <div className="flex gap-4">
+                                                <button onClick={testDbConnection} className="px-10 py-5 bg-white/5 text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">Verificar Red</button>
+                                                <button onClick={handleDownloadBackup} className="px-10 py-5 bg-primary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
+                                                    <Save size={18} /> Descargar Backup
+                                                </button>
+                                            </div>
                                         </div>
 
-                                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-4 px-6 bg-white/5 rounded-3xl border border-white/5">
-                                            <div className="flex flex-col gap-2">
-                                                <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Estado del Servidor</span>
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`size-3 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`}></div>
-                                                    <span className="text-lg font-black text-white italic tracking-tighter uppercase whitespace-nowrap">
-                                                        {dbStatus?.success ? 'Nodos En Línea' : 'Sin Comprobar'}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                            <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 flex flex-col gap-4">
+                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Latencia de Red</span>
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`size-4 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`}></div>
+                                                    <span className="text-2xl font-black text-white italic tracking-tighter uppercase whitespace-nowrap">
+                                                        {dbStatus?.success ? 'Nodos En Línea' : 'Pendiente'}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-wrap gap-3">
-                                                <button onClick={testDbConnection} className="px-6 py-3 bg-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10">Verificar Red</button>
-                                                <button onClick={handleDownloadBackup} className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">Descargar Backup</button>
-                                            </div>
-                                        </div>
-
-                                        {dbStatus?.success && (
-                                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="size-2 rounded-full bg-emerald-500"></div>
-                                                    <p className="text-[10px] font-mono text-emerald-400 uppercase tracking-tighter">
-                                                        {dbStatus.data.db} | Latencia: OK | {new Date(dbStatus.data.time).toLocaleString()}
+                                            {dbStatus?.success && (
+                                                <div className="md:col-span-2 p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[2.5rem] flex flex-col justify-center">
+                                                    <div className="flex items-center gap-4 mb-2">
+                                                        <Activity size={18} className="text-emerald-500" />
+                                                        <span className="text-[10px] font-black uppercase text-emerald-500 tracking-widest">Detalles del Servidor</span>
+                                                    </div>
+                                                    <p className="text-xs font-mono text-emerald-400 uppercase tracking-tighter leading-relaxed">
+                                                        Base de Datos: {dbStatus.data.db} <br />
+                                                        Estado: OPERATIVO | Último check: {new Date(dbStatus.data.time).toLocaleString()}
                                                     </p>
                                                 </div>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </section>
-                                </div>
-                            </div>
-                        )
+                                )}
+                            </motion.div>
+                        </div>
+                    )
                     }
 
                 </div >
