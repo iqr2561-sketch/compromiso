@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.0");
+    console.log("Admin Component Loaded - Version 4.8.2");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -85,6 +85,7 @@ const Admin = () => {
     };
 
     const [users, setUsers] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
     const [userFormData, setUserFormData] = useState({
         username: '',
         password: '',
@@ -106,9 +107,9 @@ const Admin = () => {
 
     const handleSaveUser = async (e) => {
         e.preventDefault();
-        const isEditing = userFormData.id;
-        const url = isEditing ? `/api/admins?id=${userFormData.id}` : '/api/admins';
-        const method = isEditing ? 'PUT' : 'POST';
+        const isEditMode = userFormData.id;
+        const url = isEditMode ? `/api/admins?id=${userFormData.id}` : '/api/admins';
+        const method = isEditMode ? 'PUT' : 'POST';
 
         try {
             const res = await fetch(url, {
@@ -118,7 +119,7 @@ const Admin = () => {
             });
 
             if (res.ok) {
-                showToast(isEditing ? 'Usuario actualizado' : 'Usuario creado', 'success');
+                showToast(isEditMode ? 'Usuario actualizado' : 'Usuario creado', 'success');
                 setIsEditing(false);
                 setUserFormData({ username: '', password: '', name: '', recovery_code: 'COMPROMISO-2026' });
                 fetchUsers();
@@ -700,7 +701,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.1-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.2-RELEASE</span>
                     </div>
                 </div>
 
