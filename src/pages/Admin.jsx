@@ -1912,11 +1912,14 @@ const Admin = () => {
                                             }
 
                                             return items.map(item => (
-                                                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                                                    <td className="px-8 py-6">
+                                                <tr key={item.id} className={`transition-colors group ${item.isChild ? 'bg-slate-50/80 dark:bg-white/[0.01]' : 'hover:bg-slate-50 dark:hover:bg-white/[0.02]'}`}>
+                                                    <td className={`py-6 relative ${item.isChild ? 'pl-20 pr-8' : 'px-8'}`}>
+                                                        {item.isChild && (
+                                                            <div className="absolute left-8 top-1/2 -translate-y-1/2 w-8 h-12 border-l-2 border-b-2 border-slate-200 dark:border-white/10 rounded-bl-xl"></div>
+                                                        )}
                                                         <div className="flex items-center gap-4">
-                                                            {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10" alt="" />}
-                                                            <div className="flex flex-col">
+                                                            {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10 relative z-10" alt="" />}
+                                                            <div className="flex flex-col relative z-10">
                                                                 <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
                                                                     {activeTab === 'ads' ? (
                                                                         item.type === 'premium' ? 'Publicidad Superior (Logo)' :
