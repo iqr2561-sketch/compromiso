@@ -78,6 +78,12 @@ const Admin = () => {
         password: ''
     });
 
+    const [confirmConfig, setConfirmConfig] = useState(null);
+
+    const showConfirm = (title, message, onConfirm) => {
+        setConfirmConfig({ title, message, onConfirm });
+    };
+
     const [users, setUsers] = useState([]);
     const [userFormData, setUserFormData] = useState({
         username: '',
@@ -126,19 +132,24 @@ const Admin = () => {
     };
 
     const deleteUser = async (id) => {
-        if (!confirm('¿Seguro que quieres eliminar este administrador?')) return;
-        try {
-            const res = await fetch(`/api/admins?id=${id}`, { method: 'DELETE' });
-            if (res.ok) {
-                showToast('Usuario eliminado', 'success');
-                fetchUsers();
-            } else {
-                const data = await res.json();
-                showToast(data.message || 'Error al eliminar', 'error');
+        showConfirm(
+            'Eliminar Administrador',
+            '¿Seguro que quieres eliminar este administrador? Esta acción no se puede deshacer.',
+            async () => {
+                try {
+                    const res = await fetch(`/api/admins?id=${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        showToast('Usuario eliminado', 'success');
+                        fetchUsers();
+                    } else {
+                        const data = await res.json();
+                        showToast(data.message || 'Error al eliminar', 'error');
+                    }
+                } catch (err) {
+                    showToast('Error de conexión', 'error');
+                }
             }
-        } catch (err) {
-            showToast('Error de conexión', 'error');
-        }
+        );
     };
 
     useEffect(() => {
@@ -478,6 +489,7 @@ const Admin = () => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'news', label: 'Noticias', icon: Newspaper },
+        { id: 'users', label: 'Usuarios', icon: Users },
         { id: 'categories', label: 'Categorías', icon: Grid },
         { id: 'comments', label: 'Comentarios', icon: MessageSquare },
         { id: 'ads', label: 'Publicidad', icon: View },
@@ -485,7 +497,6 @@ const Admin = () => {
         { id: 'gallery', label: 'Galería', icon: ImageIcon },
         { id: 'pharmacies', label: 'Farmacias', icon: MapPin },
         { id: 'cover', label: 'Tapa Diaria', icon: Eye },
-        { id: 'users', label: 'Usuarios', icon: Users },
         { id: 'settings', label: 'Ajustes', icon: Settings },
     ];
 
@@ -2182,7 +2193,11 @@ const Admin = () => {
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            if (confirm('¿Eliminar imagen?')) deleteFromGallery(img);
+                                                            showConfirm(
+                                                                'Eliminar Imagen',
+                                                                '¿Deseas eliminar esta imagen de la galería permanentemente?',
+                                                                () => deleteFromGallery(img)
+                                                            );
                                                         }}
                                                         className="p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75 shadow-lg"
                                                     >
@@ -2254,7 +2269,13 @@ const Admin = () => {
                                                         </>
                                                     )}
                                                     <button
-                                                        onClick={() => { if (confirm('¿Eliminar comentario permanentemente?')) deleteComment(comment.id) }}
+                                                        onClick={() => {
+                                                            showConfirm(
+                                                                'Eliminar Comentario',
+                                                                '¿Seguro que quieres eliminar este comentario permanentemente?',
+                                                                () => deleteComment(comment.id)
+                                                            );
+                                                        }}
                                                         className="flex items-center justify-center p-2 text-slate-300 hover:text-red-500 transition-colors"
                                                     >
                                                         <Trash2 size={16} />
@@ -2486,12 +2507,24 @@ const Admin = () => {
                                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                                                             <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-white"><Edit3 size={16} /></button>
                                                             <button onClick={() => {
-                                                                if (activeTab === 'news') deleteNews(item.id);
-                                                                if (activeTab === 'ads') deleteAd(item.id);
-                                                                if (activeTab === 'videos') deleteVideo(item.id);
-                                                                if (activeTab === 'categories') deleteCategory(item.id);
-                                                                if (activeTab === 'tickers') deleteTicker(item.id);
-                                                                if (activeTab === 'scores') setScores(s => s.filter(x => x.id !== item.id));
+                                                                const actionMap = {
+                                                                    news: { title: 'Eliminar Noticia', delete: deleteNews },
+                                                                    ads: { title: 'Eliminar Publicidad', delete: deleteAd },
+                                                                    videos: { title: 'Eliminar Video', delete: deleteVideo },
+                                                                    categories: { title: 'Eliminar Categoría', delete: deleteCategory },
+                                                                    tickers: { title: 'Eliminar Ticker', delete: deleteTicker }
+                                                                };
+
+                                                                const currentAction = actionMap[activeTab];
+                                                                if (currentAction) {
+                                                                    showConfirm(
+                                                                        currentAction.title,
+                                                                        '¿Estás seguro de que deseas eliminar este elemento?',
+                                                                        () => currentAction.delete(item.id)
+                                                                    );
+                                                                } else if (activeTab === 'scores') {
+                                                                    showConfirm('Eliminar Puntuación', '¿Eliminar esta puntuación?', () => setScores(s => s.filter(x => x.id !== item.id)));
+                                                                }
                                                             }} className="p-2 text-slate-600 hover:text-accent-pink"><Trash2 size={16} /></button>
                                                         </div>
                                                     </td>
@@ -2920,29 +2953,72 @@ const Admin = () => {
                 </div >
             </main >
 
-            {/* Modern Toast System */}
-            < AnimatePresence >
+            {/* Modern Toast System moved and cleaned */}
+            <AnimatePresence>
                 {toast && (
                     <motion.div
-                        initial={{ opacity: 0, x: 100, scale: 0.9 }}
-                        animate={{ opacity: 1, x: 0, scale: 1 }}
-                        exit={{ opacity: 0, x: 100, scale: 0.9 }}
-                        className="fixed top-8 right-8 z-[9999] flex items-center gap-4 px-6 py-4 rounded-3xl bg-white/80 dark:bg-[#1a1d25]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
+                            ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
+                            : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
+                            }`}
                     >
-                        <div className={`size-12 rounded-2xl flex items-center justify-center shadow-lg ${toast.type === 'success' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-accent-pink shadow-accent-pink/30'
-                            } `}>
-                            {toast.type === 'success' ? <Trophy className="text-white" size={24} /> : <Zap className="text-white" size={24} />}
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Sistema Compromiso</span>
-                            <span className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{toast.message}</span>
-                        </div>
-                        <button onClick={() => setToast(null)} className="ml-4 p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors text-slate-400">
-                            <X size={18} />
-                        </button>
+                        {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
+                        <span className="text-sm font-black uppercase tracking-widest">{toast.message}</span>
+                        <button onClick={() => setToast(null)} className="ml-4 p-1 hover:bg-white/10 rounded-full transition-colors"><X size={14} /></button>
                     </motion.div>
                 )}
-            </AnimatePresence >
+            </AnimatePresence>
+
+            {/* Custom Confirmation Modal */}
+            <AnimatePresence>
+                {confirmConfig && (
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setConfirmConfig(null)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-sm bg-[#11141b] rounded-[2.5rem] border border-white/10 shadow-3xl p-10 flex flex-col items-center text-center gap-6"
+                        >
+                            <div className="size-20 rounded-3xl bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
+                                <Trash2 size={40} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">{confirmConfig.title}</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                                    {confirmConfig.message}
+                                </p>
+                            </div>
+                            <div className="flex gap-4 w-full mt-4">
+                                <button
+                                    onClick={() => setConfirmConfig(null)}
+                                    className="flex-1 px-6 py-4 bg-white/5 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        confirmConfig.onConfirm();
+                                        setConfirmConfig(null);
+                                    }}
+                                    className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-red-500/20"
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {showGallery && (
@@ -3079,23 +3155,6 @@ const Admin = () => {
                     </div>
                 )}
             </AnimatePresence>
-            <AnimatePresence>
-                {toast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
-                        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
-                            ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
-                            : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
-                            }`}
-                    >
-                        {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
-                        <span className="text-sm font-black uppercase tracking-widest">{toast.message}</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             <input
                 ref={fileInputRef}
                 type="file"
