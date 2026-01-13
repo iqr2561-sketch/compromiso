@@ -195,6 +195,39 @@ const Admin = () => {
         }
     };
 
+    const handleDownloadBackup = async () => {
+        try {
+            showToast("Generando copia de seguridad...", "success");
+            const backupData = {
+                news,
+                categories,
+                ads,
+                pharmacies,
+                cityHeroImages,
+                comments,
+                footerSettings,
+                editionNumber,
+                coverPage,
+                aiConfig,
+                backup_date: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `compromiso_db_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("Copia de seguridad descargada", "success");
+        } catch (err) {
+            console.error(err);
+            showToast("Error al generar backup", "error");
+        }
+    };
+
     const handleEdit = (item) => {
         setEditingId(item.id);
         const editData = {
@@ -224,8 +257,27 @@ const Admin = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64 = reader.result;
-                setFormData(prev => ({ ...prev, image: base64, bgImage: base64 }));
-                addToGallery(base64);
+                if (galleryTarget === 'cityHero') {
+                    addCityHeroImage(base64).then(ok => {
+                        if (ok) showToast("Imagen de portada agregada", "success");
+                    });
+                } else if (galleryTarget === 'cover') {
+                    updateCoverPage(base64, coverPage.date).then(ok => {
+                        if (ok) showToast("Tapa del día actualizada", "success");
+                    });
+                } else if (galleryTarget === 'logo') {
+                    updateFooterSettings({ logo: base64 });
+                    addToGallery(base64);
+                } else if (galleryTarget === 'qr') {
+                    updateFooterSettings({ qr_image: base64 });
+                    addToGallery(base64);
+                } else if (galleryTarget === 'te_acordas') {
+                    updateFooterSettings({ te_acordas_bg: base64 });
+                    addToGallery(base64);
+                } else {
+                    setFormData(prev => ({ ...prev, image: base64, bgImage: base64 }));
+                    addToGallery(base64, file.name);
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -2012,6 +2064,20 @@ const Admin = () => {
                                                             onChange={e => updateCoverPage(e.target.value, coverPage.date)}
                                                             placeholder="https://..."
                                                         />
+                                                        <button
+                                                            onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }}
+                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
+                                                            title="Seleccionar de Galería"
+                                                        >
+                                                            <ImageIcon size={20} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => { setGalleryTarget('cover'); fileInputRef.current.click(); }}
+                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
+                                                            title="Subir Archivo"
+                                                        >
+                                                            <Upload size={20} />
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -2049,6 +2115,20 @@ const Admin = () => {
                                                                 }
                                                             }}
                                                         />
+                                                        <button
+                                                            onClick={() => { setGalleryTarget('cityHero'); setShowGallery(true); }}
+                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
+                                                            title="Seleccionar de Galería"
+                                                        >
+                                                            <ImageIcon size={20} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => { setGalleryTarget('cityHero'); fileInputRef.current.click(); }}
+                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
+                                                            title="Subir Archivo"
+                                                        >
+                                                            <Upload size={20} />
+                                                        </button>
                                                         <button
                                                             onClick={() => {
                                                                 const input = document.getElementById('cityHeroInput');
@@ -2189,6 +2269,12 @@ const Admin = () => {
 
                                             <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                                                 <button
+                                                    onClick={handleDownloadBackup}
+                                                    className="px-8 py-3 bg-slate-800 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-700 transition-all shadow-xl flex items-center gap-2 justify-center"
+                                                >
+                                                    <Globe size={16} className="text-primary" /> Descargar Backup
+                                                </button>
+                                                <button
                                                     onClick={testDbConnection}
                                                     disabled={dbStatus?.loading}
                                                     className={`px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 justify-center ${dbStatus?.loading ? 'bg-slate-700 text-slate-400 opacity-50 cursor-wait' : 'bg-white/10 text-white hover:bg-white/20'} `}
@@ -2299,7 +2385,9 @@ const Admin = () => {
                                         key={idx}
                                         onClick={() => {
                                             if (galleryTarget === 'cover') {
-                                                setFormData({ ...formData, image: img });
+                                                updateCoverPage(img, coverPage.date).then(ok => {
+                                                    if (ok) showToast("Tapa del día actualizada", "success");
+                                                });
                                             } else if (galleryTarget === 'ad') {
                                                 setFormData({ ...formData, image: img });
                                             } else if (galleryTarget === 'logo') {
@@ -2308,6 +2396,10 @@ const Admin = () => {
                                                 updateFooterSettings({ qr_image: img });
                                             } else if (galleryTarget === 'te_acordas') {
                                                 updateFooterSettings({ te_acordas_bg: img });
+                                            } else if (galleryTarget === 'cityHero') {
+                                                addCityHeroImage(img).then(ok => {
+                                                    if (ok) showToast("Imagen agregada a portada", "success");
+                                                });
                                             } else {
                                                 updateBlock(galleryTarget, img);
                                             }
