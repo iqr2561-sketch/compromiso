@@ -275,7 +275,7 @@ const HeaderTop = () => {
                                                 <div className="flex justify-between items-center">
                                                     <div className="flex items-center gap-2">
                                                         <Activity size={16} className="text-white" />
-                                                        <h4 className="font-black text-xs uppercase tracking-wider text-white truncate max-w-[150px]">
+                                                        <h4 className="font-black text-sm uppercase tracking-wider text-white">
                                                             {pharmacyOnDuty ? pharmacyOnDuty.name : 'Farmacias de Turno'}
                                                         </h4>
                                                     </div>
@@ -292,20 +292,20 @@ const HeaderTop = () => {
                                                 <div className="flex items-start gap-3">
                                                     <MapPin size={16} className="text-emerald-400 shrink-0 mt-0.5" />
                                                     <div className="flex flex-col gap-0.5">
-                                                        <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Ubicación</span>
-                                                        <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.address : 'Ver en mapa'}</p>
+                                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Ubicación</span>
+                                                        <p className="text-sm font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.address : 'Ver en mapa'}</p>
                                                     </div>
                                                 </div>
 
                                                 <div className="flex items-start gap-3">
                                                     <Phone size={16} className="text-emerald-400 shrink-0 mt-0.5" />
                                                     <div className="flex flex-col gap-0.5">
-                                                        <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Contacto Directo</span>
-                                                        <p className="text-xs font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.phone : 'Cargando...'}</p>
+                                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Contacto Directo</span>
+                                                        <p className="text-sm font-bold text-slate-200">{pharmacyOnDuty ? pharmacyOnDuty.phone : 'Cargando...'}</p>
                                                     </div>
                                                 </div>
 
-                                                <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black text-[10px] py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 uppercase tracking-widest">
+                                                <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black text-xs py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 uppercase tracking-widest">
                                                     <Navigation size={14} />
                                                     ¿CÓMO LLEGAR?
                                                 </button>
