@@ -25,6 +25,12 @@ const HeroSection = () => {
 
     const heroNews = heroNewsList[currentIndex];
 
+    // Generate random news for the top sidebar slots
+    const randomTopNews = React.useMemo(() => {
+        const available = news.filter(n => !n.isHero && !n.isFlash);
+        return [...available].sort(() => 0.5 - Math.random()).slice(0, 2);
+    }, [news]);
+
     return (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto">
             <div className="lg:col-span-8 flex flex-col gap-6">
@@ -135,15 +141,15 @@ const HeroSection = () => {
 
             {/* Sidebar with News and Scores */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-                {/* Lateral News - First two cards */}
+                {/* Lateral News - Random Selection above Cover */}
                 <div className="flex flex-col gap-4">
-                    {sidebarNews.slice(0, 2).map((item, idx) => (
+                    {randomTopNews.map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative h-40 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-32 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
@@ -151,15 +157,19 @@ const HeroSection = () => {
                                     style={{ backgroundImage: `url(${item.image})` }}
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                                <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
-                                    <div className="flex flex-col gap-2">
-                                        <span className="text-primary text-[10px] font-bold uppercase tracking-widest">
-                                            {item.category}
-                                        </span>
-                                        <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors leading-tight">
+                                <div className="absolute inset-0 p-5 flex flex-col justify-end z-10">
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-primary text-[9px] font-bold uppercase tracking-widest">
+                                                {item.category}
+                                            </span>
+                                            <span className="text-[8px] text-white/60 uppercase tracking-wider font-black">
+                                                FLASH
+                                            </span>
+                                        </div>
+                                        <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight line-clamp-2">
                                             {item.title}
                                         </h3>
-                                        <span className="text-[10px] text-gray-500 font-medium">{item.date}</span>
                                     </div>
                                 </div>
                             </Link>
