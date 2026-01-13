@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useNews } from '../context/NewsContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Calendar, Clock, Share2, MessageCircle,
-    Bookmark, ArrowLeft, Twitter, Facebook, Link as LinkIcon
+    Bookmark, ArrowLeft, Twitter, Facebook, Link as LinkIcon,
+    CheckCircle2, User
 } from 'lucide-react';
 import AdSection from '../components/AdSection';
 
 const Post = () => {
     const { id } = useParams();
-    const { news, footerSettings } = useNews();
+    const { news, footerSettings, comments } = useNews();
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const post = news.find(n => n.id === parseInt(id));
 
     useEffect(() => {
@@ -28,6 +30,7 @@ const Post = () => {
     }
 
     const relatedNews = news.filter(n => n.category === post.category && n.id !== post.id).slice(0, 3);
+    const approvedComments = (comments || []).filter(c => c.post_id === post.id && c.status === 'approved');
 
     return (
         <motion.div
@@ -172,65 +175,129 @@ const Post = () => {
                         </div>
 
                         {/* Comments Section */}
-                        <div className="bg-slate-50 dark:bg-white/5 p-8 md:p-12 rounded-[3.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5 mt-4">
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
-                                    <MessageCircle size={24} />
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900 dark:text-white leading-none">Deja tu Comentario</h3>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tu opinión enriquece la noticia</p>
-                                </div>
+                        <div className="flex flex-col gap-12 mt-4">
+                            <div className="bg-slate-50 dark:bg-white/5 p-8 md:p-12 rounded-[3.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5">
+                                <AnimatePresence mode="wait">
+                                    {isSubmitted ? (
+                                        <motion.div
+                                            key="success"
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            className="flex flex-col items-center text-center py-10 gap-6"
+                                        >
+                                            <div className="size-20 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shadow-2xl shadow-emerald-500/20">
+                                                <CheckCircle2 size={48} />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900 dark:text-white mb-2">¡GRACIAS POR TU COMENTARIO!</h3>
+                                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] max-w-xs mx-auto">Tu mensaje ha sido enviado correctamente y está pendiente de revisión por nuestro equipo editorial.</p>
+                                            </div>
+                                            <button
+                                                onClick={() => setIsSubmitted(false)}
+                                                className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20"
+                                            >
+                                                Enviar otro comentario
+                                            </button>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                            <div className="flex items-center gap-4 mb-8">
+                                                <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
+                                                    <MessageCircle size={24} />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900 dark:text-white leading-none">Deja tu Comentario</h3>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tu opinión enriquece la noticia</p>
+                                                </div>
+                                            </div>
+
+                                            <form className="flex flex-col gap-5" onSubmit={async (e) => {
+                                                e.preventDefault();
+                                                const formData = new FormData(e.target);
+                                                const commentData = {
+                                                    post_id: post.id,
+                                                    name: formData.get('userName'),
+                                                    email: formData.get('email'),
+                                                    comment: formData.get('content')
+                                                };
+
+                                                try {
+                                                    const res = await fetch('/api/comments', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify(commentData)
+                                                    });
+                                                    if (res.ok) {
+                                                        setIsSubmitted(true);
+                                                        e.target.reset();
+                                                    } else {
+                                                        alert("Hubo un error al enviar el comentario.");
+                                                    }
+                                                } catch (err) {
+                                                    console.error("Error submitting comment:", err);
+                                                }
+                                            }}>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Nombre Completo</label>
+                                                        <input required name="userName" type="text" placeholder="Tu Nombre" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Tu Email</label>
+                                                        <input required name="email" type="email" placeholder="email@ejemplo.com" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Mensaje</label>
+                                                    <textarea required name="content" placeholder="Escribe lo que piensas sobre esta noticia..." rows="5" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm resize-none"></textarea>
+                                                </div>
+                                                <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="size-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Los comentarios requieren revisión editorial.</p>
+                                                    </div>
+                                                    <button type="submit" className="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">Publicar Comentario</button>
+                                                </div>
+                                            </form>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
 
-                            <form className="flex flex-col gap-5" onSubmit={async (e) => {
-                                e.preventDefault();
-                                const formData = new FormData(e.target);
-                                const commentData = {
-                                    post_id: post.id,
-                                    name: formData.get('userName'),
-                                    email: formData.get('email'),
-                                    comment: formData.get('content')
-                                };
-
-                                try {
-                                    const res = await fetch('/api/comments', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(commentData)
-                                    });
-                                    if (res.ok) {
-                                        alert("¡Gracias! Comentario enviado y pendiente de aprobación.");
-                                        e.target.reset();
-                                    } else {
-                                        alert("Hubo un error al enviar el comentario.");
-                                    }
-                                } catch (err) {
-                                    console.error("Error submitting comment:", err);
-                                }
-                            }}>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Nombre Completo</label>
-                                        <input required name="userName" type="text" placeholder="Tu Nombre" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Tu Email</label>
-                                        <input required name="email" type="email" placeholder="email@ejemplo.com" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm" />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">Mensaje</label>
-                                    <textarea required name="content" placeholder="Escribe lo que piensas sobre esta noticia..." rows="5" className="px-6 py-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-all font-bold text-sm shadow-sm resize-none"></textarea>
-                                </div>
-                                <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
+                            {/* List of Approved Comments */}
+                            {approvedComments.length > 0 && (
+                                <div className="flex flex-col gap-8 px-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="size-2 rounded-full bg-amber-400 animate-pulse"></div>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Los comentarios requieren revisión editorial.</p>
+                                        <div className="w-12 h-[1px] bg-primary/30"></div>
+                                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Comentarios de Lectores ({approvedComments.length})</h4>
                                     </div>
-                                    <button type="submit" className="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">Publicar Comentario</button>
+                                    <div className="flex flex-col gap-6">
+                                        {approvedComments.map((c, i) => (
+                                            <motion.div
+                                                key={c.id}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                className="flex gap-4 md:gap-6"
+                                            >
+                                                <div className="size-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 shrink-0">
+                                                    <User size={20} />
+                                                </div>
+                                                <div className="flex flex-col gap-2 py-1">
+                                                    <div className="flex flex-wrap items-center gap-3">
+                                                        <span className="text-sm font-black text-slate-900 dark:text-white uppercase italic tracking-tight">{c.name}</span>
+                                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                                                            {new Date(c.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 leading-relaxed italic">"{c.comment}"</p>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </form>
+                            )}
                         </div>
                     </div>
                 </article>
