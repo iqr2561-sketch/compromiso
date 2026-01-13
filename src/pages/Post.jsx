@@ -187,10 +187,10 @@ const Post = () => {
                                 e.preventDefault();
                                 const formData = new FormData(e.target);
                                 const commentData = {
-                                    newsId: post.id,
-                                    userName: formData.get('userName'),
+                                    post_id: post.id,
+                                    name: formData.get('userName'),
                                     email: formData.get('email'),
-                                    content: formData.get('content')
+                                    comment: formData.get('content')
                                 };
 
                                 try {
@@ -200,10 +200,10 @@ const Post = () => {
                                         body: JSON.stringify(commentData)
                                     });
                                     if (res.ok) {
-                                        alert("¡Gracias! Tu comentario ha sido enviado y está pendiente de aprobación.");
+                                        showToast("¡Gracias! Comentario enviado y pendiente de aprobación.", "success");
                                         e.target.reset();
                                     } else {
-                                        alert("Hubo un error al enviar el comentario.");
+                                        showToast("Hubo un error al enviar el comentario.", "error");
                                     }
                                 } catch (err) {
                                     console.error("Error submitting comment:", err);
