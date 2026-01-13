@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.2");
+    console.log("Admin Component Loaded - Version 4.8.3");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -701,7 +701,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.2-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.3-RELEASE</span>
                     </div>
                 </div>
 
@@ -864,7 +864,7 @@ const Admin = () => {
                                                                 {['url', 'pc', 'gallery'].map(src => (
                                                                     <button key={src} type="button" onClick={() => {
                                                                         setImageSource(src);
-                                                                        if (src === 'gallery') { setGalleryTarget('cover'); setShowGallery(true); }
+                                                                        if (src === 'gallery') { setGalleryTarget('newsMain'); setShowGallery(true); }
                                                                     }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
                                                                 ))}
                                                             </div>
@@ -1095,7 +1095,7 @@ const Admin = () => {
                                                         />
                                                         <button
                                                             type="button"
-                                                            onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }}
+                                                            onClick={() => { setGalleryTarget('categoryBg'); setShowGallery(true); }}
                                                             className="p-4 bg-white/5 text-slate-400 rounded-xl border border-white/5 hover:text-primary transition-all"
                                                         >
                                                             <ImageIcon size={20} />
@@ -3094,6 +3094,10 @@ const Admin = () => {
                                                 updateFooterSettings({ qr_image: img });
                                             } else if (galleryTarget === 'te_acordas') {
                                                 updateFooterSettings({ te_acordas_bg: img });
+                                            } else if (galleryTarget === 'newsMain') {
+                                                setFormData({ ...formData, image: img });
+                                            } else if (galleryTarget === 'categoryBg') {
+                                                setFormData({ ...formData, bgImage: img, bg_image: img });
                                             } else if (galleryTarget === 'cityHero') {
                                                 addCityHeroImage(img).then(ok => {
                                                     if (ok) showToast("Imagen agregada a portada", "success");
