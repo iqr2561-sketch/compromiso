@@ -2202,7 +2202,7 @@ const Admin = () => {
                                                 </div>
                                                 Módulo de Clima en Tiempo Real
                                             </h3>
-                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Configuración del servicio meteorológico dinámico integrado con WeatherAPI.</p>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Configuración del servicio meteorológico dinámico integrado con OpenWeatherMap.</p>
                                         </div>
 
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -2223,17 +2223,34 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-4">
                                                     <div className="flex justify-between items-center px-1">
                                                         <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">OpenWeatherMap API Key</label>
-                                                        <a href="https://home.openweathermap.org/api_keys" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase text-yellow-500 hover:underline flex items-center gap-2">
-                                                            Obtener API Key <ArrowRight size={12} />
-                                                        </a>
+                                                        <div className="flex gap-4">
+                                                            <a href="https://home.openweathermap.org/api_keys" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase text-yellow-500 hover:underline flex items-center gap-2">
+                                                                Obtener API Key <ArrowRight size={12} />
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                    <input
-                                                        type="password"
-                                                        className="w-full bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
-                                                        placeholder="Pega aquí tu AppID de OpenWeatherMap..."
-                                                        defaultValue={weatherConfig?.apiKey}
-                                                        onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
-                                                    />
+                                                    <div className="flex gap-4">
+                                                        <input
+                                                            type="password"
+                                                            className="flex-1 bg-slate-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-yellow-500 transition-all shadow-inner"
+                                                            placeholder="Pega aquí tu AppID de OpenWeatherMap..."
+                                                            defaultValue={weatherConfig?.apiKey}
+                                                            onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
+                                                        />
+                                                        <button
+                                                            onClick={async () => {
+                                                                const success = await fetchWeatherData(weatherConfig);
+                                                                if (success) {
+                                                                    showToast('¡Conexión exitosa! Datos recibidos.');
+                                                                } else {
+                                                                    showToast('Error de conexión. Revisa la API Key y Ciudad.', 'error');
+                                                                }
+                                                            }}
+                                                            className="px-8 bg-yellow-500 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg flex items-center gap-2"
+                                                        >
+                                                            <Zap size={14} /> Probar API
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div className="flex flex-col gap-4">
@@ -2248,20 +2265,23 @@ const Admin = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col gap-6 p-8 bg-yellow-500/5 rounded-[2.5rem] border border-yellow-500/10 justify-center">
-                                                <div className="flex items-center gap-4">
+                                            <div className="flex flex-col gap-6 p-8 bg-yellow-500/5 rounded-[2.5rem] border border-yellow-500/10 justify-center relative overflow-hidden">
+                                                <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12 text-yellow-500">
+                                                    <Sun size={120} />
+                                                </div>
+                                                <div className="flex items-center gap-4 relative z-10">
                                                     <div className="size-16 rounded-[2rem] bg-yellow-500/20 flex items-center justify-center text-yellow-500">
-                                                        <Sun size={32} />
+                                                        <CloudSun size={32} />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">Configuración Rápida</span>
-                                                        <span className="text-xs text-slate-400 font-medium">Sigue estos pasos para activar el clima:</span>
+                                                        <span className="text-lg font-black text-slate-800 dark:text-white italic tracking-tighter uppercase leading-none">Estado y Guía</span>
+                                                        <span className="text-xs text-slate-500 font-medium">Sigue estos pasos para activar:</span>
                                                     </div>
                                                 </div>
-                                                <ul className="flex flex-col gap-4 text-xs font-bold text-slate-500">
+                                                <ul className="flex flex-col gap-4 text-xs font-bold text-slate-500 relative z-10">
                                                     <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">1</div> Crea una cuenta en <strong className="text-yellow-600 dark:text-yellow-500/80 underline ml-1">openweathermap.org</strong></li>
-                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">2</div> Genera una API Key (AppID) en tu perfil.</li>
-                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">3</div> Define tu ciudad y activa el "Estado del Servicio".</li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">2</div> Genera una API Key (AppID) en el panel.</li>
+                                                    <li className="flex items-center gap-4"><div className="size-6 rounded-lg bg-gray-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white shrink-0">3</div> Define tu ciudad y presiona "Probar API".</li>
                                                 </ul>
                                             </div>
                                         </div>

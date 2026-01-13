@@ -152,9 +152,12 @@ export const NewsProvider = ({ children }) => {
                 };
 
                 setWeatherData(normalizedData);
+                return true;
             }
+            return false;
         } catch (err) {
             console.error('Failed to fetch weather data from OpenWeatherMap:', err);
+            return false;
         }
     };
 

@@ -167,7 +167,19 @@ const HeaderTop = () => {
                                                 <div className="bg-slate-800/50 rounded-2xl p-4 border border-white/5">
                                                     <div className="flex items-center justify-between mb-3">
                                                         <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Ahora</span>
-                                                        {weatherData && <img src={weatherData.current.condition.icon} alt="weather" className="size-8" />}
+                                                        {weatherData && (
+                                                            <div className="relative">
+                                                                <img
+                                                                    src={weatherData.current.condition.icon}
+                                                                    alt="weather"
+                                                                    className="size-10 brightness-110 drop-shadow-md"
+                                                                    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+                                                                />
+                                                                <div style={{ display: 'none' }}>
+                                                                    <CloudSun size={24} className="text-yellow-500" />
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="text-3xl font-black text-white mb-1">
                                                         {weatherData ? `${Math.round(weatherData.current.temp_c)}°C` : '--°C'}
@@ -196,8 +208,18 @@ const HeaderTop = () => {
                                                                 <span className="text-xs font-bold text-white w-20">
                                                                     {idx === 0 ? 'Hoy' : new Date(f.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'short' })}
                                                                 </span>
-                                                                <img src={f.day.condition.icon} alt="icon" className="size-6 mr-2" />
-                                                                <span className="text-[10px] text-slate-400 flex-1 truncate">{f.day.condition.text}</span>
+                                                                <div className="relative size-8 flex items-center justify-center">
+                                                                    <img
+                                                                        src={f.day.condition.icon}
+                                                                        alt="icon"
+                                                                        className="size-8 brightness-110"
+                                                                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+                                                                    />
+                                                                    <div style={{ display: 'none' }}>
+                                                                        <CloudSun size={16} className="text-slate-400" />
+                                                                    </div>
+                                                                </div>
+                                                                <span className="text-[10px] text-slate-400 flex-1 truncate ml-2">{f.day.condition.text}</span>
                                                                 <div className="flex items-center gap-2 text-xs font-black">
                                                                     <span className="text-white">{Math.round(f.day.maxtemp_c)}°</span>
                                                                     <span className="text-slate-600">{Math.round(f.day.mintemp_c)}°</span>
