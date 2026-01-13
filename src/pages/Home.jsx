@@ -82,7 +82,6 @@ const Home = () => {
             animate={{ opacity: 1 }}
             className="flex flex-col gap-14"
         >
-            <CityHero />
             <HeroSection />
 
             {/* Quick Stats / Trending Row - Connected to Context */}
@@ -103,6 +102,8 @@ const Home = () => {
 
             {/* Premium Ad below Hero */}
             <AdSection type="premium" className="shadow-2xl shadow-primary/5" />
+
+            <CityHero />
 
             <FlashNews />
 
