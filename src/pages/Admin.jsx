@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, History, GripVertical, CloudSun, Activity
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, EyeOff, History, GripVertical, CloudSun, Activity, Lock, User
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -57,8 +57,68 @@ const Admin = () => {
     const [isScheduling, setIsScheduling] = useState(false);
     const [dbStatus, setDbStatus] = useState(null); // { success, message, data }
     const [settingsTab, setSettingsTab] = useState('edition');
+    const [galleryInputRef, setGalleryInputRef] = useState(null); // Refactored to state if needed or kept as ref
     const fileInputRef = useRef(null);
-    const galleryInputRef = useRef(null);
+    const galleryRef = useRef(null);
+
+    // Authentication States
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [loginError, setLoginError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(true);
+    const [loginData, setLoginData] = useState({
+        username: localStorage.getItem('compromiso_user') || '',
+        password: ''
+    });
+
+    useEffect(() => {
+        const savedAuth = localStorage.getItem('compromiso_auth');
+        if (savedAuth === 'true') {
+            setIsAuthenticated(true);
+        }
+    }, []);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+        setLoginError('');
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginData)
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                setIsAuthenticated(true);
+                if (rememberMe) {
+                    localStorage.setItem('compromiso_auth', 'true');
+                    localStorage.setItem('compromiso_user', loginData.username);
+                } else {
+                    localStorage.removeItem('compromiso_auth');
+                    localStorage.removeItem('compromiso_user');
+                }
+                showToast(`¡Bienvenido, ${data.user.username}!`, 'success');
+            } else {
+                setLoginError(data.message || 'Credenciales inválidas');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setLoginError('Error de conexión con el servidor');
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('compromiso_auth');
+        showToast('Sesión cerrada correctamente', 'success');
+    };
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
@@ -341,6 +401,108 @@ const Admin = () => {
         n.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen bg-[#0a0c10] flex items-center justify-center p-6 font-sans relative overflow-hidden text-slate-300">
+                {/* Background Decorations */}
+                <div className="absolute top-[-10%] left-[-10%] size-96 bg-primary/20 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] size-96 bg-accent-purple/20 blur-[120px] rounded-full" />
+
+                <motion.div
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="w-full max-w-md bg-[#11141b] border border-white/10 rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden"
+                >
+                    <div className="bg-gradient-to-br from-primary/10 to-accent-purple/10 p-10 border-b border-white/5 text-center">
+                        <div className="size-20 bg-primary/20 rounded-3xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-primary/10">
+                            <Newspaper className="text-primary" size={40} />
+                        </div>
+                        <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none mb-2">Panel Admin</h2>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ingrese sus credenciales de acceso</p>
+                    </div>
+
+                    <form onSubmit={handleLogin} className="p-10 flex flex-col gap-6">
+                        {loginError && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-center"
+                            >
+                                {loginError}
+                            </motion.div>
+                        )}
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Usuario</label>
+                            <div className="relative group">
+                                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                    value={loginData.username}
+                                    onChange={e => setLoginData({ ...loginData, username: e.target.value })}
+                                    placeholder="Nombre de usuario"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[9px] font-black uppercase text-slate-500 ml-4 tracking-widest">Contraseña</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    className="w-full bg-[#0a0c10] border border-white/5 rounded-2xl pl-14 pr-14 py-4 text-sm font-bold text-white outline-none focus:border-primary/50 transition-all shadow-inner"
+                                    value={loginData.password}
+                                    onChange={e => setLoginData({ ...loginData, password: e.target.value })}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between px-2">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <div className={`size-5 rounded-md border-2 border-white/10 flex items-center justify-center transition-all ${rememberMe ? 'bg-primary border-primary' : 'group-hover:border-primary/50'}`}>
+                                    {rememberMe && <div className="size-2 bg-white rounded-sm" />}
+                                </div>
+                                <input type="checkbox" className="hidden" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
+                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-300 transition-colors tracking-widest">Recordarme</span>
+                            </label>
+                            <Link to="/" className="text-[10px] font-black uppercase text-slate-600 hover:text-primary transition-colors tracking-widest">Volver al sitio</Link>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoggingIn}
+                            className="w-full py-5 bg-gradient-to-r from-primary to-accent-purple text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                        >
+                            {isLoggingIn ? (
+                                <>
+                                    <div className="size-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                    <span>Verificando...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Ingresar al Sistema</span>
+                                    <ArrowRight size={16} />
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </motion.div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex min-h-screen bg-slate-50 dark:bg-[#0a0c10] text-slate-600 dark:text-slate-400 font-sans transition-colors duration-300">
             <aside className="w-64 bg-white dark:bg-[#11141b] border-r border-gray-200 dark:border-white/5 flex flex-col p-6 gap-6 fixed h-full z-50 shadow-2xl shadow-black/5 dark:shadow-black/50 transition-colors duration-300">
@@ -384,7 +546,10 @@ const Admin = () => {
                     <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white transition-all uppercase tracking-widest">
                         <Globe size={16} /> Web Pública
                     </Link>
-                    <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-accent-pink/60 hover:bg-red-50 dark:hover:bg-red-500/5 hover:text-accent-pink transition-all uppercase tracking-widest">
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black text-accent-pink/60 hover:bg-red-50 dark:hover:bg-red-500/5 hover:text-accent-pink transition-all uppercase tracking-widest"
+                    >
                         <LogOut size={16} /> Salir
                     </button>
                 </div>
@@ -2619,8 +2784,8 @@ const Admin = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.9 }}
                         className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
-                                ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
-                                : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
+                            ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
+                            : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
                             }`}
                     >
                         {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
