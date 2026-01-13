@@ -9,39 +9,30 @@ const HeroSection = () => {
     const { news, scores, coverPage } = useNews();
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Improved logic: Heroes are the ones specifically marked as such
-    const heroNewsList = news.filter(n => n.isHero).slice(0, 10);
-    // Sidebar news: any news that is NOT a hero, OR if there aren't enough, just the rest of the news
-    const otherNews = news.filter(n => !n.isHero && !n.isFlash);
-    const sidebarNews = otherNews.length >= 4 ? otherNews.slice(0, 4) : news.filter(n => !n.isFlash && !heroNewsList.slice(0, 1).includes(n)).slice(1, 5);
+    const nonFlash = news.filter(n => !n.isFlash);
+    const heroes = nonFlash.filter(n => n.isHero);
+    const others = nonFlash.filter(n => !n.isHero);
+    const sortedHomeNews = [...heroes, ...others];
+
+    const principalNewsList = sortedHomeNews.slice(0, 5); // 5 primeras (Sección Principal/Carousel)
+    const secondaryNewsList = sortedHomeNews.slice(5, 10); // 5 siguientes (Secciones Secundarias)
+    const extraNewsList = sortedHomeNews.slice(10, 14); // Más noticias para el resto del sidebar
+
+    const sidebarTopNews = secondaryNewsList.slice(0, 2);
+    const bottomStripNews = secondaryNewsList.slice(2, 5);
+    const sidebarBottomNews = extraNewsList.slice(0, 2);
 
     useEffect(() => {
-        if (heroNewsList.length === 0) return;
+        if (principalNewsList.length === 0) return;
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % heroNewsList.length);
+            setCurrentIndex((prev) => (prev + 1) % principalNewsList.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, [heroNewsList.length]);
+    }, [principalNewsList.length]);
 
-    const heroNews = heroNewsList[currentIndex];
+    const heroNews = principalNewsList[currentIndex];
 
-    // Static news for visual layout (temporary)
-    const staticTopNews = [
-        {
-            id: 'static-1',
-            title: 'Nuevos proyectos de infraestructura avanzan según lo planeado en la zona céntrica',
-            category: 'Obras Públicas',
-            image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop',
-            date: 'Hace 2 horas'
-        },
-        {
-            id: 'static-2',
-            title: 'Gran convocatoria en el festival cultural de fin de semana',
-            category: 'Cultura',
-            image: 'https://images.unsplash.com/photo-1514525253440-b393452e8d03?q=80&w=1000&auto=format&fit=crop',
-            date: 'Hace 5 horas'
-        }
-    ];
+
 
     return (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto">
@@ -102,11 +93,11 @@ const HeroSection = () => {
 
                     {/* Bottom 3 News Strip */}
                     <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-md border-t border-white/10 p-4 z-30 hidden md:grid grid-cols-3 divide-x divide-white/10">
-                        {otherNews.slice(0, 3).map((item, i) => (
+                        {bottomStripNews.map((item, i) => (
                             <Link to={`/noticia/${item.id}`} key={item.id} className="px-4 flex flex-col gap-1 group/item hover:bg-white/5 transition-colors rounded-lg py-2">
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
-                                    <span className="text-[8px] text-gray-500 font-bold">{item.time_read || '2 min'}</span>
+                                    <span className="text-[8px] text-gray-500 font-bold">{item.timeRead || '2 min'}</span>
                                 </div>
                                 <h4 className="text-xs font-semibold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
                                     {item.title}
@@ -115,25 +106,25 @@ const HeroSection = () => {
                         ))}
                     </div>
 
-                    {heroNewsList.length > 1 && (
+                    {principalNewsList.length > 1 && (
                         <>
                             {/* Navigation Buttons - Adjusted position */}
                             <div className="absolute bottom-32 right-6 flex gap-2 z-20">
                                 <button
-                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev - 1 + heroNewsList.length) % heroNewsList.length); }}
+                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev - 1 + principalNewsList.length) % principalNewsList.length); }}
                                     className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
                                 >
                                     <ChevronLeft size={20} />
                                 </button>
                                 <button
-                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % heroNewsList.length); }}
+                                    onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % principalNewsList.length); }}
                                     className="size-10 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg"
                                 >
                                     <ChevronRight size={20} />
                                 </button>
                             </div>
                             <div className="absolute top-6 right-6 flex gap-1 z-20">
-                                {heroNewsList.map((_, idx) => (
+                                {principalNewsList.map((_, idx) => (
                                     <div
                                         key={idx}
                                         className={`h-1 transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-primary' : 'w-2 bg-white/30'} rounded-full`}
@@ -155,7 +146,7 @@ const HeroSection = () => {
             <div className="lg:col-span-4 flex flex-col gap-4">
                 {/* Lateral News - Static Selection above Cover */}
                 <div className="flex flex-col gap-4">
-                    {staticTopNews.map((item, idx) => (
+                    {sidebarTopNews.map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
@@ -163,7 +154,7 @@ const HeroSection = () => {
                             transition={{ delay: 0.1 * (idx + 1) }}
                             className="relative h-[205px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
-                            <div className="absolute inset-0 block">
+                            <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
                                     style={{ backgroundImage: `url(${item.image})` }}
@@ -184,7 +175,7 @@ const HeroSection = () => {
                                         </h3>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </motion.div>
                     ))}
                 </div>
@@ -221,7 +212,7 @@ const HeroSection = () => {
 
                 {/* Lateral News - Remaining cards */}
                 <div className="flex flex-col gap-4">
-                    {sidebarNews.slice(2, 4).map((item, idx) => (
+                    {sidebarBottomNews.map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, x: 20 }}
