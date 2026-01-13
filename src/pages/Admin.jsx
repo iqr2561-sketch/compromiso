@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, History, GripVertical
+    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, History, GripVertical, CloudSun
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -1005,20 +1005,29 @@ const Admin = () => {
                     )}
                     {/* Dashboard View */}
                     {activeTab === 'dashboard' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                             {[
-                                { label: 'Noticias', value: news.length, icon: Newspaper, color: 'text-primary' },
-                                { label: 'Farmacias', value: pharmacies.length, icon: Crosshair, color: 'text-accent-pink' },
-                                { label: 'Tapa Diaria', value: coverPage.date, icon: LayoutDashboard, color: 'text-primary' },
-                                { label: 'Guardia Hoy', value: onDutyToday?.name || '---', icon: CalendarIcon, color: 'text-accent-purple' },
+                                { label: 'Noticias', value: news.length, icon: Newspaper, color: 'text-primary', target: 'news' },
+                                { label: 'Farmacias', value: pharmacies.length, icon: Crosshair, color: 'text-accent-pink', target: 'pharmacies' },
+                                { label: 'Tapa Diaria', value: coverPage.date, icon: LayoutDashboard, color: 'text-primary', target: 'cover' },
+                                { label: 'Guardia Hoy', value: onDutyToday?.name || '---', icon: CalendarIcon, color: 'text-accent-purple', target: 'pharmacies' },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-[#11141b] p-6 rounded-2xl border border-white/5 shadow-xl select-none group hover:border-primary/20 transition-all">
-                                    <div className={`size-10 rounded-xl bg-white / 5 flex items-center justify-center ${stat.color} mb-4 group-hover: scale-110 transition-transform`}><stat.icon size={20} /></div>
+                                <div
+                                    key={i}
+                                    onClick={() => setActiveTab(stat.target)}
+                                    className="bg-[#11141b] p-6 rounded-2xl border border-white/5 shadow-xl select-none group hover:border-primary/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-95"
+                                >
+                                    <div className={`size-10 rounded-xl bg-white/5 flex items-center justify-center ${stat.color} mb-4 group-hover:scale-110 transition-transform`}>
+                                        <stat.icon size={20} />
+                                    </div>
                                     <h3 className="text-xl font-black text-white italic truncate">{stat.value}</h3>
                                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</span>
                                 </div>
                             ))}
-                            <div className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 shadow-xl select-none group hover:border-accent-pink/20 transition-all">
+                            <div
+                                onClick={() => setActiveTab('comments')}
+                                className="bg-white dark:bg-[#11141b] p-6 rounded-2xl border border-gray-200 dark:border-white/5 shadow-xl select-none group hover:border-accent-pink/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-95"
+                            >
                                 <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-accent-pink mb-4 group-hover:scale-110 transition-transform">
                                     <MessageCircle size={20} />
                                 </div>
