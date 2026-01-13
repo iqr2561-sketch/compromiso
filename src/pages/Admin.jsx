@@ -30,7 +30,8 @@ const Admin = () => {
         fetchNews,
         reorderCategories,
         reorderPharmacies,
-        cityHeroImages, addCityHeroImage, deleteCityHeroImage
+        cityHeroImages, addCityHeroImage, deleteCityHeroImage,
+        weatherConfig, updateWeatherConfig
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -2029,297 +2030,283 @@ const Admin = () => {
                     {/* Settings Tab */}
                     {
                         activeTab === 'settings' && (
-                            <div className="bg-[#11141b] p-8 rounded-2xl border border-white/5 shadow-2xl">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 md:col-span-2">
-                                        <div className="flex flex-col md:flex-row gap-8">
-                                            {/* Left Column: Edition & Cover Page Management */}
-                                            <div className="flex-1 flex flex-col gap-6">
-                                                <div>
-                                                    <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                        <Layers size={14} className="text-primary" /> Portada y Edición
-                                                    </h3>
-                                                    <p className="text-[10px] text-slate-500 font-bold mb-6">Gestiona la edición impresa y el carrusel principal.</p>
+                            <div className="flex flex-col gap-8 pb-20">
+                                {/* Header of Settings */}
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-3xl font-black text-white italic tracking-tighter">CONFIGURACIÓN GLOBAL</h2>
+                                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.3em]">Gestión integral del sistema y módulos activos</p>
+                                </div>
 
-                                                    <div className="flex items-center gap-4 mb-6">
-                                                        <button onClick={() => updateEdition(parseInt(editionNumber) - 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">-</button>
-                                                        <input type="number" className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-center text-primary italic outline-none focus:border-primary transition-colors" value={editionNumber} onChange={(e) => updateEdition(e.target.value)} />
-                                                        <button onClick={() => updateEdition(parseInt(editionNumber) + 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">+</button>
-                                                    </div>
-
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest">Fecha de Publicación</label>
-                                                        <button onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])} className="text-[9px] font-black uppercase text-primary hover:underline" type="button">Fijar Hoy</button>
-                                                    </div>
-                                                    <div className="relative mb-6">
-                                                        <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                                        <input type="date" className="w-full bg-[#11141b] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors" value={coverPage.date || ''} onChange={(e) => updateCoverPage(coverPage.image, e.target.value)} style={{ colorScheme: 'dark' }} />
-                                                    </div>
-
-                                                    <label className="text-[10px] font-black uppercase text-slate-500 block tracking-widest mb-2">Imagen Tapa del Día (URL)</label>
-                                                    <div className="flex gap-2 mb-4">
-                                                        <input
-                                                            className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
-                                                            value={coverPage.image || ''}
-                                                            onChange={e => updateCoverPage(e.target.value, coverPage.date)}
-                                                            placeholder="https://..."
-                                                        />
-                                                        <button
-                                                            onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }}
-                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
-                                                            title="Seleccionar de Galería"
-                                                        >
-                                                            <ImageIcon size={20} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => { setGalleryTarget('cover'); fileInputRef.current.click(); }}
-                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
-                                                            title="Subir Archivo"
-                                                        >
-                                                            <Upload size={20} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                {/* Cover Page Preview (The 'Big Image' in Admin) */}
-                                                {coverPage.image && (
-                                                    <div className="relative w-full aspect-[3/4] bg-slate-900 rounded-xl overflow-hidden border border-white/10 shadow-2xl group">
-                                                        <img src={coverPage.image} className="w-full h-full object-contain" alt="Tapa Preview" />
-                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white uppercase font-black tracking-widest text-xs">
-                                                            Vista Previa Tapa
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Right Column: City Hero Carousel */}
-                                            <div className="flex-1 border-l border-white/5 pl-8">
-                                                <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
-                                                    <ImageIcon size={12} className="text-primary" /> Carrusel Panorámico (Portada)
-                                                </h4>
-
-                                                <div className="flex flex-col gap-4">
-                                                    <div className="flex gap-2">
-                                                        <input
-                                                            id="cityHeroInput"
-                                                            className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
-                                                            placeholder="URL de imagen..."
-                                                            onKeyDown={(e) => {
-                                                                if (e.key === 'Enter') {
-                                                                    addCityHeroImage(e.target.value).then(ok => {
-                                                                        if (ok) {
-                                                                            showToast("Imagen agregada", "success");
-                                                                            e.target.value = '';
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }}
-                                                        />
-                                                        <button
-                                                            onClick={() => { setGalleryTarget('cityHero'); setShowGallery(true); }}
-                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
-                                                            title="Seleccionar de Galería"
-                                                        >
-                                                            <ImageIcon size={20} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => { setGalleryTarget('cityHero'); fileInputRef.current.click(); }}
-                                                            className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"
-                                                            title="Subir Archivo"
-                                                        >
-                                                            <Upload size={20} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => {
-                                                                const input = document.getElementById('cityHeroInput');
-                                                                if (input && input.value) {
-                                                                    addCityHeroImage(input.value).then(ok => {
-                                                                        if (ok) {
-                                                                            showToast("Imagen agregada", "success");
-                                                                            input.value = '';
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }}
-                                                            className="p-3 bg-primary text-white rounded-xl hover:bg-primary/80 transition-all font-bold text-xs uppercase tracking-wider"
-                                                        >
-                                                            <Plus size={16} />
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
-                                                        {cityHeroImages && cityHeroImages.map((img) => (
-                                                            <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-video border border-white/10 bg-black/20 shrink-0">
-                                                                <img src={img.url} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Carousel" />
-                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                    <button
-                                                                        onClick={() => deleteCityHeroImage(img.id)}
-                                                                        className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform backdrop-blur-sm shadow-xl"
-                                                                    >
-                                                                        <Trash2 size={16} />
-                                                                    </button>
-                                                                </div>
-                                                                <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-[8px] font-mono text-white/50 truncate max-w-full">
-                                                                    {img.url}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                        {(!cityHeroImages || cityHeroImages.length === 0) && (
-                                                            <div className="py-12 text-center text-slate-600 text-[10px] uppercase font-bold tracking-widest border border-dashed border-white/10 rounded-xl">
-                                                                Sin imágenes personalizadas (Se muestra la default)
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <div className="mt-8 pt-6 border-t border-white/5">
-                                                    <button
-                                                        onClick={() => fetch('/api/cron-increment').then(() => alert('Script ejecutado.'))}
-                                                        className="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
-                                                        type="button"
-                                                    >
-                                                        Forzar Incremento Diario
-                                                    </button>
-                                                </div>
-                                            </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {/* 1. Edición y Tapa */}
+                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Layers size={80} />
                                         </div>
-                                    </section>
-
-                                    <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5">
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <History size={14} className="text-primary" /> ¿Te Acordás Dolores?
-                                        </h3>
-                                        <p className="text-[10px] text-slate-500 font-bold mb-6">Establece la imagen de fondo para la sección histórica en la página de inicio.</p>
-
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Imagen de Fondo (URL)</label>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    className="flex-1 bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-all"
-                                                    value={footerSettings.te_acordas_bg || ''}
-                                                    onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
-                                                    placeholder="URL de la imagen de fondo..."
-                                                />
-                                                <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={20} /></button>
-                                            </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                                                    <Layers size={18} />
+                                                </div>
+                                                Edición y Tapa
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Control de numeración y fecha editorial.</p>
                                         </div>
-                                    </section>
-
-                                    <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5">
-                                        <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <Cpu size={14} className="text-emerald-500" /> Inteligencia Artificial
-                                        </h3>
-                                        <p className="text-[10px] text-slate-500 font-bold mb-6">Conecta un modelo (Gemini/OpenAI) para redacción automática de noticias y sugerencias de formato.</p>
 
                                         <div className="flex flex-col gap-4">
-                                            <label className="flex items-center gap-3 cursor-pointer">
-                                                <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
-                                                <span className="text-[10px] font-black uppercase text-slate-400">Habilitar Asistente IA</span>
+                                            <div className="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/5">
+                                                <button onClick={() => updateEdition(parseInt(editionNumber) - 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">-</button>
+                                                <input type="number" className="flex-1 bg-transparent text-lg font-black text-center text-primary italic outline-none" value={editionNumber} onChange={(e) => updateEdition(e.target.value)} />
+                                                <button onClick={() => updateEdition(parseInt(editionNumber) + 1)} className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors" type="button">+</button>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Fecha de Publicación</label>
+                                                    <button onClick={() => updateCoverPage(coverPage.image, new Date().toISOString().split('T')[0])} className="text-[8px] font-black uppercase text-primary hover:underline">Hoy</button>
+                                                </div>
+                                                <div className="relative">
+                                                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                                    <input type="date" className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-white outline-none focus:border-primary transition-colors" value={coverPage.date || ''} onChange={(e) => updateCoverPage(coverPage.image, e.target.value)} style={{ colorScheme: 'dark' }} />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Imagen de Tapa (URL)</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                        value={coverPage.image || ''}
+                                                        onChange={e => updateCoverPage(e.target.value, coverPage.date)}
+                                                        placeholder="https://..."
+                                                    />
+                                                    <button onClick={() => { setGalleryTarget('cover'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={18} /></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* 2. Carrusel Panorámico */}
+                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <ImageIcon size={80} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                                                    <ImageIcon size={18} />
+                                                </div>
+                                                Explorar la Ciudad
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Imágenes panorámicas de la portada.</p>
+                                        </div>
+
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex gap-2">
+                                                <input
+                                                    id="cityHeroInput"
+                                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                    placeholder="URL imagen..."
+                                                />
+                                                <button
+                                                    onClick={() => {
+                                                        const input = document.getElementById('cityHeroInput');
+                                                        if (input.value) { addCityHeroImage(input.value).then(() => { input.value = ''; showToast('Imagen añadida'); }); }
+                                                    }}
+                                                    className="p-3 bg-primary text-white rounded-xl hover:scale-105 transition-all"
+                                                >
+                                                    <Plus size={18} />
+                                                </button>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-1 select-none custom-scrollbar">
+                                                {cityHeroImages.map((img) => (
+                                                    <div key={img.id} className="relative aspect-video rounded-xl overflow-hidden group/item border border-white/10">
+                                                        <img src={img.url} className="w-full h-full object-cover" />
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button onClick={() => deleteCityHeroImage(img.id)} className="p-2 bg-red-500 text-white rounded-lg hover:scale-110 transition-all"><Trash2 size={14} /></button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* 3. Clima Real (NUEVO) */}
+                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <CloudSun size={80} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-500">
+                                                    <CloudSun size={18} />
+                                                </div>
+                                                Clima Real
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Datos en tiempo real de WeatherAPI.</p>
+                                        </div>
+
+                                        <div className="flex flex-col gap-4">
+                                            <label className="flex items-center gap-3 cursor-pointer group/label bg-white/5 p-3 rounded-xl border border-white/5">
+                                                <input type="checkbox" checked={weatherConfig?.enabled} onChange={e => updateWeatherConfig({ ...weatherConfig, enabled: e.target.checked })} className="size-4 accent-yellow-500" />
+                                                <span className="text-[10px] font-black uppercase text-slate-400 group-hover/label:text-white transition-colors">Estado del Tiempo Activo</span>
                                             </label>
 
                                             <div className="flex flex-col gap-1.5">
-                                                <div className="flex items-center justify-between">
-                                                    <label className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-600 ml-1">API Key</label>
-                                                    {aiConfig.apiKey && <span className="text-[8px] font-bold text-emerald-500">Guardado</span>}
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <input
-                                                        type="password"
-                                                        className="flex-1 bg-white dark:bg-[#11141b] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500/50 shadow-inner"
-                                                        placeholder="Pegar API Key aquí..."
-                                                        defaultValue={aiConfig.apiKey}
-                                                        onBlur={(e) => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
-                                                    />
-                                                </div>
-                                                <p className="text-[8px] text-slate-600 ml-1">Se guarda automáticamente al salir del campo.</p>
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">API Key (weatherapi.com)</label>
+                                                <input
+                                                    type="password"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-yellow-500 transition-all"
+                                                    placeholder="Tu API Key..."
+                                                    defaultValue={weatherConfig?.apiKey}
+                                                    onBlur={e => updateWeatherConfig({ ...weatherConfig, apiKey: e.target.value })}
+                                                />
                                             </div>
 
                                             <div className="flex flex-col gap-1.5">
-                                                <label className="text-[9px] font-black uppercase text-slate-600 ml-1">Modelo Seleccionado</label>
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Ciudad / Ubicación</label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-yellow-500 transition-all"
+                                                    placeholder="Ej: Dolores, Argentina"
+                                                    defaultValue={weatherConfig?.city}
+                                                    onBlur={e => updateWeatherConfig({ ...weatherConfig, city: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* 4. Inteligencia Artificial */}
+                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Cpu size={80} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+                                                    <Cpu size={18} />
+                                                </div>
+                                                Inteligencia Artificial
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Asistente de redacción y análisis.</p>
+                                        </div>
+
+                                        <div className="flex flex-col gap-4">
+                                            <label className="flex items-center gap-3 cursor-pointer group/label bg-white/5 p-3 rounded-xl border border-white/5">
+                                                <input type="checkbox" checked={aiConfig.enabled} onChange={e => updateAiConfig({ ...aiConfig, enabled: e.target.checked })} className="size-4 accent-emerald-500" />
+                                                <span className="text-[10px] font-black uppercase text-slate-400 group-hover/label:text-white transition-colors">Habilitar IA Editorial</span>
+                                            </label>
+
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">API Key</label>
+                                                <input
+                                                    type="password"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-all"
+                                                    placeholder="Clave de la API..."
+                                                    defaultValue={aiConfig.apiKey}
+                                                    onBlur={e => updateAiConfig({ ...aiConfig, apiKey: e.target.value })}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Modelo Activo</label>
                                                 <select
-                                                    className="bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none font-bold"
+                                                    className="w-full bg-[#11141b] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-all appearance-none"
                                                     value={aiConfig.model}
                                                     onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
                                                 >
-                                                    <option value="llama3-70b-8192">Groq-Llama 3 70B (Recomendado)</option>
-                                                    <option value="mixtral-8x7b-32768">Groq-Mixtral 8x7b</option>
-                                                    <option value="gemma-7b-it">Groq-Gemma 7B</option>
-                                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash (Más rápido)</option>
+                                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Más potente)</option>
                                                     <option value="gpt-4o">OpenAI GPT-4o</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </section>
 
-                                    <section className="p-6 bg-[#0a0c10] rounded-2xl border border-white/5 md:col-span-2">
-                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <Layers size={14} className="text-primary" /> Sistema de Base de Datos
-                                        </h3>
-                                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                                            <div className="flex flex-col gap-1">
-                                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Estado del Servidor</p>
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`size-2 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : dbStatus?.loading ? 'bg-amber-500 animate-pulse' : 'bg-slate-700'} `}></div>
-                                                    <span className="text-sm font-black text-white italic tracking-tighter">
-                                                        {dbStatus?.loading ? 'Comprobando...' : dbStatus?.success ? 'Conexión Activa' : 'Sin Comprobar'}
+                                    {/* 5. Identidad Visual (Footer/Fondo Histórico) */}
+                                    <section className="p-8 bg-[#0a0c10] rounded-[2.5rem] border border-white/5 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Sparkles size={80} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-500">
+                                                    <Sparkles size={18} />
+                                                </div>
+                                                Identidad Visual
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Personalización gráfica del sitio.</p>
+                                        </div>
+
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Fondo "Te Acordás Dolores"</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                        value={footerSettings.te_acordas_bg || ''}
+                                                        onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
+                                                        placeholder="URL de fondo..."
+                                                    />
+                                                    <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="p-3 bg-white/5 text-slate-400 rounded-xl border border-white/10 hover:text-primary transition-all"><ImageIcon size={18} /></button>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Títulos Pie de Página</label>
+                                                <input
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+                                                    value={footerSettings.column_2_title || ''}
+                                                    onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
+                                                    placeholder="Título Columna 2..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* 6. Sistema y Base de Datos */}
+                                    <section className="p-8 bg-slate-900 rounded-[2.5rem] border border-white/10 flex flex-col gap-6 shadow-2xl relative overflow-hidden group lg:col-span-2">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Globe size={120} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-black text-sm uppercase tracking-widest mb-2 flex items-center gap-3">
+                                                <div className="size-8 rounded-xl bg-primary/30 flex items-center justify-center text-primary">
+                                                    <Globe size={18} />
+                                                </div>
+                                                Sistema Central
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 font-bold">Estado de servicios y copias de seguridad.</p>
+                                        </div>
+
+                                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-4 px-6 bg-white/5 rounded-3xl border border-white/5">
+                                            <div className="flex flex-col gap-2">
+                                                <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Estado del Servidor</span>
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`size-3 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`}></div>
+                                                    <span className="text-lg font-black text-white italic tracking-tighter uppercase whitespace-nowrap">
+                                                        {dbStatus?.success ? 'Nodos En Línea' : 'Sin Comprobar'}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                                                <button
-                                                    onClick={handleDownloadBackup}
-                                                    className="px-8 py-3 bg-slate-800 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-700 transition-all shadow-xl flex items-center gap-2 justify-center"
-                                                >
-                                                    <Globe size={16} className="text-primary" /> Descargar Backup
-                                                </button>
-                                                <button
-                                                    onClick={testDbConnection}
-                                                    disabled={dbStatus?.loading}
-                                                    className={`px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 justify-center ${dbStatus?.loading ? 'bg-slate-700 text-slate-400 opacity-50 cursor-wait' : 'bg-white/10 text-white hover:bg-white/20'} `}
-                                                >
-                                                    {dbStatus?.loading ? 'Conectando...' : 'Probar Conexión'}
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        const sqlContent = `/* Comandos de verificación */ SELECT NOW(); SELECT COUNT(*) FROM news;`;
-                                                        navigator.clipboard.writeText(sqlContent);
-                                                        showToast("Script de prueba copiado", "success");
-                                                    }}
-                                                    className="px-8 py-3 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/25"
-                                                >
-                                                    Copiar Script de Prueba
-                                                </button>
+                                            <div className="flex flex-wrap gap-3">
+                                                <button onClick={testDbConnection} className="px-6 py-3 bg-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10">Verificar Red</button>
+                                                <button onClick={handleDownloadBackup} className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">Descargar Backup</button>
                                             </div>
                                         </div>
 
                                         {dbStatus?.success && (
-                                            <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
-                                                <div className="flex flex-col gap-1">
-                                                    <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Respuesta del Servidor:</p>
-                                                    <p className="text-[11px] font-mono text-emerald-400">Base de Datos: {dbStatus.data.db} | Hora: {new Date(dbStatus.data.time).toLocaleString()}</p>
+                                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="size-2 rounded-full bg-emerald-500"></div>
+                                                    <p className="text-[10px] font-mono text-emerald-400 uppercase tracking-tighter">
+                                                        {dbStatus.data.db} | Latencia: OK | {new Date(dbStatus.data.time).toLocaleString()}
+                                                    </p>
                                                 </div>
                                             </div>
                                         )}
-
-                                        {!dbStatus?.success && dbStatus?.error && (
-                                            <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                                                <div className="flex flex-col gap-1">
-                                                    <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">Error Detectado:</p>
-                                                    <p className="text-[11px] font-mono text-red-400">{dbStatus.error}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </section>
-                                    <section className="p-6 bg-slate-50 dark:bg-[#0a0c10] rounded-2xl border border-gray-200 dark:border-white/5 opacity-50">
-                                        <h3 className="text-slate-900 dark:text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <Wand2 size={14} className="text-accent-pink" /> Generación Automática
-                                        </h3>
-                                        <p className="text-[10px] text-slate-500 font-bold mb-6">Próximamente: Diseña portadas completas y diagramación de notas con un solo clic.</p>
-                                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                            <div className="w-1/2 h-full bg-primary/40 animate-pulse"></div>
-                                        </div>
                                     </section>
                                 </div>
                             </div>

@@ -6,7 +6,7 @@ import { useNews } from '../context/NewsContext';
 import { Link } from 'react-router-dom';
 
 const HeaderTop = () => {
-    const { pharmacies, pharmacyDuty, editionNumber, news, coverPage } = useNews();
+    const { pharmacies, pharmacyDuty, editionNumber, news, coverPage, weatherData } = useNews();
     const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -46,17 +46,11 @@ const HeaderTop = () => {
     const dateStr = displayDateBase.toLocaleDateString('es-ES', dateOptions);
     const todayDisplay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
-    const weatherData = {
-        city: 'Ciudad de Dolores',
-        current: { temp: 22, condition: 'Parcialmente nublado', humidity: 65, wind: 12 },
-        forecast: [
-            { day: 'Hoy', high: 24, low: 18, condition: 'Nublado' },
-            { day: 'Mañana', high: 26, low: 19, condition: 'Soleado' },
-            { day: 'Lunes', high: 23, low: 17, condition: 'Lluvia' }
-        ]
-    };
-
     const currentNews = latestNews[newsIndex];
+
+    // Helper function to map WeatherAPI condition icon/text if needed, 
+    // but here we just use the data structure from our fetchWeatherData.
+    // data.current.temp_c, data.current.condition.text, data.location.name, etc.
 
     return (
         <div className="bg-white dark:bg-[#0f172a] text-slate-800 dark:text-white border-b border-gray-200 dark:border-white/5 relative z-[100] transition-colors duration-300">
@@ -124,7 +118,9 @@ const HeaderTop = () => {
                         >
                             <CloudSun size={16} className="text-yellow-500" />
                             <div className="flex items-center gap-1.5 leading-none">
-                                <span className="font-black text-sm">{weatherData.current.temp}°C</span>
+                                <span className="font-black text-sm">
+                                    {weatherData ? `${Math.round(weatherData.current.temp_c)}°C` : '--°C'}
+                                </span>
                             </div>
                         </motion.div>
 
@@ -153,8 +149,8 @@ const HeaderTop = () => {
                                                 <div className="flex justify-between items-center">
                                                     <div className="flex items-center gap-2">
                                                         <CloudSun size={16} className="text-white" />
-                                                        <h4 className="font-black text-xs uppercase tracking-wider text-white">
-                                                            {weatherData.city}
+                                                        <h4 className="font-black text-xs uppercase tracking-wider text-white truncate max-w-[200px]">
+                                                            {weatherData ? weatherData.location.name : 'Clima'}
                                                         </h4>
                                                     </div>
                                                     <button
@@ -171,33 +167,40 @@ const HeaderTop = () => {
                                                 <div className="bg-slate-800/50 rounded-2xl p-4 border border-white/5">
                                                     <div className="flex items-center justify-between mb-3">
                                                         <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Ahora</span>
-                                                        <CloudSun size={24} className="text-yellow-400" />
+                                                        {weatherData && <img src={weatherData.current.condition.icon} alt="weather" className="size-8" />}
                                                     </div>
-                                                    <div className="text-3xl font-black text-white mb-1">{weatherData.current.temp}°C</div>
-                                                    <div className="text-xs text-slate-400 font-bold mb-3">{weatherData.current.condition}</div>
+                                                    <div className="text-3xl font-black text-white mb-1">
+                                                        {weatherData ? `${Math.round(weatherData.current.temp_c)}°C` : '--°C'}
+                                                    </div>
+                                                    <div className="text-xs text-slate-400 font-bold mb-3">
+                                                        {weatherData ? weatherData.current.condition.text : 'Cargando...'}
+                                                    </div>
                                                     <div className="grid grid-cols-2 gap-2 text-[10px]">
                                                         <div className="flex items-center gap-1.5">
                                                             <span className="text-slate-500">💧</span>
-                                                            <span className="text-slate-400 font-bold">{weatherData.current.humidity}%</span>
+                                                            <span className="text-slate-400 font-bold">{weatherData ? weatherData.current.humidity : '--'}%</span>
                                                         </div>
                                                         <div className="flex items-center gap-1.5">
                                                             <span className="text-slate-500">💨</span>
-                                                            <span className="text-slate-400 font-bold">{weatherData.current.wind} km/h</span>
+                                                            <span className="text-slate-400 font-bold">{weatherData ? Math.round(weatherData.current.wind_kph) : '--'} km/h</span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 {/* Forecast */}
                                                 <div>
-                                                    <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-3 block">Pronóstico</span>
+                                                    <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-3 block">Pronóstico 3 Días</span>
                                                     <div className="space-y-2">
-                                                        {weatherData.forecast.map((day, idx) => (
+                                                        {weatherData && weatherData.forecast.forecastday.map((f, idx) => (
                                                             <div key={idx} className="flex items-center justify-between p-3 bg-slate-800/30 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-                                                                <span className="text-xs font-bold text-white w-20">{day.day}</span>
-                                                                <span className="text-[10px] text-slate-400 flex-1">{day.condition}</span>
+                                                                <span className="text-xs font-bold text-white w-20">
+                                                                    {idx === 0 ? 'Hoy' : new Date(f.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'short' })}
+                                                                </span>
+                                                                <img src={f.day.condition.icon} alt="icon" className="size-6 mr-2" />
+                                                                <span className="text-[10px] text-slate-400 flex-1 truncate">{f.day.condition.text}</span>
                                                                 <div className="flex items-center gap-2 text-xs font-black">
-                                                                    <span className="text-white">{day.high}°</span>
-                                                                    <span className="text-slate-600">{day.low}°</span>
+                                                                    <span className="text-white">{Math.round(f.day.maxtemp_c)}°</span>
+                                                                    <span className="text-slate-600">{Math.round(f.day.mintemp_c)}°</span>
                                                                 </div>
                                                             </div>
                                                         ))}

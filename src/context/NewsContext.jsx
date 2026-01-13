@@ -62,6 +62,12 @@ export const NewsProvider = ({ children }) => {
     });
 
     const [cityHeroImages, setCityHeroImages] = useState([]);
+    const [weatherConfig, setWeatherConfig] = useState({
+        apiKey: '',
+        city: 'Dolores, Buenos Aires, Argentina',
+        enabled: true
+    });
+    const [weatherData, setWeatherData] = useState(null);
 
     // Initial fetch
     useEffect(() => {
@@ -85,6 +91,50 @@ export const NewsProvider = ({ children }) => {
             }
         } catch (err) {
             console.error('Failed to fetch city hero images:', err);
+        }
+    };
+
+    const fetchWeatherData = async (config) => {
+        const activeConfig = config || weatherConfig;
+        if (!activeConfig?.apiKey || !activeConfig?.enabled) return;
+        try {
+            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${activeConfig.apiKey}&q=${activeConfig.city}&days=3&aqi=no&alerts=no&lang=es`);
+            if (res.ok) {
+                const data = await res.json();
+                setWeatherData(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch weather data:', err);
+        }
+    };
+
+    const updateWeatherConfig = async (newConfig) => {
+        setWeatherConfig(newConfig);
+        try {
+            await Promise.all([
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: 'weather_api_key', value: newConfig.apiKey })
+                }),
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: 'weather_city', value: newConfig.city })
+                }),
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: 'weather_enabled', value: newConfig.enabled.toString() })
+                })
+            ]);
+            if (newConfig.apiKey && newConfig.enabled) {
+                fetchWeatherData(newConfig);
+            }
+            return true;
+        } catch (err) {
+            console.error('Failed to update weather config:', err);
+            return false;
         }
     };
 
@@ -168,6 +218,17 @@ export const NewsProvider = ({ children }) => {
                 }
                 if (data.ai_model) {
                     setAiConfig(prev => ({ ...prev, model: data.ai_model }));
+                }
+
+                // Weather settings
+                const wConfig = {
+                    apiKey: data.weather_api_key || '',
+                    city: data.weather_city || 'Dolores, Buenos Aires, Argentina',
+                    enabled: data.weather_enabled !== 'false'
+                };
+                setWeatherConfig(wConfig);
+                if (wConfig.apiKey && wConfig.enabled) {
+                    fetchWeatherData(wConfig);
                 }
 
                 // Footer settings
@@ -725,7 +786,8 @@ export const NewsProvider = ({ children }) => {
             fetchNews,
             reorderCategories: reorderCategoriesPersistently,
             reorderPharmacies,
-            cityHeroImages, addCityHeroImage, deleteCityHeroImage
+            cityHeroImages, addCityHeroImage, deleteCityHeroImage,
+            weatherConfig, weatherData, updateWeatherConfig, fetchWeatherData
         }}>
             {children}
         </NewsContext.Provider>
