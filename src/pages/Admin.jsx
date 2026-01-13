@@ -31,7 +31,7 @@ const Admin = () => {
         reorderCategories,
         reorderPharmacies,
         cityHeroImages, addCityHeroImage, deleteCityHeroImage,
-        weatherConfig, updateWeatherConfig
+        weatherConfig, updateWeatherConfig, fetchWeatherData
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -2612,6 +2612,23 @@ const Admin = () => {
                     </div>
                 )}
             </AnimatePresence>
+            <AnimatePresence>
+                {toast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
+                                ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
+                                : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
+                            }`}
+                    >
+                        {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
+                        <span className="text-sm font-black uppercase tracking-widest">{toast.message}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <input
                 ref={fileInputRef}
                 type="file"

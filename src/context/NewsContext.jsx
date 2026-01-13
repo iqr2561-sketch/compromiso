@@ -96,7 +96,7 @@ export const NewsProvider = ({ children }) => {
 
     const fetchWeatherData = async (config) => {
         const activeConfig = config || weatherConfig;
-        if (!activeConfig?.apiKey || !activeConfig?.enabled) return;
+        if (!activeConfig?.apiKey) return false;
 
         try {
             // Fetch Current Weather
