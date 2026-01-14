@@ -6,6 +6,13 @@ import { Link } from 'react-router-dom';
 const CategoryGrid = () => {
     const { news, categories } = useNews();
 
+    // Default image if none provided
+    const defaultImage = 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800';
+
+    const getImageUrl = (newsItem) => {
+        return (newsItem.image && newsItem.image.trim()) ? newsItem.image : defaultImage;
+    };
+
     const getColorClass = (color) => {
         if (!color) return 'bg-primary';
         if (color.startsWith('bg-')) return color;
@@ -62,7 +69,7 @@ const CategoryGrid = () => {
                             >
                                 <div
                                     className="w-36 h-24 shrink-0 rounded-2xl bg-cover bg-center overflow-hidden border border-white/5 shadow-inner"
-                                    style={{ backgroundImage: `url(${item.image})` }}
+                                    style={{ backgroundImage: `url(${getImageUrl(item)})` }}
                                 >
                                     <div className="w-full h-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
                                 </div>

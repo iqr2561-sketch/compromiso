@@ -22,6 +22,13 @@ const HeroSection = () => {
     const bottomStripNews = secondaryNewsList.slice(2, 5);
     const sidebarBottomNews = extraNewsList.slice(0, 2);
 
+    // Default image if none provided
+    const defaultImage = 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800';
+
+    const getImageUrl = (newsItem) => {
+        return (newsItem.image && newsItem.image.trim()) ? newsItem.image : defaultImage;
+    };
+
     useEffect(() => {
         if (principalNewsList.length === 0) return;
         const timer = setInterval(() => {
@@ -52,7 +59,7 @@ const HeroSection = () => {
                                 <Link to={`/noticia/${heroNews.id}`}>
                                     <div
                                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                        style={{ backgroundImage: `url(${heroNews.image})` }}
+                                        style={{ backgroundImage: `url(${getImageUrl(heroNews)})` }}
                                     ></div>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col items-start gap-4 cursor-pointer">
@@ -161,7 +168,7 @@ const HeroSection = () => {
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
-                                    style={{ backgroundImage: `url(${item.image})` }}
+                                    style={{ backgroundImage: `url(${getImageUrl(item)})` }}
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                 <div className="absolute inset-0 p-5 flex flex-col justify-end z-10">
@@ -227,7 +234,7 @@ const HeroSection = () => {
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-20 transition-opacity bg-cover bg-center"
-                                    style={{ backgroundImage: `url(${item.image})` }}
+                                    style={{ backgroundImage: `url(${getImageUrl(item)})` }}
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                 <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
