@@ -9,16 +9,19 @@ const HeroSection = () => {
     const { news, scores, coverPage } = useNews();
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    // Debug logs
+    console.log("HeroSection - Total news:", news.length);
+    console.log("HeroSection - News data:", news.slice(0, 10));
+
     const nonFlash = news.filter(n => !n.isFlash);
+    console.log("HeroSection - NonFlash news:", nonFlash.length);
     
     // Principal carousel: First 5 news
     const principalNewsList = nonFlash.slice(0, 5);
-    
-    // Secondary news: Next 5 news (no repetition)
     const secondaryNewsList = nonFlash.slice(5, 10);
-    
-    // Extra news for sidebar bottom: Next 4 after secondary
     const extraNewsList = nonFlash.slice(10, 14);
+
+    console.log("HeroSection - Principal:", principalNewsList.length, "Secondary:", secondaryNewsList.length, "Extra:", extraNewsList.length);
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
