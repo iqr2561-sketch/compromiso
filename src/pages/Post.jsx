@@ -59,7 +59,7 @@ const Post = () => {
                 <article className="lg:col-span-8 flex flex-col gap-8">
                     <div className="flex flex-col gap-6">
                         <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter italic">
-                            {post.title ? post.title.charAt(0).toUpperCase() + post.title.slice(1).toLowerCase() : ''}
+                            {post.title}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-6 border-y border-gray-100 dark:border-white/5 py-6">

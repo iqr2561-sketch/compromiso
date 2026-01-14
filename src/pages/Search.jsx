@@ -84,7 +84,7 @@ const Search = () => {
                                                         <Calendar size={12} className="text-primary" /> {item.date}
                                                     </div>
                                                 </div>
-                                                <h2 className="text-xl font-black text-slate-900 dark:text-white leading-[1.1] group-hover:text-primary transition-colors tracking-tighter uppercase italic line-clamp-2">
+                                                <h2 className="text-xl font-black text-slate-900 dark:text-white leading-[1.1] group-hover:text-primary transition-colors tracking-tighter italic line-clamp-2">
                                                     {item.title}
                                                 </h2>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
