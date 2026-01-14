@@ -32,10 +32,8 @@ export default async function handler(req, res) {
                 }
 
                 // Map database naming (snake_case) to frontend (camelCase)
-                const defaultImage = 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800';
                 const mappedRows = rows.map(row => ({
                     ...row,
-                    image: row.image && row.image.trim() ? row.image : defaultImage,
                     isHero: !!row.is_hero,
                     isFlash: !!row.is_flash,
                     timeRead: row.time_read || '2 min'

@@ -68,7 +68,7 @@ const CategoryGrid = () => {
                                 className="bg-white dark:bg-surface-darker rounded-[2rem] p-5 flex gap-5 hover:shadow-2xl transition-all border border-gray-100 dark:border-white/5 cursor-pointer group shadow-lg shadow-black/5"
                             >
                                 <div
-                                    className="w-36 h-24 shrink-0 rounded-2xl bg-cover bg-center overflow-hidden border border-white/5 shadow-inner"
+                                    className="w-48 h-32 shrink-0 rounded-2xl bg-cover bg-center overflow-hidden border border-white/5 shadow-inner"
                                     style={{ backgroundImage: `url(${getImageUrl(item)})` }}
                                 >
                                     <div className="w-full h-full bg-black/10 group-hover:bg-transparent transition-colors"></div>

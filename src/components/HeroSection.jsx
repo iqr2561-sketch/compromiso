@@ -14,9 +14,12 @@ const HeroSection = () => {
     const others = nonFlash.filter(n => !n.isHero);
     const sortedHomeNews = [...heroes, ...others];
 
-    const principalNewsList = sortedHomeNews.slice(0, 5); // 5 primeras (Sección Principal/Carousel)
-    const secondaryNewsList = sortedHomeNews.slice(5, 10); // 5 siguientes (Secciones Secundarias)
-    const extraNewsList = sortedHomeNews.slice(10, 14); // Más noticias para el resto del sidebar
+    // Only show HERO news in the principal carousel
+    const principalNewsList = heroes.length > 0 ? heroes : sortedHomeNews.slice(0, 5);
+    // Secondary news: next 5 after heroes
+    const secondaryNewsList = sortedHomeNews.slice(heroes.length, heroes.length + 5);
+    // Extra news for sidebar bottom
+    const extraNewsList = sortedHomeNews.slice(heroes.length + 5, heroes.length + 9);
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
@@ -163,7 +166,7 @@ const HeroSection = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 1) }}
-                            className="relative h-[205px] rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-48 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
@@ -229,7 +232,7 @@ const HeroSection = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * (idx + 3) }}
-                            className="relative h-40 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
+                            className="relative h-48 rounded-3xl overflow-hidden group cursor-pointer bg-surface-dark border border-white/5 shadow-xl"
                         >
                             <Link to={`/noticia/${item.id}`} className="absolute inset-0 block">
                                 <div
