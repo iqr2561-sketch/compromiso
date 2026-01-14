@@ -7,11 +7,79 @@ import {
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
     ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, EyeOff, History, GripVertical, CloudSun, Activity, Lock, User
 } from 'lucide-react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+
+const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
+    const controls = useDragControls();
+
+    return (
+        <Reorder.Item
+            value={ad}
+            dragListener={false}
+            dragControls={controls}
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            whileDrag={{
+                scale: 1.02,
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                zIndex: 100,
+                boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+            }}
+            className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] bg-white dark:bg-[#11141b] group relative border-b border-gray-100 dark:border-white/5 last:border-0"
+        >
+            <div className="flex items-center gap-6">
+                <div
+                    onPointerDown={(e) => controls.start(e)}
+                    className="size-10 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
+                >
+                    <GripVertical size={20} />
+                </div>
+                <div className="flex items-center gap-6">
+                    {ad.image ? (
+                        <div className="relative group/ad">
+                            <img src={ad.image} className="h-20 w-36 object-cover rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg" alt="" />
+                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/ad:opacity-100 transition-opacity rounded-2xl" />
+                        </div>
+                    ) : (
+                        <div className="h-20 w-36 bg-slate-100 dark:bg-white/5 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 flex items-center justify-center text-[10px] font-black text-slate-400">SIN PIEZA</div>
+                    )}
+                    <div className="flex flex-col">
+                        <span className="font-black text-base text-slate-900 dark:text-white italic tracking-tighter leading-none group-hover:text-primary transition-colors">
+                            {ad.type === 'premium' ? 'Header Logo Premium' :
+                                ad.type === 'sidebar_1' ? 'Sidebar Superior' :
+                                    ad.type === 'sidebar_2' ? 'Sidebar Medio' :
+                                        ad.type === 'sidebar_3' ? 'Sidebar Inferior' :
+                                            ad.type === 'footer_1' ? 'Footer Izquierdo' :
+                                                ad.type === 'footer_2' ? 'Footer Derecho' :
+                                                    ad.type.startsWith('hero') ? `Slot Portada ${ad.type.split('_')[1]}` :
+                                                        `Ubicación: ${ad.type}`}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">LINK: {ad.link || 'Sin Enlace'}</span>
+                        <div className="flex items-center gap-2 mt-2">
+                            {ad.active ? (
+                                <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-emerald-500/20">Publicidad Activa</span>
+                            ) : (
+                                <span className="text-[8px] bg-red-500/10 text-red-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-red-500/20">Pausada / Inactiva</span>
+                            )}
+                            <span className="text-[8px] bg-slate-100 dark:bg-white/5 text-slate-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-slate-200 dark:border-white/10">ID: #{ad.id}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                <button onClick={() => handleEdit(ad)} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Edit3 size={18} /></button>
+                <button onClick={() => showConfirm('Eliminar Publicidad', '¿Estás seguro de quitar este anuncio?', () => deleteAd(ad.id))} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Trash2 size={18} /></button>
+            </div>
+        </Reorder.Item>
+    );
+};
+
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.9");
+    console.log("Admin Component Loaded - Version 4.9.0");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -744,7 +812,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.9-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.9.0-RELEASE</span>
                     </div>
                 </div>
 
@@ -2526,57 +2594,17 @@ const Admin = () => {
                             <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
                                 <div className="p-8 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
                                     <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Gestión de Publicidades</h2>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Arrastra las tarjetas para cambiar su prioridad</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Usa el controlador lateral para cambiar el orden</span>
                                 </div>
-                                <Reorder.Group axis="y" values={ads || []} onReorder={reorderAds} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
+                                <Reorder.Group axis="y" values={ads || []} onReorder={reorderAds} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0 overflow-visible">
                                     {(ads || []).map(ad => (
-                                        <Reorder.Item
+                                        <AdReorderItem
                                             key={ad.id}
-                                            value={ad}
-                                            layout
-                                            className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] bg-white dark:bg-[#11141b] group relative"
-                                        >
-                                            <div className="flex items-center gap-6">
-                                                <div className="size-10 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-primary/10 hover:text-primary transition-all">
-                                                    <GripVertical size={20} />
-                                                </div>
-                                                <div className="flex items-center gap-6">
-                                                    {ad.image ? (
-                                                        <div className="relative group/ad">
-                                                            <img src={ad.image} className="h-20 w-36 object-cover rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg" alt="" />
-                                                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/ad:opacity-100 transition-opacity rounded-2xl"></div>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="h-20 w-36 bg-slate-100 dark:bg-white/5 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 flex items-center justify-center text-[10px] font-black text-slate-400">SIN PIEZA</div>
-                                                    )}
-                                                    <div className="flex flex-col">
-                                                        <span className="font-black text-base text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none group-hover:text-primary transition-colors">
-                                                            {ad.type === 'premium' ? 'Header Logo Premium' :
-                                                                ad.type === 'sidebar_1' ? 'Sidebar Superior' :
-                                                                    ad.type === 'sidebar_2' ? 'Sidebar Medio' :
-                                                                        ad.type === 'sidebar_3' ? 'Sidebar Inferior' :
-                                                                            ad.type === 'footer_1' ? 'Footer Izquierdo' :
-                                                                                ad.type === 'footer_2' ? 'Footer Derecho' :
-                                                                                    ad.type.startsWith('hero') ? `Slot Portada ${ad.type.split('_')[1]}` :
-                                                                                        `Ubicación: ${ad.type}`}
-                                                        </span>
-                                                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">LINK: {ad.link || 'Sin Enlace'}</span>
-                                                        <div className="flex items-center gap-2 mt-2">
-                                                            {ad.active ? (
-                                                                <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-emerald-500/20">Publicidad Activa</span>
-                                                            ) : (
-                                                                <span className="text-[8px] bg-red-500/10 text-red-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-red-500/20">Pausada / Inactiva</span>
-                                                            )}
-                                                            <span className="text-[8px] bg-slate-100 dark:bg-white/5 text-slate-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-slate-200 dark:border-white/10">ID: #{ad.id}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                <button onClick={() => handleEdit(ad)} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Edit3 size={18} /></button>
-                                                <button onClick={() => showConfirm('Eliminar Publicidad', '¿Estás seguro de quitar este anuncio?', () => deleteAd(ad.id))} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Trash2 size={18} /></button>
-                                            </div>
-                                        </Reorder.Item>
+                                            ad={ad}
+                                            handleEdit={handleEdit}
+                                            deleteAd={deleteAd}
+                                            showConfirm={showConfirm}
+                                        />
                                     ))}
                                 </Reorder.Group>
                                 {ads.length === 0 && (
