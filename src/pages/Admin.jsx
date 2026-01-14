@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.8");
+    console.log("Admin Component Loaded - Version 4.8.9");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -30,6 +30,7 @@ const Admin = () => {
         fetchNews,
         reorderCategories,
         reorderPharmacies,
+        reorderAds,
         cityHeroImages, addCityHeroImage, deleteCityHeroImage,
         weatherConfig, updateWeatherConfig, fetchWeatherData
     } = useNews();
@@ -743,7 +744,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.8-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.9-RELEASE</span>
                     </div>
                 </div>
 
@@ -937,20 +938,20 @@ const Admin = () => {
                                                             {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
                                                         </div>
 
-                                                        <div className="flex gap-6 p-6 bg-white dark:bg-[#0a0c10] rounded-3xl border border-gray-200 dark:border-white/5 shadow-inner">
-                                                            <label className="flex items-center gap-3 cursor-pointer group">
-                                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary' : 'group-hover:border-primary/50'} `}>
-                                                                    {formData.isHero && <Zap size={12} className="text-white" />}
+                                                        <div className="flex gap-6 p-6 bg-slate-50 dark:bg-white/[0.03] rounded-3xl border border-gray-200 dark:border-white/5">
+                                                            <label className="flex items-center gap-3 cursor-pointer group bg-white dark:bg-[#0a0c10] px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-primary transition-all shadow-sm">
+                                                                <div className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 group-hover:border-primary/50'}`}>
+                                                                    {formData.isHero && <Zap size={14} className="text-white fill-current" />}
                                                                 </div>
                                                                 <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
-                                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Destacar en Portada</span>
+                                                                <span className="text-[10px] font-black uppercase text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Destacar en Portada</span>
                                                             </label>
-                                                            <label className="flex items-center gap-3 cursor-pointer group">
-                                                                <div className={`size-5 rounded-md border-2 border-slate-200 dark: border-white / 10 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink' : 'group-hover:border-accent-pink/50'} `}>
-                                                                    {formData.isFlash && <Zap size={12} className="text-white" />}
+                                                            <label className="flex items-center gap-3 cursor-pointer group bg-white dark:bg-[#0a0c10] px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-accent-pink transition-all shadow-sm">
+                                                                <div className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink shadow-lg shadow-accent-pink/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 group-hover:border-accent-pink/50'}`}>
+                                                                    {formData.isFlash && <Zap size={14} className="text-white fill-current" />}
                                                                 </div>
                                                                 <input type="checkbox" className="hidden" checked={formData.isFlash} onChange={e => setFormData({ ...formData, isFlash: e.target.checked })} />
-                                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Flash Noticia</span>
+                                                                <span className="text-[10px] font-black uppercase text-slate-600 dark:text-slate-400 group-hover:text-accent-pink transition-colors">Flash Noticia</span>
                                                             </label>
                                                         </div>
                                                     </div>
@@ -2519,9 +2520,78 @@ const Admin = () => {
                         )
                     }
 
-                    {/* Generic Table View (for News, Ads, etc.) */}
+                    {/* Ads View with Reordering */}
                     {
-                        activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && activeTab !== 'users' && (
+                        activeTab === 'ads' && (
+                            <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                <div className="p-8 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+                                    <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Gestión de Publicidades</h2>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Arrastra las tarjetas para cambiar su prioridad</span>
+                                </div>
+                                <Reorder.Group axis="y" values={ads || []} onReorder={reorderAds} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0">
+                                    {(ads || []).map(ad => (
+                                        <Reorder.Item
+                                            key={ad.id}
+                                            value={ad}
+                                            layout
+                                            className="flex items-center justify-between px-8 py-6 hover:bg-slate-50 dark:hover:bg-white/[0.02] bg-white dark:bg-[#11141b] group relative"
+                                        >
+                                            <div className="flex items-center gap-6">
+                                                <div className="size-10 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-primary/10 hover:text-primary transition-all">
+                                                    <GripVertical size={20} />
+                                                </div>
+                                                <div className="flex items-center gap-6">
+                                                    {ad.image ? (
+                                                        <div className="relative group/ad">
+                                                            <img src={ad.image} className="h-20 w-36 object-cover rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg" alt="" />
+                                                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/ad:opacity-100 transition-opacity rounded-2xl"></div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="h-20 w-36 bg-slate-100 dark:bg-white/5 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 flex items-center justify-center text-[10px] font-black text-slate-400">SIN PIEZA</div>
+                                                    )}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black text-base text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none group-hover:text-primary transition-colors">
+                                                            {ad.type === 'premium' ? 'Header Logo Premium' :
+                                                                ad.type === 'sidebar_1' ? 'Sidebar Superior' :
+                                                                    ad.type === 'sidebar_2' ? 'Sidebar Medio' :
+                                                                        ad.type === 'sidebar_3' ? 'Sidebar Inferior' :
+                                                                            ad.type === 'footer_1' ? 'Footer Izquierdo' :
+                                                                                ad.type === 'footer_2' ? 'Footer Derecho' :
+                                                                                    ad.type.startsWith('hero') ? `Slot Portada ${ad.type.split('_')[1]}` :
+                                                                                        `Ubicación: ${ad.type}`}
+                                                        </span>
+                                                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">LINK: {ad.link || 'Sin Enlace'}</span>
+                                                        <div className="flex items-center gap-2 mt-2">
+                                                            {ad.active ? (
+                                                                <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-emerald-500/20">Publicidad Activa</span>
+                                                            ) : (
+                                                                <span className="text-[8px] bg-red-500/10 text-red-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-red-500/20">Pausada / Inactiva</span>
+                                                            )}
+                                                            <span className="text-[8px] bg-slate-100 dark:bg-white/5 text-slate-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-slate-200 dark:border-white/10">ID: #{ad.id}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                <button onClick={() => handleEdit(ad)} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Edit3 size={18} /></button>
+                                                <button onClick={() => showConfirm('Eliminar Publicidad', '¿Estás seguro de quitar este anuncio?', () => deleteAd(ad.id))} className="size-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all shadow-sm flex items-center justify-center scale-90 hover:scale-100"><Trash2 size={18} /></button>
+                                            </div>
+                                        </Reorder.Item>
+                                    ))}
+                                </Reorder.Group>
+                                {ads.length === 0 && (
+                                    <div className="p-20 text-center flex flex-col items-center gap-4">
+                                        <Megaphone size={48} className="text-slate-200 dark:text-slate-800" />
+                                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">No hay publicidades registradas</p>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    }
+
+                    {/* Generic Table View (for News, etc.) */}
+                    {
+                        activeTab !== 'ads' && activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && activeTab !== 'users' && (
                             <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 dark:bg-[#14171d]">
@@ -2571,7 +2641,7 @@ const Admin = () => {
                                                         <div className="flex items-center gap-4">
                                                             {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10 relative z-10" alt="" />}
                                                             <div className="flex flex-col relative z-10">
-                                                                <span className="font-black text-sm text-slate-900 dark:text-white uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                                                                <span className="font-black text-sm text-slate-900 dark:text-white italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
                                                                     {activeTab === 'ads' ? (
                                                                         item.type === 'premium' ? 'Publicidad Superior (Logo)' :
                                                                             item.type === 'sidebar_1' ? 'Barra Lateral 1 (Arriba)' :

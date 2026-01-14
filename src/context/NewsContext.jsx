@@ -798,6 +798,21 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
+    const reorderAds = async (newOrder) => {
+        setAds(newOrder);
+        try {
+            await fetch('/api/ads?type=reorder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: newOrder.map((ad, idx) => ({ id: ad.id, position: idx }))
+                })
+            });
+        } catch (err) {
+            console.error('Failed to persist ad order:', err);
+        }
+    };
+
     const updateFooterSettings = async (settings) => {
         try {
             console.log('NewsContext: updateFooterSettings called with:', settings);
@@ -841,6 +856,7 @@ export const NewsProvider = ({ children }) => {
             fetchNews,
             reorderCategories: reorderCategoriesPersistently,
             reorderPharmacies,
+            reorderAds,
             cityHeroImages, addCityHeroImage, deleteCityHeroImage,
             weatherConfig, weatherData, updateWeatherConfig, fetchWeatherData
         }}>
