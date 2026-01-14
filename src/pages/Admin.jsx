@@ -387,6 +387,12 @@ const Admin = () => {
         let success = false;
 
         if (activeTab === 'news') {
+            // Validar que si es Hero, tenga imagen
+            if (formData.isHero && !formData.image) {
+                showToast("Las noticias destacadas en portada requieren una imagen", "error");
+                return;
+            }
+
             const status = isScheduling ? 'scheduled' : 'published';
             const scheduledAt = isScheduling ? `${formData.scheduleDate}T${formData.scheduleTime}:00Z` : null;
 
@@ -1019,12 +1025,15 @@ const Admin = () => {
                                                         </div>
 
                                                         <div className="flex gap-6 p-6 bg-slate-50 dark:bg-white/[0.03] rounded-3xl border border-gray-200 dark:border-white/5">
-                                                            <label className="flex items-center gap-3 cursor-pointer group bg-white dark:bg-[#0a0c10] px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-primary transition-all shadow-sm">
+                                                            <label className={`flex items-center gap-3 cursor-pointer group bg-white dark:bg-[#0a0c10] px-4 py-3 rounded-2xl border transition-all shadow-sm ${formData.isHero && !formData.image ? 'border-red-400 dark:border-red-400/50' : 'border-gray-200 dark:border-white/10 hover:border-primary'}`}>
                                                                 <div className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isHero ? 'bg-primary border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 group-hover:border-primary/50'}`}>
                                                                     {formData.isHero && <Zap size={14} className="text-white fill-current" />}
                                                                 </div>
                                                                 <input type="checkbox" className="hidden" checked={formData.isHero} onChange={e => setFormData({ ...formData, isHero: e.target.checked })} />
-                                                                <span className="text-[10px] font-black uppercase text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Destacar en Portada</span>
+                                                                <div className="flex flex-col gap-0.5">
+                                                                    <span className="text-[10px] font-black uppercase text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Destacar en Portada</span>
+                                                                    {formData.isHero && !formData.image && <span className="text-[8px] text-red-500 font-bold">⚠️ Requiere imagen</span>}
+                                                                </div>
                                                             </label>
                                                             <label className="flex items-center gap-3 cursor-pointer group bg-white dark:bg-[#0a0c10] px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-accent-pink transition-all shadow-sm">
                                                                 <div className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isFlash ? 'bg-accent-pink border-accent-pink shadow-lg shadow-accent-pink/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 group-hover:border-accent-pink/50'}`}>
