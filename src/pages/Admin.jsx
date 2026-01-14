@@ -14,6 +14,15 @@ import { Link } from 'react-router-dom';
 const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
     const controls = useDragControls();
 
+    // Identificar el nombre amigable de la ubicación
+    const getZoneLabel = (type) => {
+        if (type === 'premium') return 'CABECERA PREMIUM';
+        if (type.startsWith('hero_')) return `PORTADA - ESPACIO ${type.split('_')[1]}`;
+        if (type.startsWith('sidebar_')) return `SIDEBAR - POSICIÓN ${type.split('_')[1]}`;
+        if (type.startsWith('footer_')) return `FOOTER - BLOQUE ${type.split('_')[1]}`;
+        return type.toUpperCase();
+    };
+
     return (
         <Reorder.Item
             value={ad}
@@ -43,22 +52,25 @@ const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
                         <div className="relative group/ad">
                             <img src={ad.image} className="h-20 w-36 object-cover rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg" alt="" />
                             <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/ad:opacity-100 transition-opacity rounded-2xl" />
+                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] font-black px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                VISTA PREVIA
+                            </div>
                         </div>
                     ) : (
                         <div className="h-20 w-36 bg-slate-100 dark:bg-white/5 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 flex items-center justify-center text-[10px] font-black text-slate-400">SIN PIEZA</div>
                     )}
                     <div className="flex flex-col">
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[8px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded uppercase tracking-wider">
+                                {getZoneLabel(ad.type)}
+                            </span>
+                        </div>
                         <span className="font-black text-base text-slate-900 dark:text-white italic tracking-tighter leading-none group-hover:text-primary transition-colors">
-                            {ad.type === 'premium' ? 'Header Logo Premium' :
-                                ad.type === 'sidebar_1' ? 'Sidebar Superior' :
-                                    ad.type === 'sidebar_2' ? 'Sidebar Medio' :
-                                        ad.type === 'sidebar_3' ? 'Sidebar Inferior' :
-                                            ad.type === 'footer_1' ? 'Footer Izquierdo' :
-                                                ad.type === 'footer_2' ? 'Footer Derecho' :
-                                                    ad.type.startsWith('hero') ? `Slot Portada ${ad.type.split('_')[1]}` :
-                                                        `Ubicación: ${ad.type}`}
+                            {ad.title || 'Publicidad sin título'}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">LINK: {ad.link || 'Sin Enlace'}</span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">
+                            {ad.link ? `LINK: ${ad.link}` : 'Sin Enlace'}
+                        </span>
                         <div className="flex items-center gap-2 mt-2">
                             {ad.active ? (
                                 <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-emerald-500/20">Publicidad Activa</span>
@@ -79,7 +91,7 @@ const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
 };
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.9.0");
+    console.log("Admin Component Loaded - Version 4.9.2");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -2588,31 +2600,73 @@ const Admin = () => {
                         )
                     }
 
-                    {/* Ads View with Reordering */}
+                    {/* Ads View with Categorized Reordering */}
                     {
                         activeTab === 'ads' && (
-                            <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
-                                <div className="p-8 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
-                                    <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter">Gestión de Publicidades</h2>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Usa el controlador lateral para cambiar el orden</span>
-                                </div>
-                                <Reorder.Group axis="y" values={ads || []} onReorder={reorderAds} className="divide-y divide-gray-200 dark:divide-white/5 list-none m-0 p-0 overflow-visible">
-                                    {(ads || []).map(ad => (
-                                        <AdReorderItem
-                                            key={ad.id}
-                                            ad={ad}
-                                            handleEdit={handleEdit}
-                                            deleteAd={deleteAd}
-                                            showConfirm={showConfirm}
-                                        />
-                                    ))}
-                                </Reorder.Group>
-                                {ads.length === 0 && (
-                                    <div className="p-20 text-center flex flex-col items-center gap-4">
-                                        <Megaphone size={48} className="text-slate-200 dark:text-slate-800" />
-                                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">No hay publicidades registradas</p>
+                            <div className="flex flex-col gap-8 pb-20">
+                                <div className="bg-white dark:bg-[#11141b] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl">
+                                    <div className="p-8 bg-slate-50 dark:bg-white/[0.02] border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+                                        <div className="flex flex-col">
+                                            <h2 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter leading-none">Gestión Comercial</h2>
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Organiza la prioridad visual de tus anuncios por zonas</span>
+                                        </div>
+                                        <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                            <Layers size={20} />
+                                        </div>
                                     </div>
-                                )}
+
+                                    {[
+                                        { id: 'hero', name: 'PUBLICIDAD PORTADA (3 ESPACIOS)', types: ['hero_1', 'hero_2', 'hero_3'] },
+                                        { id: 'premium', name: 'PUBLICIDAD PREMIUM (CABECERA)', types: ['premium'] },
+                                        { id: 'sidebar', name: 'PUBLICIDAD BARRA LATERAL', types: ['sidebar_1', 'sidebar_2', 'sidebar_3'] },
+                                        { id: 'footer', name: 'PUBLICIDAD PIE DE PÁGINA', types: ['footer_1', 'footer_2'] },
+                                        { id: 'others', name: 'OTROS ESPACIOS Y ANUNCIOS', types: [] }
+                                    ].map(zone => {
+                                        const zoneAds = ads.filter(ad => {
+                                            if (zone.id === 'others') {
+                                                const allGuidedTypes = ['hero_1', 'hero_2', 'hero_3', 'premium', 'sidebar_1', 'sidebar_2', 'sidebar_3', 'footer_1', 'footer_2'];
+                                                return !allGuidedTypes.includes(ad.type);
+                                            }
+                                            return zone.types.includes(ad.type);
+                                        });
+
+                                        if (zoneAds.length === 0 && zone.id !== 'hero') return null;
+
+                                        return (
+                                            <div key={zone.id} className="border-b border-gray-100 dark:border-white/5 last:border-0">
+                                                <div className="p-4 bg-slate-50/50 dark:bg-white/[0.01] border-b border-gray-100 dark:border-white/5 flex items-center gap-3">
+                                                    <Zap size={14} className="text-primary/50" />
+                                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">{zone.name}</span>
+                                                </div>
+                                                <Reorder.Group
+                                                    axis="y"
+                                                    values={zoneAds}
+                                                    onReorder={(newOrder) => {
+                                                        // Reconstruir la lista global manteniendo los demás items intactos
+                                                        const otherAds = ads.filter(a => !zoneAds.find(za => za.id === a.id));
+                                                        reorderAds([...otherAds, ...newOrder]);
+                                                    }}
+                                                    className="divide-y divide-gray-100 dark:divide-white/5 list-none m-0 p-0"
+                                                >
+                                                    {zoneAds.sort((a, b) => a.position - b.position).map(ad => (
+                                                        <AdReorderItem
+                                                            key={ad.id}
+                                                            ad={ad}
+                                                            handleEdit={handleEdit}
+                                                            deleteAd={deleteAd}
+                                                            showConfirm={showConfirm}
+                                                        />
+                                                    ))}
+                                                    {zoneAds.length === 0 && (
+                                                        <div className="p-8 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
+                                                            No hay anuncios asignados a esta zona
+                                                        </div>
+                                                    )}
+                                                </Reorder.Group>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         )
                     }
