@@ -57,9 +57,13 @@ const HeroSection = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col items-start gap-4 cursor-pointer">
                                         <div className="flex items-center gap-3">
-                                            <span className="px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/20 backdrop-blur-sm">
-                                                {heroNews.category}
-                                            </span>
+                                            <div className="flex flex-wrap gap-2">
+                                                {heroNews.category?.split(', ').map(cat => (
+                                                    <span key={cat} className="px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/20 backdrop-blur-sm">
+                                                        {cat}
+                                                    </span>
+                                                ))}
+                                            </div>
                                             <div className="flex items-center gap-1 text-yellow-500">
                                                 <Star size={12} className="fill-yellow-500" />
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-white">Destacado</span>
@@ -96,7 +100,7 @@ const HeroSection = () => {
                         {bottomStripNews.map((item, i) => (
                             <Link to={`/noticia/${item.id}`} key={item.id} className="px-4 flex flex-col gap-1 group/item hover:bg-white/5 transition-colors rounded-lg py-2">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category}</span>
+                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{item.category?.split(', ')[0]}</span>
                                     <span className="text-[8px] text-gray-500 font-bold">{item.timeRead || '2 min'}</span>
                                 </div>
                                 <h4 className="text-xs font-semibold text-white leading-tight line-clamp-2 group-hover/item:text-primary transition-colors">
@@ -229,7 +233,7 @@ const HeroSection = () => {
                                 <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
                                     <div className="flex flex-col gap-2">
                                         <span className="text-primary text-[10px] font-bold uppercase tracking-widest">
-                                            {item.category}
+                                            {item.category?.split(', ')[0]}
                                         </span>
                                         <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors leading-tight">
                                             {item.title}

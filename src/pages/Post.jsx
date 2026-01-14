@@ -75,10 +75,12 @@ const Post = () => {
                     {/* Hero Image */}
                     <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl shadow-black/10">
                         <img src={post.image} className="w-full h-full object-cover" alt={post.title} />
-                        <div className="absolute top-8 left-8">
-                            <span className="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
-                                {post.category}
-                            </span>
+                        <div className="absolute top-8 left-8 flex flex-wrap gap-2">
+                            {post.category?.split(', ').map(cat => (
+                                <span key={cat} className="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
+                                    {cat}
+                                </span>
+                            ))}
                         </div>
                     </div>
 

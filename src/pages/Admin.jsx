@@ -11,7 +11,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.8.7");
+    console.log("Admin Component Loaded - Version 4.8.8");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -743,7 +743,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.7-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.8.8-RELEASE</span>
                     </div>
                 </div>
 
@@ -888,11 +888,34 @@ const Admin = () => {
                                                         </div>
 
                                                         <div className="grid grid-cols-2 gap-4">
-                                                            <div className="flex flex-col gap-2">
-                                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Sección</label>
-                                                                <select className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
-                                                                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                                                                </select>
+                                                            <div className="flex flex-col gap-2 col-span-2">
+                                                                <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Secciones (Selecciona una o varias)</label>
+                                                                <div className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl p-6 flex flex-wrap gap-3 shadow-inner">
+                                                                    {categories.map(c => {
+                                                                        const isSelected = formData.category?.split(', ').includes(c.name);
+                                                                        return (
+                                                                            <label key={c.id} className="flex items-center gap-2 cursor-pointer group">
+                                                                                <div
+                                                                                    onClick={() => {
+                                                                                        const currentCats = formData.category ? formData.category.split(', ') : [];
+                                                                                        let newCats;
+                                                                                        if (isSelected) {
+                                                                                            newCats = currentCats.filter(cat => cat !== c.name);
+                                                                                        } else {
+                                                                                            newCats = [...currentCats, c.name];
+                                                                                        }
+                                                                                        setFormData({ ...formData, category: newCats.join(', ') });
+                                                                                    }}
+                                                                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${isSelected
+                                                                                        ? 'bg-primary border-primary text-white shadow-lg'
+                                                                                        : 'bg-transparent border-slate-100 dark:border-white/5 text-slate-400 dark:text-slate-600 hover:border-primary/50'}`}
+                                                                                >
+                                                                                    {c.name}
+                                                                                </div>
+                                                                            </label>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                             <div className="flex flex-col gap-2">
                                                                 <label className="text-[9px] font-black uppercase text-slate-500 ml-4 mb-2 tracking-widest">Publicación</label>
@@ -1040,8 +1063,12 @@ const Admin = () => {
                                                 <div className="max-w-4xl mx-auto w-full bg-[#11141b] rounded-[3rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden text-left">
                                                     <div className="relative aspect-video rounded-3xl overflow-hidden mb-8">
                                                         <img src={formData.image || 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b'} className="w-full h-full object-cover" alt="" />
-                                                        <div className="absolute top-6 left-6 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
-                                                            {formData.category}
+                                                        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+                                                            {formData.category?.split(', ').map(cat => (
+                                                                <span key={cat} className="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl">
+                                                                    {cat}
+                                                                </span>
+                                                            ))}
                                                         </div>
                                                     </div>
                                                     <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter leading-none mb-8">
