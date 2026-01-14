@@ -11,15 +11,16 @@ const HeroSection = () => {
 
     const nonFlash = news.filter(n => !n.isFlash);
     const heroes = nonFlash.filter(n => n.isHero);
-    const others = nonFlash.filter(n => !n.isHero);
-    const sortedHomeNews = [...heroes, ...others];
+    const nonHeroes = nonFlash.filter(n => !n.isHero);
 
-    // Only show HERO news in the principal carousel
-    const principalNewsList = heroes.length > 0 ? heroes : sortedHomeNews.slice(0, 5);
-    // Secondary news: next 5 after heroes
-    const secondaryNewsList = sortedHomeNews.slice(heroes.length, heroes.length + 5);
-    // Extra news for sidebar bottom
-    const extraNewsList = sortedHomeNews.slice(heroes.length + 5, heroes.length + 9);
+    // Principal carousel: ONLY hero news (5 max), fallback to first 5 if no heroes
+    const principalNewsList = heroes.length > 0 ? heroes.slice(0, 5) : nonFlash.slice(0, 5);
+    
+    // Secondary news: next 5 from non-hero news (don't mix with heroes)
+    const secondaryNewsList = nonHeroes.slice(0, 5);
+    
+    // Extra news for sidebar bottom (next 5 after secondary)
+    const extraNewsList = nonHeroes.slice(5, 9);
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
