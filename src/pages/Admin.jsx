@@ -128,6 +128,7 @@ const Admin = () => {
 
     const [showGallery, setShowGallery] = useState(false);
     const [galleryTarget, setGalleryTarget] = useState('cover'); // 'cover' or block index
+    const [gallerySearch, setGallerySearch] = useState('');
     const [editorBlocks, setEditorBlocks] = useState([{ type: 'text', content: '' }]);
     const [previewMode, setPreviewMode] = useState(false);
     const [showAiModal, setShowAiModal] = useState(false);
@@ -3307,8 +3308,20 @@ const Admin = () => {
                                 </button>
                             </div>
 
+                            <div className="p-6 border-b border-white/5 bg-black/40">
+                                <input 
+                                    type="text"
+                                    placeholder="Buscar imagen..."
+                                    value={gallerySearch}
+                                    onChange={(e) => setGallerySearch(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-primary transition-all text-sm"
+                                />
+                            </div>
+
                             <div className="p-8 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                {imageGallery.map((img, idx) => (
+                                {imageGallery
+                                    .filter((img) => img.toLowerCase().includes(gallerySearch.toLowerCase()))
+                                    .map((img, idx) => (
                                     <div
                                         key={idx}
                                         onClick={() => {
