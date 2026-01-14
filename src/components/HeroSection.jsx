@@ -9,23 +9,18 @@ const HeroSection = () => {
     const { news, scores, coverPage } = useNews();
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Debug logs
-    console.log("HeroSection - Total news:", news.length);
-    console.log("HeroSection - News data:", news.slice(0, 10));
-
     const nonFlash = news.filter(n => !n.isFlash);
-    console.log("HeroSection - NonFlash news:", nonFlash.length);
     
-    // Principal carousel: First 5 news
-    const principalNewsList = nonFlash.slice(0, 5);
-    const secondaryNewsList = nonFlash.slice(5, 10);
-    const extraNewsList = nonFlash.slice(10, 14);
-
-    console.log("HeroSection - Principal:", principalNewsList.length, "Secondary:", secondaryNewsList.length, "Extra:", extraNewsList.length);
+    // Show what we have: first 5 in carousel, rest in sidebar
+    // If less than 5 total, show all in carousel
+    const splitPoint = Math.min(5, Math.floor(nonFlash.length / 2));
+    
+    const principalNewsList = nonFlash.slice(0, splitPoint);
+    const secondaryNewsList = nonFlash.slice(splitPoint);
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
-    const sidebarBottomNews = extraNewsList.slice(0, 2);
+    const sidebarBottomNews = secondaryNewsList.slice(5, 7);
 
     // Default image if none provided
     const defaultImage = 'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=800';
