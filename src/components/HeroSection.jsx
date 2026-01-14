@@ -10,17 +10,15 @@ const HeroSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const nonFlash = news.filter(n => !n.isFlash);
-    const heroes = nonFlash.filter(n => n.isHero);
-    const nonHeroes = nonFlash.filter(n => !n.isHero);
-
-    // Principal carousel: ONLY hero news (5 max), fallback to first 5 if no heroes
-    const principalNewsList = heroes.length > 0 ? heroes.slice(0, 5) : nonFlash.slice(0, 5);
     
-    // Secondary news: next 5 from non-hero news (don't mix with heroes)
-    const secondaryNewsList = nonHeroes.slice(0, 5);
+    // Principal carousel: First 5 news
+    const principalNewsList = nonFlash.slice(0, 5);
     
-    // Extra news for sidebar bottom (next 5 after secondary)
-    const extraNewsList = nonHeroes.slice(5, 9);
+    // Secondary news: Next 5 news (no repetition)
+    const secondaryNewsList = nonFlash.slice(5, 10);
+    
+    // Extra news for sidebar bottom: Next 4 after secondary
+    const extraNewsList = nonFlash.slice(10, 14);
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
