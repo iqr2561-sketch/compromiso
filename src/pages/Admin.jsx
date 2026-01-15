@@ -3318,7 +3318,7 @@ const Admin = () => {
                                 />
                             </div>
 
-                            <div className="p-8 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                            <div className="p-8 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {imageGallery
                                     .filter((img) => img.toLowerCase().includes(gallerySearch.toLowerCase()))
                                     .map((img, idx) => (
@@ -3352,7 +3352,7 @@ const Admin = () => {
                                         }}
                                         className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col"
                                     >
-                                        <div className="aspect-square w-full relative">
+                                        <div className="aspect-square w-full h-64 relative">
                                             <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
                                             <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                                 <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
