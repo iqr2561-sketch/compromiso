@@ -91,7 +91,7 @@ const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
 };
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.9.5");
+    console.log("Admin Component Loaded - Version 4.9.11");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -831,7 +831,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.9.5-RELEASE</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V4.9.11-RELEASE</span>
                     </div>
                 </div>
 
