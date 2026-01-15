@@ -481,6 +481,27 @@ export const NewsProvider = ({ children }) => {
         return false;
     };
 
+    const updateEditionConfig = async (autoIncrement, manualNumber) => {
+        try {
+            const r1 = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'edition_auto_increment', value: autoIncrement.toString() })
+            });
+            const r2 = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'edition_manual_override', value: manualNumber.toString() })
+            });
+            if (r1.ok && r2.ok) {
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to update edition config:', err);
+        }
+        return false;
+    };
+
     const addNews = async (item) => {
         try {
             const res = await fetch('/api/news', {
@@ -859,7 +880,7 @@ export const NewsProvider = ({ children }) => {
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
             pharmacyDuty, setDuty,
             comments, deleteComment, updateCommentStatus,
-            aiConfig, updateAiConfig,
+            aiConfig, updateAiConfig, updateEditionConfig,
             footerSettings, updateFooterSettings,
             fetchNews,
             reorderCategories: reorderCategoriesPersistently,

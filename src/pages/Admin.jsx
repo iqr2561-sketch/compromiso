@@ -104,7 +104,7 @@ const Admin = () => {
         pharmacyDuty, setDuty,
         editionNumber, updateEdition,
         coverPage, updateCoverPage,
-        aiConfig, updateAiConfig,
+        aiConfig, updateAiConfig, updateEditionConfig,
         comments, deleteComment, updateCommentStatus,
         footerSettings, updateFooterSettings,
         fetchNews,
@@ -2900,7 +2900,13 @@ const Admin = () => {
                                                 <div className="flex flex-col gap-4 bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-inner">
                                                     <div className="flex items-center gap-4">
                                                         <button 
-                                                            onClick={() => { setEditionAutoIncrement(true); setEditionManualNumber(''); }}
+                                                            onClick={async () => { 
+                                                                setEditionAutoIncrement(true); 
+                                                                setEditionManualNumber('');
+                                                                const success = await updateEditionConfig(true, '');
+                                                                if (success) showToast('Modo automático activado', 'success');
+                                                                else showToast('Error al cambiar modo', 'error');
+                                                            }}
                                                             type="button"
                                                             className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
                                                                 editionAutoIncrement 
@@ -2912,7 +2918,7 @@ const Admin = () => {
                                                             <span>Automático (Diario)</span>
                                                         </button>
                                                         <button 
-                                                            onClick={() => setEditionAutoIncrement(false)}
+                                                            onClick={async () => setEditionAutoIncrement(false)}
                                                             type="button"
                                                             className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
                                                                 !editionAutoIncrement 
@@ -2934,10 +2940,12 @@ const Admin = () => {
                                                                 className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-6 py-4 text-lg font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
                                                             />
                                                             <button 
-                                                                onClick={() => { 
+                                                                onClick={async () => { 
                                                                     if (editionManualNumber) {
                                                                         updateEdition(editionManualNumber);
-                                                                        showToast('Edición actualizada a: ' + editionManualNumber, 'success');
+                                                                        const success = await updateEditionConfig(false, editionManualNumber);
+                                                                        if (success) showToast('Edición actualizada a: ' + editionManualNumber, 'success');
+                                                                        else showToast('Error al actualizar edición', 'error');
                                                                     }
                                                                 }}
                                                                 type="button"
