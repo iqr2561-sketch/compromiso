@@ -11,12 +11,9 @@ const HeroSection = () => {
 
     const nonFlash = news.filter(n => !n.isFlash);
     
-    // Show what we have: first 5 in carousel, rest in sidebar
-    // If less than 5 total, show all in carousel
-    const splitPoint = Math.min(5, Math.floor(nonFlash.length / 2));
-    
-    const principalNewsList = nonFlash.slice(0, splitPoint);
-    const secondaryNewsList = nonFlash.slice(splitPoint);
+    // Principal: first 5, Secondary: next items for sidebar
+    const principalNewsList = nonFlash.slice(0, 5);
+    const secondaryNewsList = nonFlash.slice(5, 12); // Next 7 items for sidebars
 
     const sidebarTopNews = secondaryNewsList.slice(0, 2);
     const bottomStripNews = secondaryNewsList.slice(2, 5);
