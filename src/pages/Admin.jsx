@@ -139,6 +139,8 @@ const Admin = () => {
     const [isScheduling, setIsScheduling] = useState(false);
     const [dbStatus, setDbStatus] = useState(null); // { success, message, data }
     const [settingsTab, setSettingsTab] = useState('edition');
+    const [editionAutoIncrement, setEditionAutoIncrement] = useState(true);
+    const [editionManualNumber, setEditionManualNumber] = useState('');
     const [galleryInputRef, setGalleryInputRef] = useState(null); // Refactored to state if needed or kept as ref
     const fileInputRef = useRef(null);
     const galleryRef = useRef(null);
@@ -2891,6 +2893,66 @@ const Admin = () => {
                                                     </button>
                                                 </div>
                                                 <p className="text-[10px] text-slate-600 font-medium italic mt-2 ml-4">Esta imagen se mostrará automáticamente en la sección "Tapa de Hoy" de la web pública.</p>
+                                            </div>
+
+                                            <div className="flex flex-col gap-4 md:col-span-2">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Modo de Numeración de Edición</label>
+                                                <div className="flex flex-col gap-4 bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-inner">
+                                                    <div className="flex items-center gap-4">
+                                                        <button 
+                                                            onClick={() => { setEditionAutoIncrement(true); setEditionManualNumber(''); }}
+                                                            type="button"
+                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
+                                                                editionAutoIncrement 
+                                                                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
+                                                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                                                            }`}
+                                                        >
+                                                            <span>🔄</span>
+                                                            <span>Automático (Diario)</span>
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => setEditionAutoIncrement(false)}
+                                                            type="button"
+                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
+                                                                !editionAutoIncrement 
+                                                                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
+                                                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                                                            }`}
+                                                        >
+                                                            <span>✋</span>
+                                                            <span>Manual (Específico)</span>
+                                                        </button>
+                                                    </div>
+                                                    {!editionAutoIncrement && (
+                                                        <div className="flex items-center gap-4">
+                                                            <input
+                                                                type="number"
+                                                                value={editionManualNumber}
+                                                                onChange={(e) => setEditionManualNumber(e.target.value)}
+                                                                placeholder="Número de edición"
+                                                                className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-6 py-4 text-lg font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                            />
+                                                            <button 
+                                                                onClick={() => { 
+                                                                    if (editionManualNumber) {
+                                                                        updateEdition(editionManualNumber);
+                                                                        showToast('Edición actualizada a: ' + editionManualNumber, 'success');
+                                                                    }
+                                                                }}
+                                                                type="button"
+                                                                className="px-8 bg-primary text-black rounded-2xl font-black uppercase text-[10px] tracking-widest hover:shadow-lg hover:shadow-primary/30 transition-all shadow-lg shadow-primary/10"
+                                                            >
+                                                                Establecer
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                    <p className="text-[10px] text-slate-600 font-medium italic">
+                                                        {editionAutoIncrement 
+                                                            ? '✓ La edición se incrementará automáticamente cada día a medianoche.'
+                                                            : '⚠ La edición será fija hasta que cambies al modo automático.'}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </section>
