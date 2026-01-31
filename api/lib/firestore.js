@@ -1,0 +1,29 @@
+import admin from 'firebase-admin';
+
+// Initialize Firebase Admin
+// On Cloud Run, it uses the default service account automatically
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+        databaseId: process.env.FIRESTORE_DB_ID || '(default)'
+    });
+}
+
+const db = admin.firestore();
+
+// Helper to convert Firestore timestamp to JS Date or ISO string
+export const formatFirestoreData = (doc) => {
+    const data = doc.data();
+    const id = doc.id;
+
+    // Process all fields to handle timestamps
+    Object.keys(data).forEach(key => {
+        if (data[key] && typeof data[key].toDate === 'function') {
+            data[key] = data[key].toDate().toISOString();
+        }
+    });
+
+    return { id, ...data };
+};
+
+export default db;

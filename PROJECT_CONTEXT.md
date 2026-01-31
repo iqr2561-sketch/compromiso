@@ -21,32 +21,29 @@
 
 ## Application Structure
 *   **Frontend**: React + Vite
+*   **Backend**: Node.js Express Server (Cloud Run)
+*   **Database**: Google Cloud Firestore (NoSQL)
+*   **Storage**: Google Cloud Storage (Bucket) for images
 *   **Styling**: TailwindCSS
 *   **State**: Context API (`NewsContext`)
 *   **Routing**: React Router DOM
 
-## Recent Updates (Jan 9, 2026)
-*   **Database Stability**: Fixed SSL connection issues for Vercel deployment (Jan 11, 2026).
-*   **Pharmacy Update**: Added comprehensive pharmacy list and duty management.
-*   **Memoria Histórica**: Refined "¿Te Acordás, Dolores?" section on the homepage. Now features a full-width, horizontal layout with enhanced visual effects, glassmorphism icons, and responsive design.
-
-## Recent Updates (Jan 5, 2026)
-*   **Navbar Redesign**: Simplified simplified navigation items, removed Admin link to utility bar, optimized for small screens.
-*   **News Display**: Removed author/reading time, added official AFIP Data Fiscal, enabled internal content images.
-*   **Homepage**: Expanded "Hero" section to 10 items, "Flash News" to 15 items, added dynamic Ad slots.
-*   **Comments**: Added comment section with moderation queue.
-
+## Recent Updates (Jan 30, 2026)
+*   **Migration to Google Cloud**: Fully migrated from PostgreSQL/Prisma to **Firebase Admin SDK (Firestore)**.
+*   **Image Optimization**: Integrated **Google Cloud Storage** for all image uploads (News, Ads, Settings), moving away from Base64 storage in database to improve performance.
+*   **Cloud Run (No Docker)**: Configured the app for native Node.js deployment via Google Cloud Buildpacks.
+*   **Server Robustness**: Updated `server.js` for production readiness on Cloud Run (Port 8080, health checks).
 
 ## Pending Roadmap
-*   [ ] Backend integration (Supabase/Firebase) for persistent data.
-*   [ ] Auth system for Editors/Admins.
-*   [ ] SEO advanced optimization (SSR/ISR consideration).
+*   [ ] SEO advanced optimization (Sitemap generation).
+*   [ ] Email notifications for new comments.
+*   [ ] Image resizing on upload for further optimization.
 
 ## Critical Workflows
-*   **Adding News**: Admin Panel -> New Post.
+*   **Adding News**: Admin Panel -> New Post (Images uploaded to GCS).
 *   **Editing Ads**: Admin Panel -> Ads Manager.
 *   **Managing Pharmacies**: Admin Panel -> Pharmacies (Duties & List).
-*   **Deploy**: Automatic deployment via Vercel on `main` branch push.
+*   **Deploy**: Manual or automated deployment to Google Cloud Run using `gcloud run deploy`.
 
 ---
 *This document serves as the high-level context for the AI assistant and developer team.*

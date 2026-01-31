@@ -1,13 +1,17 @@
-import pool from './api/lib/db.js';
+import db from './api/lib/firestore.js';
 
-async function check() {
-    try {
-        const res = await pool.query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'ads'");
-        console.log(JSON.stringify(res.rows, null, 2));
-        process.exit(0);
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+async function testFirestore() {
+  console.log('🚀 Probando conexión a Firestore...');
+  try {
+    const collections = await db.listCollections();
+    console.log('✅ Conexión exitosa a Firestore.');
+    console.log('📋 Colecciones disponibles:');
+    collections.forEach(col => console.log(`   - ${col.id}`));
+  } catch (error) {
+    console.error('❌ Error de conexión a Firestore:', error);
+  } finally {
+    process.exit();
+  }
 }
-check();
+
+testFirestore();

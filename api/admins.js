@@ -1,8 +1,9 @@
-import pool from './lib/db.js';
+import db, { formatFirestoreData } from './lib/firestore.js';
 
 export default async function handler(req, res) {
     const { method } = req;
     const { id, action } = req.query;
+    const adminsCol = db.collection('admins');
 
     try {
         if (method === 'POST') {
@@ -10,12 +11,14 @@ export default async function handler(req, res) {
 
             // Handle Login
             if (action === 'login') {
-                const userRes = await pool.query('SELECT * FROM admins WHERE username = $1', [username]);
-                if (userRes.rows.length === 0) {
+                const snapshot = await adminsCol.where('username', '==', username).limit(1).get();
+                if (snapshot.empty) {
                     return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos' });
                 }
 
-                const user = userRes.rows[0];
+                const doc = snapshot.docs[0];
+                const user = { id: doc.id, ...doc.data() };
+
                 if (user.locked_until && new Date(user.locked_until) > new Date()) {
                     const minutesLeft = Math.ceil((new Date(user.locked_until) - new Date()) / 60000);
                     return res.status(403).json({
@@ -25,7 +28,7 @@ export default async function handler(req, res) {
                 }
 
                 if (user.password === password) {
-                    await pool.query('UPDATE admins SET failed_attempts = 0, locked_until = NULL WHERE id = $1', [user.id]);
+                    await doc.ref.update({ failed_attempts: 0, locked_until: null });
                     delete user.password;
                     delete user.recovery_code;
                     delete user.failed_attempts;
@@ -35,10 +38,10 @@ export default async function handler(req, res) {
                     let lockedUntil = null;
                     let message = 'Usuario o contraseña incorrectos';
                     if (newAttempts >= 5) {
-                        lockedUntil = new Date(Date.now() + 15 * 60 * 1000);
+                        lockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString();
                         message = 'Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.';
                     }
-                    await pool.query('UPDATE admins SET failed_attempts = $1, locked_until = $2 WHERE id = $3', [newAttempts, lockedUntil, user.id]);
+                    await doc.ref.update({ failed_attempts: newAttempts, locked_until: lockedUntil });
                     return res.status(401).json({ success: false, message, attemptsLeft: Math.max(0, 5 - newAttempts) });
                 }
             }
@@ -48,9 +51,10 @@ export default async function handler(req, res) {
                 if (!username || !recoveryCode || !newPassword) {
                     return res.status(400).json({ success: false, message: 'Faltan datos requeridos' });
                 }
-                const result = await pool.query('SELECT id FROM admins WHERE username = $1 AND recovery_code = $2', [username, recoveryCode]);
-                if (result.rows.length > 0) {
-                    await pool.query('UPDATE admins SET password = $1, failed_attempts = 0, locked_until = NULL WHERE id = $2', [newPassword, result.rows[0].id]);
+                const snapshot = await adminsCol.where('username', '==', username).where('recovery_code', '==', recoveryCode).limit(1).get();
+                if (!snapshot.empty) {
+                    const doc = snapshot.docs[0];
+                    await doc.ref.update({ password: newPassword, failed_attempts: 0, locked_until: null });
                     return res.status(200).json({ success: true, message: 'Contraseña actualizada correctamente' });
                 } else {
                     return res.status(401).json({ success: false, message: 'Código de recuperación o usuario incorrecto' });
@@ -58,48 +62,63 @@ export default async function handler(req, res) {
             }
 
             // Default POST: Create User
-            const newUser = await pool.query(
-                'INSERT INTO admins (username, password, name, recovery_code) VALUES ($1, $2, $3, $4) RETURNING id, username, name',
-                [username, password, name, recovery_code || 'COMPROMISO-2026']
-            );
-            return res.status(201).json(newUser.rows[0]);
+            const newUser = {
+                username,
+                password,
+                name: name || '',
+                recovery_code: recovery_code || 'COMPROMISO-2026',
+                created_at: new Date().toISOString()
+            };
+            const docRef = await adminsCol.add(newUser);
+            const { password: _, ...userSafe } = newUser;
+            return res.status(201).json({ id: docRef.id, ...userSafe });
         }
 
         switch (method) {
-            case 'GET':
-                const users = await pool.query('SELECT id, username, name, created_at, failed_attempts, locked_until FROM admins ORDER BY id ASC');
-                return res.status(200).json(users.rows);
+            case 'GET': {
+                const snapshot = await adminsCol.orderBy('created_at', 'asc').get();
+                const users = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    delete data.password;
+                    return { id: doc.id, ...data };
+                });
+                return res.status(200).json(users);
+            }
 
-            case 'PUT':
+            case 'PUT': {
                 const { username: upUsername, password: upPassword, name: upName, recovery_code: upRecovery } = req.body;
-                let query = 'UPDATE admins SET username = $1, name = $2';
-                let params = [upUsername, upName, id];
+                const targetId = id || req.body.id;
+                if (!targetId) return res.status(400).json({ error: 'ID required' });
 
-                if (upPassword) {
-                    query += ', password = $4';
-                    params.push(upPassword);
-                }
-                if (upRecovery) {
-                    query += ', recovery_code = $' + (params.length + 1);
-                    params.push(upRecovery);
-                }
-                query += ' WHERE id = $3 RETURNING id, username, name';
-                const updatedUser = await pool.query(query, params);
-                return res.status(200).json(updatedUser.rows[0]);
+                const updateData = {};
+                if (upUsername) updateData.username = upUsername;
+                if (upName) updateData.name = upName;
+                if (upPassword) updateData.password = upPassword;
+                if (upRecovery) updateData.recovery_code = upRecovery;
+                updateData.updated_at = new Date().toISOString();
 
-            case 'DELETE':
-                const count = await pool.query('SELECT COUNT(*) FROM admins');
-                if (parseInt(count.rows[0].count) <= 1) {
+                await adminsCol.doc(targetId).update(updateData);
+                const doc = await adminsCol.doc(targetId).get();
+                const data = doc.data();
+                delete data.password;
+                return res.status(200).json({ id: doc.id, ...data });
+            }
+
+            case 'DELETE': {
+                if (!id) return res.status(400).json({ error: 'ID required' });
+                const snapshot = await adminsCol.get();
+                if (snapshot.size <= 1) {
                     return res.status(400).json({ message: 'No se puede eliminar el último administrador' });
                 }
-                await pool.query('DELETE FROM admins WHERE id = $1', [id]);
+                await adminsCol.doc(id).delete();
                 return res.status(200).json({ success: true });
+            }
 
             default:
                 return res.status(405).end();
         }
     } catch (error) {
-        console.error('Admins API Error:', error);
+        console.error('Admins API Firestore Error:', error);
         return res.status(500).json({ message: error.message });
     }
 }

@@ -1,50 +1,56 @@
-import pool from './lib/db.js';
+import db, { formatFirestoreData } from './lib/firestore.js';
 
 export default async function handler(req, res) {
     const { method } = req;
+    const commentsCol = db.collection('comments');
 
     try {
-        const client = await pool.connect();
-
         switch (method) {
             case 'GET': {
                 const { status } = req.query;
-                let query = 'SELECT c.*, n.title as post_title FROM comments c LEFT JOIN news n ON c.post_id = n.id ORDER BY c.created_at DESC';
-                let values = [];
+                let query = commentsCol.orderBy('createdAt', 'desc');
 
                 if (status) {
-                    query = 'SELECT c.*, n.title as post_title FROM comments c LEFT JOIN news n ON c.post_id = n.id WHERE c.status = $1 ORDER BY c.created_at DESC';
-                    values = [status];
+                    query = query.where('status', '==', status);
                 }
 
-                const { rows } = await client.query(query, values);
-                res.status(200).json(rows);
+                const snapshot = await query.get();
+                const comments = snapshot.docs.map(doc => formatFirestoreData(doc));
+
+                // Note: Normally we'd join with news title here, but for now we return the raw comments
+                res.status(200).json(comments);
                 break;
             }
 
             case 'POST': {
                 const { post_id, name, email, comment } = req.body;
-                const insertRes = await client.query(
-                    'INSERT INTO comments (post_id, name, email, comment) VALUES ($1, $2, $3, $4) RETURNING *',
-                    [post_id, name, email, comment]
-                );
-                res.status(201).json(insertRes.rows[0]);
+                const newComment = {
+                    post_id,
+                    name,
+                    email,
+                    comment,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+                const docRef = await commentsCol.add(newComment);
+                res.status(201).json({ id: docRef.id, ...newComment });
                 break;
             }
 
             case 'PUT': {
                 const { id, status } = req.body;
-                const updateRes = await client.query(
-                    'UPDATE comments SET status = $2 WHERE id = $1 RETURNING *',
-                    [id, status]
-                );
-                res.status(200).json(updateRes.rows[0]);
+                if (!id) return res.status(400).json({ error: 'ID required' });
+
+                await commentsCol.doc(id).update({ status, updatedAt: new Date().toISOString() });
+                const updatedDoc = await commentsCol.doc(id).get();
+                res.status(200).json(formatFirestoreData(updatedDoc));
                 break;
             }
 
             case 'DELETE': {
                 const { id } = req.query;
-                await client.query('DELETE FROM comments WHERE id = $1', [id]);
+                if (!id) return res.status(400).json({ error: 'ID required' });
+                await commentsCol.doc(id).delete();
                 res.status(200).json({ message: 'Comment deleted' });
                 break;
             }
@@ -53,10 +59,9 @@ export default async function handler(req, res) {
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
                 res.status(405).end(`Method ${method} Not Allowed`);
         }
-
-        client.release();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Comments API Firestore Error:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }
+

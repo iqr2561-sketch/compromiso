@@ -1,89 +1,116 @@
-import pool from './lib/db.js';
+import db, { formatFirestoreData } from './lib/firestore.js';
 
 export default async function handler(req, res) {
     const { method } = req;
     const { id, type } = req.query;
+    const pharmCol = db.collection('pharmacies');
+    const dutyCol = db.collection('pharmacy_duty');
 
     try {
-        const client = await pool.connect();
+        // Handle Duties
+        if (type === 'duty') {
+            if (method === 'GET') {
+                const snapshot = await dutyCol.orderBy('date', 'asc').get();
+                const duties = snapshot.docs.map(doc => formatFirestoreData(doc));
+                res.status(200).json(duties);
+                return;
+            }
+            if (method === 'POST') {
+                const { date, pharmacyId } = req.body;
+                if (!date) return res.status(400).json({ error: 'Date is required' });
 
-        try {
-            // Handle Duties
-            if (type === 'duty') {
-                if (method === 'GET') {
-                    const { rows } = await client.query('SELECT pd.date, pd.pharmacy_id as "pharmacyId" FROM pharmacy_duty pd ORDER BY pd.date ASC');
-                    return res.status(200).json(rows.map(r => ({
-                        ...r,
-                        date: new Date(r.date).toISOString().split('T')[0]
-                    })));
+                if (pharmacyId === null) {
+                    // Delete duty for this date if it exists
+                    const snapshot = await dutyCol.where('date', '==', date).get();
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } else {
+                    // Upsert: Firestore uses doc ID or logic
+                    // We can use the date as the ID if it's unique per date
+                    await dutyCol.doc(date).set({ date, pharmacyId, createdAt: new Date().toISOString() });
                 }
-                if (method === 'POST') {
-                    const { date, pharmacyId } = req.body;
-                    if (!date) return res.status(400).json({ error: 'Date is required' });
+                res.status(200).json({ success: true, date, pharmacyId });
+                return;
+            }
+        }
 
-                    if (pharmacyId === null) {
-                        await client.query('DELETE FROM pharmacy_duty WHERE date = $1', [date]);
-                    } else {
-                        await client.query(`
-                            INSERT INTO pharmacy_duty (date, pharmacy_id) VALUES ($1, $2)
-                            ON CONFLICT (date) DO UPDATE SET pharmacy_id = EXCLUDED.pharmacy_id, created_at = NOW()
-                        `, [date, pharmacyId]);
-                    }
-                    return res.status(200).json({ success: true, date, pharmacyId });
-                }
+        // Handle Reorder
+        if (type === 'reorder') {
+            if (method === 'POST') {
+                const { items } = req.body;
+                const batch = db.batch();
+                items.forEach(item => {
+                    batch.update(pharmCol.doc(item.id), { position: item.position });
+                });
+                await batch.commit();
+                res.status(200).json({ success: true });
+                return;
+            }
+        }
+
+        // Handle Pharmacies
+        switch (method) {
+            case 'GET': {
+                const snapshot = await pharmCol.orderBy('position', 'asc').get();
+                const pharmacies = snapshot.docs.map(doc => formatFirestoreData(doc));
+                res.status(200).json(pharmacies);
+                break;
             }
 
-            // Handle Reorder
-            if (type === 'reorder') {
-                if (method === 'POST') {
-                    const { items } = req.body;
-                    for (const item of items) {
-                        await client.query('UPDATE pharmacies SET position = $1 WHERE id = $2', [item.position, item.id]);
-                    }
-                    return res.status(200).json({ success: true });
-                }
+            case 'POST': {
+                const { name, address, phone, city, lat, lng, position } = req.body;
+                const newPharm = {
+                    name,
+                    address: address || '',
+                    phone: phone || '',
+                    city: city || 'Central',
+                    location: { lat: lat || 0, lng: lng || 0 }, // optional structure change or keep flat
+                    lat: lat || 0,
+                    lng: lng || 0,
+                    position: position || 0,
+                    createdAt: new Date().toISOString()
+                };
+                const docRef = await pharmCol.add(newPharm);
+                res.status(201).json({ id: docRef.id, ...newPharm });
+                break;
             }
 
-            // Handle Pharmacies
-            switch (method) {
-                case 'GET':
-                    const { rows } = await client.query('SELECT * FROM pharmacies ORDER BY position ASC, name ASC');
-                    res.status(200).json(rows);
-                    break;
+            case 'PUT': {
+                const { name: upName, address: upAddress, phone: upPhone, city: upCity, lat: upLat, lng: upLng } = req.body;
+                const targetId = id || req.body.id;
+                if (!targetId) return res.status(400).json({ error: 'ID required' });
 
-                case 'POST':
-                    const { name, address, phone, city, lat, lng, position } = req.body;
-                    const insertRes = await client.query(
-                        'INSERT INTO pharmacies (name, address, phone, city, lat, lng, position) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-                        [name, address, phone, city || 'Central', lat || 0, lng || 0, position || 0]
-                    );
-                    res.status(201).json(insertRes.rows[0]);
-                    break;
+                const updateData = {
+                    name: upName,
+                    address: upAddress,
+                    phone: upPhone,
+                    city: upCity,
+                    lat: upLat || 0,
+                    lng: upLng || 0,
+                    updatedAt: new Date().toISOString()
+                };
 
-                case 'PUT':
-                    const { name: upName, address: upAddress, phone: upPhone, city: upCity, lat: upLat, lng: upLng } = req.body;
-                    const targetId = id || req.body.id;
-                    const updateRes = await client.query(
-                        'UPDATE pharmacies SET name = $1, address = $2, phone = $3, city = $4, lat = $5, lng = $6 WHERE id = $7 RETURNING *',
-                        [upName, upAddress, upPhone, upCity, upLat || 0, upLng || 0, targetId]
-                    );
-                    res.status(200).json(updateRes.rows[0]);
-                    break;
-
-                case 'DELETE':
-                    await client.query('DELETE FROM pharmacies WHERE id = $1', [id]);
-                    res.status(200).json({ success: true });
-                    break;
-
-                default:
-                    res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-                    res.status(405).end(`Method ${method} Not Allowed`);
+                await pharmCol.doc(targetId).update(updateData);
+                const updatedDoc = await pharmCol.doc(targetId).get();
+                res.status(200).json(formatFirestoreData(updatedDoc));
+                break;
             }
-        } finally {
-            client.release();
+
+            case 'DELETE': {
+                if (!id) return res.status(400).json({ error: 'ID required' });
+                await pharmCol.doc(id).delete();
+                res.status(200).json({ success: true });
+                break;
+            }
+
+            default:
+                res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+                res.status(405).end(`Method ${method} Not Allowed`);
         }
     } catch (error) {
-        console.error('Pharmacies API Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Pharmacies API Firestore Error:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }
+

@@ -1,4 +1,5 @@
-import pool from './lib/db.js';
+import db from './lib/firestore.js';
+import { uploadImage } from './lib/storage.js';
 
 export const config = {
     api: {
@@ -10,56 +11,63 @@ export const config = {
 
 export default async function handler(req, res) {
     const { method } = req;
+    const settingsCol = db.collection('settings');
 
     try {
-        const client = await pool.connect();
-
         const { test } = req.query;
 
         // DB Connection Test
         if (test === 'true') {
-            const result = await client.query('SELECT NOW() as time, current_database() as db');
-            client.release();
+            // In Firestore we just try to get any collection to verify connectivity
+            await settingsCol.limit(1).get();
             return res.status(200).json({
                 success: true,
-                message: 'Conexión exitosa con Supabase',
+                message: 'Conexión exitosa con Firestore',
                 data: {
-                    time: result.rows[0].time,
-                    db: result.rows[0].db,
+                    time: new Date().toISOString(),
+                    project: db.projectId || 'Unknown',
                     env: process.env.NODE_ENV || 'development'
                 }
             });
         }
 
         switch (method) {
-            case 'GET':
-                const { rows } = await client.query('SELECT * FROM settings');
-                const settings = rows.reduce((acc, current) => {
-                    acc[current.key] = current.value;
-                    return acc;
-                }, {});
+            case 'GET': {
+                const snapshot = await settingsCol.get();
+                const settings = {};
+                snapshot.docs.forEach(doc => {
+                    settings[doc.id] = doc.data().value;
+                });
                 res.status(200).json(settings);
                 break;
+            }
 
-            case 'POST':
+            case 'POST': {
                 const { key, value } = req.body;
-                console.log(`API POST Settings - Key: ${key}, Value length: ${value ? value.length : 0}`);
+                if (!key) return res.status(400).json({ error: 'Key required' });
 
-                await client.query(
-                    'INSERT INTO settings (key, value, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()',
-                    [key, value.toString()]
-                );
-                res.status(200).json({ success: true, key, value });
+                let finalValue = value;
+
+                // If it's an image key and has base64 data, upload to storage
+                if (key.includes('image') || key.includes('logo') || key.includes('bg')) {
+                    finalValue = await uploadImage(value, 'settings');
+                }
+
+                await settingsCol.doc(key).set({
+                    value: finalValue !== undefined ? finalValue.toString() : '',
+                    updatedAt: new Date().toISOString()
+                });
+                res.status(200).json({ success: true, key, value: finalValue });
                 break;
+            }
 
             default:
                 res.setHeader('Allow', ['GET', 'POST']);
                 res.status(405).end(`Method ${method} Not Allowed`);
         }
-
-        client.release();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Settings API Firestore Error:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }
+

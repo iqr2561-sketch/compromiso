@@ -1,58 +1,81 @@
-import pool from './lib/db.js';
+import db, { formatFirestoreData } from './lib/firestore.js';
+import { uploadImage } from './lib/storage.js';
 
 export default async function handler(req, res) {
     const { method } = req;
     const { id, type } = req.query;
+    const galleryCol = db.collection('gallery');
+    const cityHeroCol = db.collection('city_hero_images');
 
     try {
-        const client = await pool.connect();
-
-        try {
-            if (type === 'city-hero') {
-                switch (method) {
-                    case 'GET':
-                        const { rows: cityRows } = await client.query('SELECT * FROM city_hero_images ORDER BY created_at DESC');
-                        return res.status(200).json(cityRows);
-                    case 'POST':
-                        const { url: cityUrl } = req.body;
-                        if (!cityUrl) return res.status(400).json({ error: 'URL is required' });
-                        const cityInsert = await client.query('INSERT INTO city_hero_images (url) VALUES ($1) RETURNING *', [cityUrl]);
-                        return res.status(201).json(cityInsert.rows[0]);
-                    case 'DELETE':
-                        if (!id) return res.status(400).json({ error: 'ID is required' });
-                        await client.query('DELETE FROM city_hero_images WHERE id = $1', [id]);
-                        return res.status(200).json({ success: true });
-                    default:
-                        return res.status(405).end();
-                }
-            }
-
-            // Default: Standard Gallery
+        if (type === 'city-hero') {
             switch (method) {
-                case 'GET':
-                    const { rows } = await client.query('SELECT * FROM gallery ORDER BY created_at DESC');
-                    return res.status(200).json(rows);
-                case 'POST':
-                    const { url, filename, alt_text } = req.body;
-                    if (!url) return res.status(400).json({ error: 'URL is required' });
-                    const { rows: postRows } = await client.query(
-                        'INSERT INTO gallery (url, filename, alt_text) VALUES ($1, $2, $3) RETURNING *',
-                        [url, filename || null, alt_text || null]
-                    );
-                    return res.status(201).json(postRows[0]);
-                case 'DELETE':
+                case 'GET': {
+                    const snapshot = await cityHeroCol.orderBy('createdAt', 'desc').get();
+                    const images = snapshot.docs.map(doc => formatFirestoreData(doc));
+                    res.status(200).json(images);
+                    return;
+                }
+                case 'POST': {
+                    const { url: cityUrl } = req.body;
+                    if (!cityUrl) return res.status(400).json({ error: 'URL is required' });
+
+                    const finalUrl = await uploadImage(cityUrl, 'city-hero');
+
+                    const newCityImg = { url: finalUrl, createdAt: new Date().toISOString() };
+                    const docRef = await cityHeroCol.add(newCityImg);
+                    res.status(201).json({ id: docRef.id, ...newCityImg });
+                    return;
+                }
+                case 'DELETE': {
                     if (!id) return res.status(400).json({ error: 'ID is required' });
-                    await client.query('DELETE FROM gallery WHERE id = $1', [id]);
-                    return res.status(200).json({ message: 'Image deleted successfully' });
+                    await cityHeroCol.doc(id).delete();
+                    res.status(200).json({ success: true });
+                    return;
+                }
                 default:
-                    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-                    return res.status(405).json({ error: 'Method not allowed' });
+                    res.status(405).end();
+                    return;
             }
-        } finally {
-            client.release();
+        }
+
+        // Default: Standard Gallery
+        switch (method) {
+            case 'GET': {
+                const snapshot = await galleryCol.orderBy('createdAt', 'desc').get();
+                const images = snapshot.docs.map(doc => formatFirestoreData(doc));
+                res.status(200).json(images);
+                break;
+            }
+            case 'POST': {
+                const { url, filename, alt_text } = req.body;
+                if (!url) return res.status(400).json({ error: 'URL is required' });
+
+                const finalGalleryUrl = await uploadImage(url, 'gallery');
+
+                const newGalleryImg = {
+                    url: finalGalleryUrl,
+                    filename: filename || null,
+                    alt_text: alt_text || null,
+                    createdAt: new Date().toISOString()
+                };
+                const docRef = await galleryCol.add(newGalleryImg);
+                res.status(201).json({ id: docRef.id, ...newGalleryImg });
+                break;
+            }
+            case 'DELETE': {
+                if (!id) return res.status(400).json({ error: 'ID is required' });
+                await galleryCol.doc(id).delete();
+                res.status(200).json({ message: 'Image deleted successfully' });
+                break;
+            }
+            default:
+                res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+                res.status(405).json({ error: 'Method not allowed' });
         }
     } catch (error) {
-        console.error('Gallery API Error:', error);
+        console.error('Gallery API Firestore Error:', error);
         res.status(500).json({ error: error.message });
     }
 }
+

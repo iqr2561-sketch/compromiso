@@ -1,4 +1,4 @@
-import pool from './lib/db.js';
+import db from './lib/firestore.js';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -7,13 +7,17 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
+    const settingsCol = db.collection('settings');
 
     try {
-        const client = await pool.connect();
-        const { rows } = await client.query("SELECT * FROM settings WHERE key IN ('ai_api_key', 'ai_model', 'ai_enabled')");
-        client.release();
-
-        const settings = rows.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {});
+        // Fetch AI settings from Firestore
+        const snapshot = await settingsCol.get();
+        const settings = {};
+        snapshot.docs.forEach(doc => {
+            if (doc.id.startsWith('ai_')) {
+                settings[doc.id] = doc.data().value;
+            }
+        });
 
         if (settings.ai_enabled !== 'true') {
             return res.status(403).json({ error: 'AI Assistant is disabled' });
