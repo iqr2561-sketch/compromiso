@@ -177,6 +177,16 @@ const Admin = () => {
         recovery_code: 'COMPROMISO-2026'
     });
 
+    // AI Generator States
+    const [aiGeneratorData, setAiGeneratorData] = useState({
+        prompt: '',
+        category: 'Locales',
+        generateImage: true
+    });
+    const [aiGeneratedContent, setAiGeneratedContent] = useState(null);
+    const [isAiGenerating, setIsAiGenerating] = useState(false);
+    const [aiError, setAiError] = useState(null);
+
     const fetchUsers = async () => {
         try {
             const res = await fetch('/api/admins');
@@ -458,6 +468,76 @@ const Admin = () => {
         }
     };
 
+    // AI Content Generation
+    const handleAiGenerate = async () => {
+        if (!aiGeneratorData.prompt.trim()) {
+            showToast("Por favor, escribe un tema para generar la noticia", "error");
+            return;
+        }
+
+        setIsAiGenerating(true);
+        setAiError(null);
+        setAiGeneratedContent(null);
+
+        try {
+            const res = await fetch('/api/ai-generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: aiGeneratorData.prompt,
+                    category: aiGeneratorData.category,
+                    generateImage: aiGeneratorData.generateImage
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                setAiGeneratedContent(data.data);
+                showToast("¡Noticia generada con éxito!", "success");
+            } else {
+                setAiError(data.error || data.message || 'Error al generar contenido');
+                showToast(data.error || "Error al generar contenido", "error");
+            }
+        } catch (err) {
+            console.error('AI Generation error:', err);
+            setAiError('Error de conexión con el servidor');
+            showToast("Error de conexión", "error");
+        } finally {
+            setIsAiGenerating(false);
+        }
+    };
+
+    // Publish AI Generated News
+    const handlePublishAiNews = async () => {
+        if (!aiGeneratedContent) return;
+
+        const contentBlocks = [{ type: 'text', content: aiGeneratedContent.content }];
+
+        const newItem = {
+            title: aiGeneratedContent.title,
+            category: aiGeneratedContent.category,
+            author: 'IA Compromiso',
+            date: new Date().toISOString().split('T')[0],
+            image: aiGeneratedContent.image || '',
+            content: JSON.stringify(contentBlocks),
+            isHero: false,
+            isFlash: false,
+            timeRead: '3 min',
+            status: 'published'
+        };
+
+        const success = await addNews(newItem);
+
+        if (success) {
+            showToast("Noticia publicada correctamente", "success");
+            setAiGeneratedContent(null);
+            setAiGeneratorData({ prompt: '', category: 'Locales', generateImage: true });
+        } else {
+            showToast("Error al publicar la noticia", "error");
+        }
+    };
+
     const handleDownloadBackup = async () => {
         try {
             showToast("Generando copia de seguridad...", "success");
@@ -622,6 +702,7 @@ const Admin = () => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'news', label: 'Noticias', icon: Newspaper },
+        { id: 'ai-generator', label: 'Generador IA', icon: Sparkles },
         { id: 'users', label: 'Usuarios', icon: Users },
         { id: 'categories', label: 'Categorías', icon: Grid },
         { id: 'comments', label: 'Comentarios', icon: MessageSquare },
@@ -1550,6 +1631,222 @@ const Admin = () => {
                                 </div>
                                 <h3 className="text-xl font-black text-slate-900 dark:text-white italic truncate">{comments.filter(c => c.status === 'pending').length}</h3>
                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Comentarios Pendientes</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* AI News Generator Section */}
+                    {activeTab === 'ai-generator' && (
+                        <div className="space-y-8">
+                            {/* Header */}
+                            <div className="bg-gradient-to-br from-primary/10 via-accent-purple/10 to-accent-pink/10 p-8 rounded-3xl border border-white/10">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="size-16 bg-gradient-to-br from-primary to-accent-purple rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20">
+                                        <Sparkles className="text-white" size={32} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-3xl font-black text-white italic tracking-tighter">Generador de Noticias IA</h2>
+                                        <p className="text-sm text-slate-400">Crea noticias automáticamente con inteligencia artificial</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Generator Form */}
+                            <div className="bg-white dark:bg-[#11141b] p-8 rounded-3xl border border-gray-200 dark:border-white/5 shadow-xl">
+                                <div className="space-y-6">
+                                    {/* Prompt Input */}
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-3 tracking-widest">
+                                            ¿Sobre qué tema quieres generar una noticia?
+                                        </label>
+                                        <div className="relative">
+                                            <Wand2 className="absolute left-5 top-5 text-primary" size={20} />
+                                            <textarea
+                                                className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/10 rounded-2xl pl-14 pr-6 py-5 text-base font-medium text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all resize-none"
+                                                placeholder="Ej: Recetas rápidas para hacer en 10 minutos, consejos de cocina saludable..."
+                                                rows={3}
+                                                value={aiGeneratorData.prompt}
+                                                onChange={e => setAiGeneratorData({ ...aiGeneratorData, prompt: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Category & Options */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase text-slate-500 mb-3 tracking-widest">
+                                                Categoría
+                                            </label>
+                                            <select
+                                                className="w-full bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/10 rounded-xl px-5 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all"
+                                                value={aiGeneratorData.category}
+                                                onChange={e => setAiGeneratorData({ ...aiGeneratorData, category: e.target.value })}
+                                            >
+                                                {categories.map(cat => (
+                                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase text-slate-500 mb-3 tracking-widest">
+                                                Opciones
+                                            </label>
+                                            <label className="flex items-center gap-4 bg-slate-50 dark:bg-[#0a0c10] border border-gray-200 dark:border-white/10 rounded-xl px-5 py-4 cursor-pointer group hover:border-primary/30 transition-all">
+                                                <div className={`size-6 rounded-lg border-2 flex items-center justify-center transition-all ${aiGeneratorData.generateImage ? 'bg-primary border-primary' : 'border-slate-300 dark:border-slate-600'}`}>
+                                                    {aiGeneratorData.generateImage && <div className="size-2.5 bg-white rounded-sm" />}
+                                                </div>
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={aiGeneratorData.generateImage}
+                                                    onChange={e => setAiGeneratorData({ ...aiGeneratorData, generateImage: e.target.checked })}
+                                                />
+                                                <div>
+                                                    <span className="block text-sm font-bold text-slate-900 dark:text-white">Generar imagen</span>
+                                                    <span className="block text-[10px] text-slate-500">Crear una foto ilustrativa con IA</span>
+                                                </div>
+                                                <ImageIcon className="ml-auto text-slate-400" size={20} />
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    {/* Generate Button */}
+                                    <button
+                                        onClick={handleAiGenerate}
+                                        disabled={isAiGenerating || !aiGeneratorData.prompt.trim()}
+                                        className="w-full bg-gradient-to-r from-primary via-accent-purple to-accent-pink text-white font-black uppercase tracking-widest py-5 rounded-2xl flex items-center justify-center gap-3 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-primary/20"
+                                    >
+                                        {isAiGenerating ? (
+                                            <>
+                                                <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                Generando contenido...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sparkles size={20} />
+                                                Generar Noticia con IA
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {/* Error Message */}
+                                    {aiError && (
+                                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl text-sm font-medium">
+                                            {aiError}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Generated Content Preview */}
+                            {aiGeneratedContent && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="bg-white dark:bg-[#11141b] p-8 rounded-3xl border border-primary/20 shadow-xl"
+                                >
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="size-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500">
+                                            <Sparkles size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-black text-white italic">Vista Previa</h3>
+                                            <p className="text-[10px] text-slate-500 uppercase tracking-widest">Contenido generado por IA</p>
+                                        </div>
+                                        <span className="ml-auto text-[9px] font-black bg-emerald-500/10 text-emerald-500 px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                            Listo para publicar
+                                        </span>
+                                    </div>
+
+                                    {/* Preview Content */}
+                                    <div className="space-y-6">
+                                        {aiGeneratedContent.image && (
+                                            <img
+                                                src={aiGeneratedContent.image}
+                                                alt="Generated"
+                                                className="w-full h-64 object-cover rounded-2xl border border-white/10"
+                                            />
+                                        )}
+
+                                        <div>
+                                            <span className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-widest">
+                                                {aiGeneratedContent.category}
+                                            </span>
+                                            <h2 className="text-2xl font-black text-white italic mt-3 leading-tight">
+                                                {aiGeneratedContent.title}
+                                            </h2>
+                                        </div>
+
+                                        <div className="prose prose-invert max-w-none">
+                                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                {aiGeneratedContent.content}
+                                            </p>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-4 pt-6 border-t border-white/5">
+                                            <button
+                                                onClick={handlePublishAiNews}
+                                                className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase tracking-widest py-4 rounded-xl flex items-center justify-center gap-3 transition-all"
+                                            >
+                                                <Save size={18} />
+                                                Publicar Noticia
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setFormData({
+                                                        ...formData,
+                                                        title: aiGeneratedContent.title,
+                                                        category: aiGeneratedContent.category,
+                                                        image: aiGeneratedContent.image || '',
+                                                        author: 'IA Compromiso'
+                                                    });
+                                                    setEditorBlocks([{ type: 'text', content: aiGeneratedContent.content }]);
+                                                    setActiveTab('news');
+                                                    setIsAdding(true);
+                                                    showToast("Contenido cargado en el editor de noticias", "success");
+                                                }}
+                                                className="flex-1 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest py-4 rounded-xl flex items-center justify-center gap-3 transition-all border border-white/10"
+                                            >
+                                                <Edit3 size={18} />
+                                                Editar antes de publicar
+                                            </button>
+                                            <button
+                                                onClick={() => setAiGeneratedContent(null)}
+                                                className="size-14 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center transition-all"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Tips Section */}
+                            <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
+                                <h4 className="text-sm font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <Cpu size={16} className="text-primary" />
+                                    Consejos para mejores resultados
+                                </h4>
+                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-600 dark:text-slate-400">
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-primary">•</span>
+                                        Sé específico con el tema (ej: "5 recetas de pasta italiana casera")
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-primary">•</span>
+                                        Indica el enfoque deseado (práctico, informativo, entretenido)
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-primary">•</span>
+                                        Menciona datos relevantes (temporada, tendencias, ubicación)
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-primary">•</span>
+                                        Revisa siempre el contenido antes de publicar
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     )}
@@ -2899,32 +3196,30 @@ const Admin = () => {
                                                 <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Modo de Numeración de Edición</label>
                                                 <div className="flex flex-col gap-4 bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-inner">
                                                     <div className="flex items-center gap-4">
-                                                        <button 
-                                                            onClick={async () => { 
-                                                                setEditionAutoIncrement(true); 
+                                                        <button
+                                                            onClick={async () => {
+                                                                setEditionAutoIncrement(true);
                                                                 setEditionManualNumber('');
                                                                 const success = await updateEditionConfig(true, '');
                                                                 if (success) showToast('Modo automático activado', 'success');
                                                                 else showToast('Error al cambiar modo', 'error');
                                                             }}
                                                             type="button"
-                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
-                                                                editionAutoIncrement 
-                                                                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
-                                                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
-                                                            }`}
+                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${editionAutoIncrement
+                                                                ? 'bg-primary text-black shadow-lg shadow-primary/20'
+                                                                : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                                                                }`}
                                                         >
                                                             <span>🔄</span>
                                                             <span>Automático (Diario)</span>
                                                         </button>
-                                                        <button 
+                                                        <button
                                                             onClick={async () => setEditionAutoIncrement(false)}
                                                             type="button"
-                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${
-                                                                !editionAutoIncrement 
-                                                                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
-                                                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
-                                                            }`}
+                                                            className={`flex-1 py-4 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 ${!editionAutoIncrement
+                                                                ? 'bg-primary text-black shadow-lg shadow-primary/20'
+                                                                : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                                                                }`}
                                                         >
                                                             <span>✋</span>
                                                             <span>Manual (Específico)</span>
@@ -2939,8 +3234,8 @@ const Admin = () => {
                                                                 placeholder="Número de edición"
                                                                 className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-6 py-4 text-lg font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
                                                             />
-                                                            <button 
-                                                                onClick={async () => { 
+                                                            <button
+                                                                onClick={async () => {
                                                                     if (editionManualNumber) {
                                                                         updateEdition(editionManualNumber);
                                                                         const success = await updateEditionConfig(false, editionManualNumber);
@@ -2956,7 +3251,7 @@ const Admin = () => {
                                                         </div>
                                                     )}
                                                     <p className="text-[10px] text-slate-600 font-medium italic">
-                                                        {editionAutoIncrement 
+                                                        {editionAutoIncrement
                                                             ? '✓ La edición se incrementará automáticamente cada día a medianoche.'
                                                             : '⚠ La edición será fija hasta que cambies al modo automático.'}
                                                     </p>
@@ -3379,7 +3674,7 @@ const Admin = () => {
                             </div>
 
                             <div className="p-6 border-b border-white/5 bg-black/40">
-                                <input 
+                                <input
                                     type="text"
                                     placeholder="Buscar imagen..."
                                     value={gallerySearch}
@@ -3392,47 +3687,47 @@ const Admin = () => {
                                 {imageGallery
                                     .filter((img) => img.toLowerCase().includes(gallerySearch.toLowerCase()))
                                     .map((img, idx) => (
-                                    <div
-                                        key={idx}
-                                        onClick={() => {
-                                            if (galleryTarget === 'cover') {
-                                                updateCoverPage(img, coverPage.date).then(ok => {
-                                                    if (ok) showToast("Tapa del día actualizada", "success");
-                                                });
-                                            } else if (galleryTarget === 'ad') {
-                                                setFormData({ ...formData, image: img });
-                                            } else if (galleryTarget === 'logo') {
-                                                updateFooterSettings({ logo: img });
-                                            } else if (galleryTarget === 'qr') {
-                                                updateFooterSettings({ qr_image: img });
-                                            } else if (galleryTarget === 'te_acordas') {
-                                                updateFooterSettings({ te_acordas_bg: img });
-                                            } else if (galleryTarget === 'newsMain') {
-                                                setFormData({ ...formData, image: img });
-                                            } else if (galleryTarget === 'categoryBg') {
-                                                setFormData({ ...formData, bgImage: img, bg_image: img });
-                                            } else if (galleryTarget === 'cityHero') {
-                                                addCityHeroImage(img).then(ok => {
-                                                    if (ok) showToast("Imagen agregada a portada", "success");
-                                                });
-                                            } else {
-                                                updateBlock(galleryTarget, img);
-                                            }
-                                            setShowGallery(false);
-                                        }}
-                                        className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col hover:border-primary/50"
-                                    >
-                                        <div className="w-full aspect-square relative bg-black/40">
-                                            <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="gallery" loading="lazy" />
-                                            <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                                <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
+                                        <div
+                                            key={idx}
+                                            onClick={() => {
+                                                if (galleryTarget === 'cover') {
+                                                    updateCoverPage(img, coverPage.date).then(ok => {
+                                                        if (ok) showToast("Tapa del día actualizada", "success");
+                                                    });
+                                                } else if (galleryTarget === 'ad') {
+                                                    setFormData({ ...formData, image: img });
+                                                } else if (galleryTarget === 'logo') {
+                                                    updateFooterSettings({ logo: img });
+                                                } else if (galleryTarget === 'qr') {
+                                                    updateFooterSettings({ qr_image: img });
+                                                } else if (galleryTarget === 'te_acordas') {
+                                                    updateFooterSettings({ te_acordas_bg: img });
+                                                } else if (galleryTarget === 'newsMain') {
+                                                    setFormData({ ...formData, image: img });
+                                                } else if (galleryTarget === 'categoryBg') {
+                                                    setFormData({ ...formData, bgImage: img, bg_image: img });
+                                                } else if (galleryTarget === 'cityHero') {
+                                                    addCityHeroImage(img).then(ok => {
+                                                        if (ok) showToast("Imagen agregada a portada", "success");
+                                                    });
+                                                } else {
+                                                    updateBlock(galleryTarget, img);
+                                                }
+                                                setShowGallery(false);
+                                            }}
+                                            className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col hover:border-primary/50"
+                                        >
+                                            <div className="w-full aspect-square relative bg-black/40">
+                                                <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="gallery" loading="lazy" />
+                                                <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                    <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
+                                                </div>
+                                            </div>
+                                            <div className="p-3 bg-black/40 mt-auto border-t border-white/5">
+                                                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest truncate">Img {idx + 1}</p>
                                             </div>
                                         </div>
-                                        <div className="p-3 bg-black/40 mt-auto border-t border-white/5">
-                                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest truncate">Img {idx + 1}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
                                 {imageGallery.length === 0 && (
                                     <div className="col-span-full py-20 text-center flex flex-col items-center gap-4">
                                         <ImageIcon size={48} className="text-slate-800" />

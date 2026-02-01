@@ -12,6 +12,7 @@ import cronIncrementHandler from './api/cron-increment.js';
 import cityHeroHandler from './api/city-hero.js';
 import adminsHandler from './api/admins.js';
 import generateNewsHandler from './api/generate-news.js';
+import aiGenerateHandler from './api/ai-generate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,6 +52,7 @@ app.all('/api/cron-increment', adapt(cronIncrementHandler));
 app.all('/api/city-hero', adapt(cityHeroHandler));
 app.all('/api/admins', adapt(adminsHandler));
 app.all('/api/generate-news', adapt(generateNewsHandler));
+app.all('/api/ai-generate', adapt(aiGenerateHandler));
 
 // Serve static files from the React app build
 const distPath = path.join(__dirname, 'dist');
