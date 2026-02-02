@@ -16,12 +16,25 @@ export default async function handler(req, res) {
 
     try {
         // Get Gemini API key from settings or environment
-        const apiKey = process.env.GEMINI_API_KEY;
+        // Get Gemini API key from settings or environment
+        let apiKey = process.env.GEMINI_API_KEY;
+
+        if (!apiKey) {
+            try {
+                // Fallback to database setting
+                const settingsDoc = await db.collection('settings').doc('ai_api_key').get();
+                if (settingsDoc.exists) {
+                    apiKey = settingsDoc.data().value;
+                }
+            } catch (dbError) {
+                console.warn('Failed to fetch API key from DB:', dbError);
+            }
+        }
 
         if (!apiKey) {
             return res.status(500).json({
                 error: 'Gemini API key not configured',
-                message: 'Please set GEMINI_API_KEY environment variable in Cloud Run'
+                message: 'Please set GEMINI_API_KEY environment variable or configure it in the Admin Panel'
             });
         }
 

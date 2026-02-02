@@ -3259,6 +3259,92 @@ const Admin = () => {
                         )
                     }
 
+                    {/* Categories View (Card List) */}
+                    {activeTab === 'categories' && (
+                        <div className="flex flex-col gap-4 pb-20">
+                            <div className="flex items-center justify-between mb-2 px-2">
+                                <h2 className="text-xl font-black italic tracking-tighter text-slate-800 dark:text-white uppercase">Estructura de Categorías</h2>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <ArrowRight size={12} /> Desliza a la derecha para crear subcategoría
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                {(() => {
+                                    const parentCategories = categories.filter(c => !c.parent_id).sort((a, b) => a.name.localeCompare(b.name));
+                                    let categoriesToRender = [];
+                                    parentCategories.forEach(parent => {
+                                        categoriesToRender.push({ ...parent, isParent: true });
+                                        const children = categories.filter(c => c.parent_id === parent.id).sort((a, b) => a.name.localeCompare(b.name));
+                                        children.forEach(child => categoriesToRender.push({ ...child, isChild: true, parentName: parent.name }));
+                                    });
+
+                                    return categoriesToRender.map((item, index) => (
+                                        <motion.div
+                                            key={item.id}
+                                            layout
+                                            className={`
+                                                relative flex items-center justify-between p-4 rounded-xl border-l-[6px] 
+                                                bg-white dark:bg-[#11141b] shadow-sm hover:shadow-md transition-all
+                                                ${item.isChild
+                                                    ? 'ml-12 border-l-primary/30 border-y border-r border-gray-200 dark:border-white/5'
+                                                    : 'border-l-primary border-y border-r border-gray-200 dark:border-white/10'
+                                                }
+                                            `}
+                                            drag="x"
+                                            dragConstraints={{ left: 0, right: 0 }}
+                                            dragElastic={{ left: item.isChild ? 0.3 : 0.05, right: !item.isChild ? 0.3 : 0.05 }}
+                                            onDragEnd={async (e, info) => {
+                                                if (info.offset.x > 50 && !item.isChild && index > 0) {
+                                                    const prev = categoriesToRender[index - 1];
+                                                    const newParentId = prev.isChild ? prev.parent_id : prev.id;
+                                                    if (newParentId !== item.id) {
+                                                        await updateCategory(item.id, { parent_id: newParentId });
+                                                        fetchNews(true);
+                                                    }
+                                                }
+                                                if (info.offset.x < -50 && item.isChild) {
+                                                    await updateCategory(item.id, { parent_id: null });
+                                                    fetchNews(true);
+                                                }
+                                            }}
+                                        >
+                                            {item.isChild && (
+                                                <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-4 h-8 border-b-2 border-l-2 border-slate-300 dark:border-white/20 rounded-bl-xl opacity-50" />
+                                            )}
+
+                                            <div className="flex items-center gap-4">
+                                                <div className="cursor-grab active:cursor-grabbing p-2 text-slate-300 hover:text-slate-500">
+                                                    <GripVertical size={18} />
+                                                </div>
+
+                                                <div className="flex flex-col">
+                                                    <h4 className="font-bold text-slate-800 dark:text-white uppercase tracking-tight text-xs flex items-center gap-2">
+                                                        {item.name}
+                                                    </h4>
+                                                    <span className="text-[9px] text-slate-400 uppercase tracking-widest">{item.color}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-1">
+                                                <button onClick={() => handleEdit(item)} className="p-2 text-slate-400 hover:text-primary transition-colors"><Edit3 size={16} /></button>
+                                                <button
+                                                    onClick={() => showConfirm('Eliminar', '¿Eliminar categoría?', () => {
+                                                        const hasChildren = categories.some(c => c.parent_id === item.id);
+                                                        if (hasChildren) showToast("No puedes eliminar una categoría con hijos", "error");
+                                                        else deleteCategory(item.id);
+                                                    })}
+                                                    className="p-2 text-slate-400 hover:text-accent-pink transition-colors"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ));
+                                })()}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Generic Table View (for News, etc.) */}
                     {
                         activeTab !== 'ads' && activeTab !== 'pharmacies' && activeTab !== 'dashboard' && activeTab !== 'settings' && activeTab !== 'categories' && activeTab !== 'gallery' && activeTab !== 'cover' && activeTab !== 'comments' && activeTab !== 'users' && (
