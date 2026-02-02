@@ -3292,8 +3292,8 @@ const Admin = () => {
                                                 }
                                             `}
                                             drag="x"
-                                            dragConstraints={{ left: 0, right: 0 }}
-                                            dragElastic={{ left: item.isChild ? 0.3 : 0.05, right: !item.isChild ? 0.3 : 0.05 }}
+                                            dragConstraints={{ left: item.isChild ? -100 : 0, right: !item.isChild ? 100 : 0 }}
+                                            dragElastic={0.1}
                                             onDragEnd={async (e, info) => {
                                                 if (info.offset.x > 50 && !item.isChild && index > 0) {
                                                     const prev = categoriesToRender[index - 1];

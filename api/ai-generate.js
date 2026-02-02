@@ -60,7 +60,7 @@ Responde SOLO en formato JSON con esta estructura exacta:
     "summary": "Breve resumen de 2 líneas para la vista previa"
 }`;
 
-        const geminiResponse = await fetch(geminiUrl, {
+        let geminiResponse = await fetch(geminiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -78,11 +78,46 @@ Responde SOLO en formato JSON con esta estructura exacta:
 
         if (!geminiResponse.ok) {
             const errorData = await geminiResponse.json();
-            console.error('Gemini API Error:', errorData);
-            return res.status(500).json({
-                error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
-                details: errorData
-            });
+
+            // Si el error es relacionado con el modelo y no estamos usando flash, reintentar con flash
+            if (selectedModel !== 'gemini-1.5-flash' && (geminiResponse.status === 404 || geminiResponse.status === 400)) {
+                console.log(`Modelo ${selectedModel} falló, reintentando con gemini-1.5-flash...`);
+                const flashUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+                const retryResponse = await fetch(flashUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `${systemPrompt}\n\nTEMA A DESARROLLAR: ${prompt}\nCATEGORÍA: ${category || 'General'}`
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.8,
+                            maxOutputTokens: 2048
+                        }
+                    })
+                });
+
+                if (retryResponse.ok) {
+                    // Si el retry funcionó, usamos esa respuesta y seguimos como si nada
+                    geminiResponse = retryResponse; // Sobreescribimos la variable (necesitamos cambiar const a let arriba)
+                } else {
+                    // Si también falla flash, devolvemos el error original
+                    console.error('Gemini API Error (Retry failed):', await retryResponse.json());
+                    return res.status(500).json({
+                        error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
+                        details: errorData
+                    });
+                }
+            } else {
+                console.error('Gemini API Error:', errorData);
+                return res.status(500).json({
+                    error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
+                    details: errorData
+                });
+            }
         }
 
         const geminiData = await geminiResponse.json();
