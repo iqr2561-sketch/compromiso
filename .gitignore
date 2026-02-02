@@ -34,3 +34,6 @@ dist-ssr
 
 # Uploads locales
 uploads/
+
+# Documentación Privada
+PRIVATE_DOCS.md

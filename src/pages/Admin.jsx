@@ -5,7 +5,7 @@ import {
     Newspaper, LayoutDashboard, Settings, Video, Menu,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
-    ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, EyeOff, History, GripVertical, CloudSun, Activity, Lock, User
+    ChevronLeft, ChevronRight, ChevronDown, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, EyeOff, History, GripVertical, CloudSun, Activity, Lock, User
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -717,6 +717,13 @@ const Admin = () => {
         { id: 'settings', label: 'Ajustes', icon: Settings },
     ];
 
+    const sidebarStructure = [
+        { title: 'Principal', items: ['dashboard'] },
+        { title: 'Gestión Editorial', items: ['news', 'cover', 'categories', 'ai-generator', 'gallery', 'comments'] },
+        { title: 'Comercial & Utilidades', items: ['ads', 'pharmacies'] },
+        { title: 'Sistema', items: ['settings', 'users', 'footer', 'menu-order'] }
+    ];
+
     const upcomingDuties = pharmacyDuty
         .filter(d => d.date >= new Date().toISOString().split('T')[0])
         .sort((a, b) => a.date.localeCompare(b.date))
@@ -922,28 +929,46 @@ const Admin = () => {
                 </div>
 
                 <nav className="flex flex-col gap-1 overflow-y-auto pr-2 custom-scrollbar">
-                    {menuItems.map(item => (
-                        <button
-                            key={item.id}
-                            onClick={() => {
-                                setActiveTab(item.id);
-                                resetForms();
-                                if (item.id === 'cover') {
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        image: coverPage.image,
-                                        date: coverPage.date
-                                    }));
-                                }
-                            }}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
-                                ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
-                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
-                                }`}
-                        >
-                            <item.icon size={18} />
-                            <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
-                        </button>
+                    {sidebarStructure.map((group, gIdx) => (
+                        <div key={gIdx} className="mb-6 last:mb-0">
+                            {group.title && (
+                                <h3 className="px-4 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400/80 dark:text-slate-500/80 select-none">
+                                    {group.title}
+                                </h3>
+                            )}
+                            <div className="flex flex-col gap-1">
+                                {group.items.map(itemId => {
+                                    const item = menuItems.find(m => m.id === itemId);
+                                    if (!item) return null;
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => {
+                                                setActiveTab(item.id);
+                                                resetForms();
+                                                if (item.id === 'cover') {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        image: coverPage.image,
+                                                        date: coverPage.date
+                                                    }));
+                                                }
+                                            }}
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all relative ${activeTab === item.id
+                                                ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
+                                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
+                                                }`}
+                                        >
+                                            <item.icon size={18} />
+                                            <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
+                                            {activeTab === item.id && (
+                                                <motion.div layoutId="activeTabSidebar" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     ))}
                 </nav>
 
@@ -3243,13 +3268,46 @@ const Admin = () => {
                                                 items.push(...categoriesToRender);
                                             }
 
-                                            return items.map(item => (
+                                            return items.map((item, index) => (
                                                 <tr key={item.id} className={`transition-colors group ${item.isChild ? 'bg-slate-50/80 dark:bg-white/[0.01]' : 'hover:bg-slate-50 dark:hover:bg-white/[0.02]'}`}>
                                                     <td className={`py-6 relative ${item.isChild ? 'pl-20 pr-8' : 'px-8'}`}>
                                                         {item.isChild && (
                                                             <div className="absolute left-8 top-1/2 -translate-y-1/2 w-8 h-12 border-l-2 border-b-2 border-slate-200 dark:border-white/10 rounded-bl-xl"></div>
                                                         )}
                                                         <div className="flex items-center gap-4">
+                                                            {activeTab === 'categories' && (
+                                                                <div className="flex gap-1 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    {item.isChild ? (
+                                                                        <button
+                                                                            onClick={async (e) => { e.stopPropagation(); await updateCategory(item.id, { parent_id: null }); fetchNews(true); }}
+                                                                            className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg text-slate-500 hover:text-primary transition-colors"
+                                                                            title="Mover a la izquierda (Hacer Principal)"
+                                                                        >
+                                                                            <ChevronLeft size={14} />
+                                                                        </button>
+                                                                    ) : (
+                                                                        index > 0 && (
+                                                                            <button
+                                                                                onClick={async (e) => {
+                                                                                    e.stopPropagation();
+                                                                                    const prev = items[index - 1];
+                                                                                    // Si el de arriba es hijo, tomo su padre. Si es padre, lo tomo a él.
+                                                                                    const newParentId = prev.isChild ? prev.parent_id : prev.id;
+                                                                                    // Evitar confusiones
+                                                                                    if (newParentId === item.id) return;
+
+                                                                                    await updateCategory(item.id, { parent_id: newParentId });
+                                                                                    fetchNews(true);
+                                                                                }}
+                                                                                className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg text-slate-500 hover:text-primary transition-colors"
+                                                                                title="Mover a la derecha (Hacer Subcategoría)"
+                                                                            >
+                                                                                <ChevronRight size={14} />
+                                                                            </button>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            )}
                                                             {item.image && <img src={item.image} className="size-12 rounded-xl object-cover border border-gray-200 dark:border-white/10 relative z-10" alt="" />}
                                                             <div className="flex flex-col relative z-10">
                                                                 <span className="font-black text-sm text-slate-900 dark:text-white italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
@@ -3915,7 +3973,7 @@ const Admin = () => {
                                     onClick={() => searchGallery(gallerySearch, 10)}
                                     className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/80 transition-all flex items-center gap-2"
                                 >
-                                    <Search size={16} /> Buscar
+                                    <Search size={16} /> BUSCAR IMAGEN
                                 </button>
                             </div>
 

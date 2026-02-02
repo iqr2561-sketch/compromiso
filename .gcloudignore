@@ -36,3 +36,6 @@ test-db.js
 test-new-db.js
 insert_pharmacies.sql
 *.sql
+
+# Documentación Privada
+PRIVATE_DOCS.md
