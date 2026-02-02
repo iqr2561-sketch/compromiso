@@ -1371,7 +1371,7 @@ const Admin = () => {
                                                         <select
                                                             className="bg-[#0a0c10] border border-white/5 rounded-xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-primary shadow-inner appearance-none"
                                                             value={formData.parent_id || ''}
-                                                            onChange={e => setFormData({ ...formData, parent_id: e.target.value ? parseInt(e.target.value) : null })}
+                                                            onChange={e => setFormData({ ...formData, parent_id: e.target.value || null })}
                                                         >
                                                             <option value="">-- Sin categoría padre (Principal) --</option>
                                                             {categories
