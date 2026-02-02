@@ -39,18 +39,10 @@ export const NewsProvider = ({ children }) => {
     const [videos, setVideos] = useState([
         { id: 1, title: "Crónica: El despertar de la IA en la industria local", views: "12k", duration: "3:45", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", category: "Tech & Futuro", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
     ]);
-    const [imageGallery, setImageGallery] = useState([
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1504711432869-efd5971ee14b?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1614680376593-902f74cc0d41?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=400',
-        'https://images.unsplash.com/photo-1544253109-c88ce53cc9d0?auto=format&fit=crop&q=80&w=400'
-    ]);
+    const [imageGallery, setImageGallery] = useState([]);
+    const [galleryTotal, setGalleryTotal] = useState(0);
+    const [galleryHasMore, setGalleryHasMore] = useState(false);
+    const [galleryLoading, setGalleryLoading] = useState(false);
     const [pharmacies, setPharmacies] = useState([]);
     const [pharmacyDuty, setPharmacyDuty] = useState([]);
     const [comments, setComments] = useState([]);
@@ -76,6 +68,7 @@ export const NewsProvider = ({ children }) => {
         enabled: true
     });
     const [weatherData, setWeatherData] = useState(null);
+    const [menuOrder, setMenuOrder] = useState([]); // Array of category names in display order
 
     // Initial fetch
     useEffect(() => {
@@ -304,6 +297,18 @@ export const NewsProvider = ({ children }) => {
                 });
                 setFooterSettings(footer);
 
+                // Menu order
+                if (data.menu_order) {
+                    try {
+                        const order = JSON.parse(data.menu_order);
+                        if (Array.isArray(order)) {
+                            setMenuOrder(order);
+                        }
+                    } catch (e) {
+                        console.warn('Invalid menu_order in settings');
+                    }
+                }
+
                 // Trigger daily increment check on load
                 fetch('/api/cron-increment');
             }
@@ -324,21 +329,38 @@ export const NewsProvider = ({ children }) => {
         }
     };
 
-    const fetchGallery = async () => {
+    const fetchGallery = async (search = '', append = false, limit = 20) => {
         try {
-            const res = await fetch('/api/gallery');
+            setGalleryLoading(true);
+            const offset = append ? imageGallery.length : 0;
+            const url = `/api/gallery?limit=${limit}&offset=${offset}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+            const res = await fetch(url);
             if (res.ok) {
                 const data = await res.json();
-                // Extract just the URLs from the gallery objects
-                const urls = data.map(img => img.url);
-                setImageGallery(urls);
+                const urls = data.images.map(img => img.url);
+                if (append) {
+                    setImageGallery(prev => [...prev, ...urls]);
+                } else {
+                    setImageGallery(urls);
+                }
+                setGalleryTotal(data.total);
+                setGalleryHasMore(data.hasMore);
             } else {
                 console.warn('Gallery API returned error status:', res.status);
             }
         } catch (err) {
-            // Silent fail - keep the default gallery images
-            console.warn('Failed to fetch gallery, using defaults:', err.message);
+            console.warn('Failed to fetch gallery:', err.message);
+        } finally {
+            setGalleryLoading(false);
         }
+    };
+
+    const loadMoreGallery = async (search = '', limit = 20) => {
+        await fetchGallery(search, true, limit);
+    };
+
+    const searchGallery = async (search, limit = 20) => {
+        await fetchGallery(search, false, limit);
     };
 
     const fetchPharmacies = async () => {
@@ -866,6 +888,23 @@ export const NewsProvider = ({ children }) => {
         return false;
     };
 
+    const updateMenuOrder = async (newOrder) => {
+        try {
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: 'menu_order', value: JSON.stringify(newOrder) })
+            });
+            if (res.ok) {
+                setMenuOrder(newOrder);
+                return true;
+            }
+        } catch (err) {
+            console.error('Failed to update menu order:', err);
+        }
+        return false;
+    };
+
     return (
         <NewsContext.Provider value={{
             news, addNews, deleteNews, updateNews, loading,
@@ -877,6 +916,7 @@ export const NewsProvider = ({ children }) => {
             ads, addAd, deleteAd, updateAd,
             videos, addVideo, deleteVideo, updateVideo,
             imageGallery, addToGallery, deleteFromGallery,
+            galleryTotal, galleryHasMore, galleryLoading, loadMoreGallery, searchGallery,
             pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
             pharmacyDuty, setDuty,
             comments, deleteComment, updateCommentStatus,
@@ -887,7 +927,8 @@ export const NewsProvider = ({ children }) => {
             reorderPharmacies,
             reorderAds,
             cityHeroImages, addCityHeroImage, deleteCityHeroImage,
-            weatherConfig, weatherData, updateWeatherConfig, fetchWeatherData
+            weatherConfig, weatherData, updateWeatherConfig, fetchWeatherData,
+            menuOrder, updateMenuOrder
         }}>
             {children}
         </NewsContext.Provider>

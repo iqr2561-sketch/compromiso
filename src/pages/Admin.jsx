@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNews } from '../context/NewsContext';
 import {
     Plus, Trash2, Edit3, Save, X, Image as ImageIcon, Zap, Trophy,
-    Newspaper, LayoutDashboard, Settings, Video,
+    Newspaper, LayoutDashboard, Settings, Video, Menu,
     LogOut, BarChart3, Users, Bell, Layers, Megaphone, Search, Filter,
     Upload, Globe, Grid, Crosshair, Calendar as CalendarIcon, MapPin, Phone, ArrowRight,
     ChevronLeft, ChevronRight, Clock, Cpu, Sparkles, Wand2, View, Sun, Moon, MessageSquare, MessageCircle, Eye, EyeOff, History, GripVertical, CloudSun, Activity, Lock, User
@@ -91,7 +91,7 @@ const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
 };
 
 const Admin = () => {
-    console.log("Admin Component Loaded - Version 4.9.11");
+    console.log("Admin Component Loaded - Version 4.9.12");
     const {
         news, addNews, deleteNews, updateNews,
         flashTickers, addTicker, deleteTicker, updateTicker,
@@ -100,6 +100,7 @@ const Admin = () => {
         ads, addAd, deleteAd, updateAd,
         videos, addVideo, deleteVideo, updateVideo,
         imageGallery, addToGallery, deleteFromGallery,
+        galleryTotal, galleryHasMore, galleryLoading, loadMoreGallery, searchGallery,
         pharmacies, addPharmacy, deletePharmacy, updatePharmacy,
         pharmacyDuty, setDuty,
         editionNumber, updateEdition,
@@ -112,7 +113,8 @@ const Admin = () => {
         reorderPharmacies,
         reorderAds,
         cityHeroImages, addCityHeroImage, deleteCityHeroImage,
-        weatherConfig, updateWeatherConfig, fetchWeatherData
+        weatherConfig, updateWeatherConfig, fetchWeatherData,
+        menuOrder, updateMenuOrder
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -141,7 +143,7 @@ const Admin = () => {
     const [settingsTab, setSettingsTab] = useState('edition');
     const [editionAutoIncrement, setEditionAutoIncrement] = useState(true);
     const [editionManualNumber, setEditionManualNumber] = useState('');
-    const [galleryInputRef, setGalleryInputRef] = useState(null); // Refactored to state if needed or kept as ref
+    const galleryInputRef = useRef(null);
     const fileInputRef = useRef(null);
     const galleryRef = useRef(null);
 
@@ -705,6 +707,7 @@ const Admin = () => {
         { id: 'ai-generator', label: 'Generador IA', icon: Sparkles },
         { id: 'users', label: 'Usuarios', icon: Users },
         { id: 'categories', label: 'Categorías', icon: Grid },
+        { id: 'menu-order', label: 'Menú Principal', icon: Menu },
         { id: 'comments', label: 'Comentarios', icon: MessageSquare },
         { id: 'ads', label: 'Publicidad', icon: View },
         { id: 'footer', label: 'Pie de Página', icon: Layers },
@@ -2637,6 +2640,58 @@ const Admin = () => {
                     {
                         activeTab === 'gallery' && (
                             <div className="flex flex-col gap-8">
+                                {/* Header with Search and Stats */}
+                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 p-6">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                                                <ImageIcon size={24} className="text-primary" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Galería de Imágenes</h3>
+                                                <p className="text-slate-500 font-bold text-xs">
+                                                    {galleryLoading ? 'Cargando...' : `${imageGallery.length} de ${galleryTotal} imágenes`}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 flex-1 max-w-md">
+                                            <div className="relative flex-1">
+                                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Buscar por nombre de imagen..."
+                                                    value={gallerySearch}
+                                                    onChange={(e) => setGallerySearch(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            searchGallery(gallerySearch);
+                                                        }
+                                                    }}
+                                                    className="w-full bg-slate-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary transition-all"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() => searchGallery(gallerySearch)}
+                                                disabled={galleryLoading}
+                                                className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/80 transition-all disabled:opacity-50"
+                                            >
+                                                Buscar
+                                            </button>
+                                            {gallerySearch && (
+                                                <button
+                                                    onClick={() => {
+                                                        setGallerySearch('');
+                                                        searchGallery('');
+                                                    }}
+                                                    className="px-4 py-3 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                                                >
+                                                    Limpiar
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Mass Upload Area */}
                                 <div
                                     className="bg-white dark:bg-[#11141b] rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 p-10 flex flex-col items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group cursor-pointer relative"
@@ -2662,44 +2717,209 @@ const Admin = () => {
                                 </div>
 
                                 {/* Gallery Grid */}
-                                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6">
-                                    {imageGallery.map((img, idx) => (
-                                        <div key={idx} className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden relative group shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
-                                            <div className="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-black/40">
-                                                <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
-
-                                                {/* Overlay Actions */}
-                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 pointer-events-none group-hover:pointer-events-auto">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigator.clipboard.writeText(img);
-                                                            showToast("URL copiada", "success");
-                                                        }}
-                                                        className="w-full px-3 py-2 bg-white text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
-                                                    >
-                                                        Copiar URL
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            showConfirm(
-                                                                'Eliminar Imagen',
-                                                                '¿Deseas eliminar esta imagen de la galería permanentemente?',
-                                                                () => deleteFromGallery(img)
-                                                            );
-                                                        }}
-                                                        className="p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75 shadow-lg"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="p-3 bg-white dark:bg-[#11141b] border-t border-gray-100 dark:border-white/5 mt-auto">
-                                                <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 truncate uppercase tracking-tighter">Imagen {idx + 1}</p>
-                                            </div>
+                                {galleryLoading && imageGallery.length === 0 ? (
+                                    <div className="flex items-center justify-center py-20">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                            <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Cargando galería...</p>
                                         </div>
-                                    ))}
+                                    </div>
+                                ) : imageGallery.length === 0 ? (
+                                    <div className="flex items-center justify-center py-20">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <ImageIcon size={48} className="text-slate-300 dark:text-slate-700" />
+                                            <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">
+                                                {gallerySearch ? 'No se encontraron imágenes' : 'La galería está vacía'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6">
+                                            {imageGallery.map((img, idx) => (
+                                                <div key={idx} className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden relative group shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
+                                                    <div className="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-black/40">
+                                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" loading="lazy" />
+
+                                                        {/* Overlay Actions */}
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 pointer-events-none group-hover:pointer-events-auto">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    navigator.clipboard.writeText(img);
+                                                                    showToast("URL copiada", "success");
+                                                                }}
+                                                                className="w-full px-3 py-2 bg-white text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+                                                            >
+                                                                Copiar URL
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    showConfirm(
+                                                                        'Eliminar Imagen',
+                                                                        '¿Deseas eliminar esta imagen de la galería permanentemente?',
+                                                                        () => deleteFromGallery(img)
+                                                                    );
+                                                                }}
+                                                                className="p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75 shadow-lg"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-3 bg-white dark:bg-[#11141b] border-t border-gray-100 dark:border-white/5 mt-auto">
+                                                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 truncate uppercase tracking-tighter">Imagen {idx + 1}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Load More Button */}
+                                        {galleryHasMore && (
+                                            <div className="flex justify-center pt-4">
+                                                <button
+                                                    onClick={() => loadMoreGallery(gallerySearch)}
+                                                    disabled={galleryLoading}
+                                                    className="px-10 py-4 bg-primary text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-primary/80 transition-all disabled:opacity-50 flex items-center gap-3 shadow-xl shadow-primary/20"
+                                                >
+                                                    {galleryLoading ? (
+                                                        <>
+                                                            <div className="size-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                            Cargando...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Plus size={20} />
+                                                            Cargar Más Imágenes
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Stats */}
+                                        <div className="text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                                            Mostrando {imageGallery.length} de {galleryTotal} imágenes
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )
+                    }
+
+                    {/* Menu Order Tab */}
+                    {
+                        activeTab === 'menu-order' && (
+                            <div className="flex flex-col gap-8">
+                                {/* Header */}
+                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 p-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                                            <Menu size={24} className="text-primary" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-slate-900 dark:text-white font-black text-lg uppercase italic tracking-tighter">Orden del Menú Principal</h3>
+                                            <p className="text-slate-500 font-bold text-xs">
+                                                Arrastra las categorías para reordenarlas en el menú de navegación
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Menu Items Reorder */}
+                                <div className="bg-white dark:bg-[#11141b] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden">
+                                    <div className="p-6 border-b border-gray-200 dark:border-white/5 bg-slate-50 dark:bg-[#14171d]">
+                                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tighter">Categorías del Menú</h4>
+                                        <p className="text-xs text-slate-500 mt-1">El orden aquí se reflejará en el menú de navegación del sitio</p>
+                                    </div>
+
+                                    <Reorder.Group
+                                        axis="y"
+                                        values={(() => {
+                                            const excludedCategories = ['¿Te Acordás Dolores?', 'Te Acordás Dolores', 'TE ACORDÁS DOLORES???', 'Memoria', 'Tapa del día'];
+                                            let parents = categories.filter(c =>
+                                                !c.parent_id &&
+                                                !excludedCategories.includes(c.name) &&
+                                                !c.name.toUpperCase().includes('TE ACORDÁS DOLORES')
+                                            );
+
+                                            if (menuOrder && menuOrder.length > 0) {
+                                                parents = parents.sort((a, b) => {
+                                                    const idxA = menuOrder.indexOf(a.name);
+                                                    const idxB = menuOrder.indexOf(b.name);
+                                                    return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+                                                });
+                                            }
+                                            return parents.map(p => p.name);
+                                        })()}
+                                        onReorder={async (newOrder) => {
+                                            const success = await updateMenuOrder(newOrder);
+                                            if (success) {
+                                                showToast("Orden del menú actualizado", "success");
+                                            } else {
+                                                showToast("Error al guardar el orden", "error");
+                                            }
+                                        }}
+                                        className="divide-y divide-gray-100 dark:divide-white/5"
+                                    >
+                                        {(() => {
+                                            const excludedCategories = ['¿Te Acordás Dolores?', 'Te Acordás Dolores', 'TE ACORDÁS DOLORES???', 'Memoria', 'Tapa del día'];
+                                            let parents = categories.filter(c =>
+                                                !c.parent_id &&
+                                                !excludedCategories.includes(c.name) &&
+                                                !c.name.toUpperCase().includes('TE ACORDÁS DOLORES')
+                                            );
+
+                                            if (menuOrder && menuOrder.length > 0) {
+                                                parents = parents.sort((a, b) => {
+                                                    const idxA = menuOrder.indexOf(a.name);
+                                                    const idxB = menuOrder.indexOf(b.name);
+                                                    return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+                                                });
+                                            }
+
+                                            return parents.map((cat, idx) => (
+                                                <Reorder.Item
+                                                    key={cat.name}
+                                                    value={cat.name}
+                                                    className="flex items-center gap-4 px-6 py-4 bg-white dark:bg-[#11141b] cursor-grab active:cursor-grabbing hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-4 flex-1">
+                                                        <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary text-xs font-black">
+                                                            {idx + 1}
+                                                        </div>
+                                                        <GripVertical size={20} className="text-slate-300 dark:text-slate-600" />
+                                                        <span className="font-bold text-slate-900 dark:text-white">{cat.name}</span>
+                                                        {categories.filter(c => c.parent_id === cat.id).length > 0 && (
+                                                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-white/10 rounded-full text-[9px] font-black text-slate-500 uppercase">
+                                                                {categories.filter(c => c.parent_id === cat.id).length} subcategorías
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                                                        Posición {idx + 1}
+                                                    </div>
+                                                </Reorder.Item>
+                                            ));
+                                        })()}
+                                    </Reorder.Group>
+                                </div>
+
+                                {/* Info Note */}
+                                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-500/20 p-6">
+                                    <div className="flex items-start gap-4">
+                                        <div className="size-10 rounded-xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center shrink-0">
+                                            <Activity size={20} className="text-blue-600 dark:text-blue-400" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-blue-900 dark:text-blue-300 text-sm uppercase tracking-tighter">Información</h4>
+                                            <p className="text-blue-700 dark:text-blue-400 text-xs mt-1">
+                                                El elemento "Inicio" siempre aparecerá primero en el menú y no puede ser reordenado.
+                                                Las subcategorías se muestran dentro de su categoría padre y se ordenan automáticamente.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -3666,77 +3886,121 @@ const Admin = () => {
                             <div className="p-8 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-primary/10 to-transparent">
                                 <div>
                                     <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Galería de Medios</h2>
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Selecciona una imagen almacenada</p>
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                                        {galleryLoading ? 'Buscando en la nube...' : `Mostrando ${imageGallery.length} de ${galleryTotal} imágenes`}
+                                    </p>
                                 </div>
                                 <button onClick={() => setShowGallery(false)} className="size-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-primary transition-all">
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="p-6 border-b border-white/5 bg-black/40">
-                                <input
-                                    type="text"
-                                    placeholder="Buscar imagen..."
-                                    value={gallerySearch}
-                                    onChange={(e) => setGallerySearch(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-primary transition-all text-sm"
-                                />
+                            <div className="p-6 border-b border-white/5 bg-black/40 flex gap-4">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                    <input
+                                        type="text"
+                                        placeholder="Escribe el nombre de la imagen y presiona Enter..."
+                                        value={gallerySearch}
+                                        onChange={(e) => setGallerySearch(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                searchGallery(gallerySearch, 10);
+                                            }
+                                        }}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-500 outline-none focus:border-primary transition-all text-sm"
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => searchGallery(gallerySearch, 10)}
+                                    className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/80 transition-all flex items-center gap-2"
+                                >
+                                    <Search size={16} /> Buscar
+                                </button>
                             </div>
 
-                            <div className="p-8 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                {imageGallery
-                                    .filter((img) => img.toLowerCase().includes(gallerySearch.toLowerCase()))
-                                    .map((img, idx) => (
-                                        <div
-                                            key={idx}
-                                            onClick={() => {
-                                                if (galleryTarget === 'cover') {
-                                                    updateCoverPage(img, coverPage.date).then(ok => {
-                                                        if (ok) showToast("Tapa del día actualizada", "success");
-                                                    });
-                                                } else if (galleryTarget === 'ad') {
-                                                    setFormData({ ...formData, image: img });
-                                                } else if (galleryTarget === 'logo') {
-                                                    updateFooterSettings({ logo: img });
-                                                } else if (galleryTarget === 'qr') {
-                                                    updateFooterSettings({ qr_image: img });
-                                                } else if (galleryTarget === 'te_acordas') {
-                                                    updateFooterSettings({ te_acordas_bg: img });
-                                                } else if (galleryTarget === 'newsMain') {
-                                                    setFormData({ ...formData, image: img });
-                                                } else if (galleryTarget === 'categoryBg') {
-                                                    setFormData({ ...formData, bgImage: img, bg_image: img });
-                                                } else if (galleryTarget === 'cityHero') {
-                                                    addCityHeroImage(img).then(ok => {
-                                                        if (ok) showToast("Imagen agregada a portada", "success");
-                                                    });
-                                                } else {
-                                                    updateBlock(galleryTarget, img);
-                                                }
-                                                setShowGallery(false);
-                                            }}
-                                            className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col hover:border-primary/50"
-                                        >
-                                            <div className="w-full aspect-square relative bg-black/40">
-                                                <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="gallery" loading="lazy" />
-                                                <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                                    <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
-                                                </div>
-                                            </div>
-                                            <div className="p-3 bg-black/40 mt-auto border-t border-white/5">
-                                                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest truncate">Img {idx + 1}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                {imageGallery.length === 0 && (
-                                    <div className="col-span-full py-20 text-center flex flex-col items-center gap-4">
-                                        <ImageIcon size={48} className="text-slate-800" />
-                                        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">La galería está vacía</p>
+                            <div className="p-8 overflow-y-auto min-h-[400px]">
+                                {galleryLoading && imageGallery.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                        <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Cargando medios...</p>
                                     </div>
+                                ) : (
+                                    <>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                            {imageGallery.map((img, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => {
+                                                        if (galleryTarget === 'cover') {
+                                                            updateCoverPage(img, coverPage.date).then(ok => {
+                                                                if (ok) showToast("Tapa del día actualizada", "success");
+                                                            });
+                                                        } else if (galleryTarget === 'ad') {
+                                                            setFormData({ ...formData, image: img });
+                                                        } else if (galleryTarget === 'logo') {
+                                                            updateFooterSettings({ logo: img });
+                                                        } else if (galleryTarget === 'qr') {
+                                                            updateFooterSettings({ qr_image: img });
+                                                        } else if (galleryTarget === 'te_acordas') {
+                                                            updateFooterSettings({ te_acordas_bg: img });
+                                                        } else if (galleryTarget === 'newsMain') {
+                                                            setFormData({ ...formData, image: img });
+                                                        } else if (galleryTarget === 'categoryBg') {
+                                                            setFormData({ ...formData, bgImage: img, bg_image: img });
+                                                        } else if (galleryTarget === 'cityHero') {
+                                                            addCityHeroImage(img).then(ok => {
+                                                                if (ok) showToast("Imagen agregada a portada", "success");
+                                                            });
+                                                        } else {
+                                                            updateBlock(galleryTarget, img);
+                                                        }
+                                                        setShowGallery(false);
+                                                    }}
+                                                    className="bg-white dark:bg-black/20 rounded-2xl overflow-hidden border border-white/5 cursor-pointer group relative shadow-lg hover:shadow-primary/5 transition-all flex flex-col hover:border-primary/50"
+                                                >
+                                                    <div className="w-full aspect-square relative bg-black/40">
+                                                        <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="gallery" loading="lazy" />
+                                                        <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                            <div className="px-4 py-2 bg-white text-primary rounded-xl font-black text-[9px] uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Seleccionar</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-3 bg-black/40 mt-auto border-t border-white/5">
+                                                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest truncate">Img {idx + 1}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {imageGallery.length === 0 && !galleryLoading && (
+                                            <div className="col-span-full py-20 text-center flex flex-col items-center gap-4 text-slate-500">
+                                                <ImageIcon size={48} className="opacity-20" />
+                                                <p className="font-bold uppercase text-[10px] tracking-[0.2em]">No se encontraron imágenes</p>
+                                            </div>
+                                        )}
+
+                                        {galleryHasMore && (
+                                            <div className="flex justify-center mt-10 mb-4">
+                                                <button
+                                                    onClick={() => loadMoreGallery(gallerySearch, 10)}
+                                                    disabled={galleryLoading}
+                                                    className="px-10 py-4 bg-primary/10 text-primary border border-primary/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center gap-3 disabled:opacity-50"
+                                                >
+                                                    {galleryLoading ? (
+                                                        <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Plus size={16} />
+                                                    )}
+                                                    Cargar Más Imágenes
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
 
-                            <div className="p-6 bg-[#0a0c10] border-t border-white/5 flex justify-end">
+                            <div className="p-6 bg-[#0a0c10] border-t border-white/5 flex justify-between items-center px-10">
+                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Total en galería: {galleryTotal} archivos</span>
                                 <button onClick={() => setShowGallery(false)} className="px-8 py-3 bg-white/5 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">Cerrar Galería</button>
                             </div>
                         </motion.div>

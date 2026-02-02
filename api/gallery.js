@@ -42,9 +42,48 @@ export default async function handler(req, res) {
         // Default: Standard Gallery
         switch (method) {
             case 'GET': {
-                const snapshot = await galleryCol.orderBy('createdAt', 'desc').get();
-                const images = snapshot.docs.map(doc => formatFirestoreData(doc));
-                res.status(200).json(images);
+                const { limit, offset, search } = req.query;
+                const pageLimit = parseInt(limit) || 20;
+                const pageOffset = parseInt(offset) || 0;
+
+                let query = galleryCol.orderBy('createdAt', 'desc');
+
+                // For search, we need to get all and filter (Firestore doesn't support LIKE)
+                if (search) {
+                    const allSnapshot = await query.get();
+                    const allImages = allSnapshot.docs.map(doc => formatFirestoreData(doc));
+
+                    // Filter by filename (case-insensitive)
+                    const searchLower = search.toLowerCase();
+                    const filtered = allImages.filter(img =>
+                        (img.filename && img.filename.toLowerCase().includes(searchLower)) ||
+                        (img.alt_text && img.alt_text.toLowerCase().includes(searchLower)) ||
+                        (img.url && img.url.toLowerCase().includes(searchLower))
+                    );
+
+                    // Paginate the filtered results
+                    const paginated = filtered.slice(pageOffset, pageOffset + pageLimit);
+
+                    res.status(200).json({
+                        images: paginated,
+                        total: filtered.length,
+                        hasMore: (pageOffset + pageLimit) < filtered.length
+                    });
+                } else {
+                    // Get total count for pagination info
+                    const countSnapshot = await galleryCol.count().get();
+                    const total = countSnapshot.data().count;
+
+                    // Apply pagination
+                    const snapshot = await query.limit(pageLimit).offset(pageOffset).get();
+                    const images = snapshot.docs.map(doc => formatFirestoreData(doc));
+
+                    res.status(200).json({
+                        images: images,
+                        total: total,
+                        hasMore: (pageOffset + pageLimit) < total
+                    });
+                }
                 break;
             }
             case 'POST': {
