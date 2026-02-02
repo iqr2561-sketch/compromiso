@@ -16,7 +16,6 @@ export default async function handler(req, res) {
 
     try {
         // Get Gemini API key from settings or environment
-        // Get Gemini API key from settings or environment
         let apiKey = process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
@@ -38,9 +37,13 @@ export default async function handler(req, res) {
             });
         }
 
-        // Generate news content using Gemini
-        const selectedModel = model || 'gemini-1.5-flash';
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+        // --- NEW LOGIC: FALLBACK CHAIN ---
+        // Generar lista de modelos a probar en orden
+        const modelsToTry = [];
+        if (model) modelsToTry.push(model); // El usuario eligió uno
+        if (!modelsToTry.includes('gemini-1.5-flash')) modelsToTry.push('gemini-1.5-flash'); // Fallback 1: Flash (Rápido)
+        if (!modelsToTry.includes('gemini-pro')) modelsToTry.push('gemini-pro'); // Fallback 2: Legacy (Estable)
+        if (!modelsToTry.includes('gemini-1.0-pro')) modelsToTry.push('gemini-1.0-pro'); // Fallback 3: Alias específico
 
         const systemPrompt = `Eres un periodista profesional de un diario local de Argentina llamado "Compromiso". 
 Tu tarea es generar noticias completas y bien estructuradas basadas en el tema proporcionado.
@@ -60,31 +63,17 @@ Responde SOLO en formato JSON con esta estructura exacta:
     "summary": "Breve resumen de 2 líneas para la vista previa"
 }`;
 
-        let geminiResponse = await fetch(geminiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `${systemPrompt}\n\nTEMA A DESARROLLAR: ${prompt}\nCATEGORÍA: ${category || 'General'}`
-                    }]
-                }],
-                generationConfig: {
-                    temperature: 0.8,
-                    maxOutputTokens: 2048
-                }
-            })
-        });
+        let geminiResponse = null;
+        let lastError = null;
+        let successfulModel = '';
+        let geminiData = null;
 
-        if (!geminiResponse.ok) {
-            const errorData = await geminiResponse.json();
-
-            // Si el error es relacionado con el modelo y no estamos usando flash, reintentar con flash
-            if (selectedModel !== 'gemini-1.5-flash' && (geminiResponse.status === 404 || geminiResponse.status === 400)) {
-                console.log(`Modelo ${selectedModel} falló, reintentando con gemini-1.5-flash...`);
-                const flashUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-                const retryResponse = await fetch(flashUrl, {
+        // Bucle de intentos
+        for (const modelToUse of modelsToTry) {
+            console.log(`Intentando generar con modelo: ${modelToUse}`);
+            try {
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:generateContent?key=${apiKey}`;
+                const response = await fetch(geminiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -100,31 +89,41 @@ Responde SOLO en formato JSON con esta estructura exacta:
                     })
                 });
 
-                if (retryResponse.ok) {
-                    // Si el retry funcionó, usamos esa respuesta y seguimos como si nada
-                    geminiResponse = retryResponse; // Sobreescribimos la variable (necesitamos cambiar const a let arriba)
+                if (response.ok) {
+                    geminiData = await response.json();
+                    if (geminiData.candidates?.[0]?.content?.parts?.[0]?.text) {
+                        geminiResponse = response; // Marcamos éxito
+                        successfulModel = modelToUse;
+                        break; // Éxito total, salimos del bucle
+                    } else {
+                        // Respuesta OK pero sin texto (vacía/bloqueada)
+                        lastError = { error: { message: `Modelo ${modelToUse} devolvió respuesta vacía (posible filtro de seguridad)` } };
+                        console.warn(`Modelo ${modelToUse} vacío:`, geminiData);
+                    }
                 } else {
-                    // Si también falla flash, devolvemos el error original
-                    console.error('Gemini API Error (Retry failed):', await retryResponse.json());
-                    return res.status(500).json({
-                        error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
-                        details: errorData
-                    });
+                    const errorJson = await response.json();
+                    lastError = errorJson;
+                    console.warn(`Modelo ${modelToUse} falló:`, errorJson?.error?.message);
+                    // Continuar al siguiente modelo
                 }
-            } else {
-                console.error('Gemini API Error:', errorData);
-                return res.status(500).json({
-                    error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
-                    details: errorData
-                });
+            } catch (err) {
+                console.error(`Error de red con modelo ${modelToUse}:`, err);
+                lastError = { error: { message: err.message } };
             }
         }
 
-        const geminiData = await geminiResponse.json();
+        if (!geminiResponse || !geminiData) {
+            console.error('Todos los modelos fallaron. Último error:', lastError);
+            return res.status(500).json({
+                error: `Error IA: Todos los modelos fallaron. Último error: ${lastError?.error?.message || 'Desconocido'}`,
+                details: lastError
+            });
+        }
+
         const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!generatedText) {
-            return res.status(500).json({ error: 'No content generated' });
+            return res.status(500).json({ error: 'No content generated (Empty response)' });
         }
 
         // Parse the JSON response from Gemini
@@ -195,7 +194,8 @@ No text overlays, no watermarks.`;
                 summary: parsedContent.summary,
                 image: imageUrl,
                 category: category || 'Locales',
-                generatedAt: new Date().toISOString()
+                generatedAt: new Date().toISOString(),
+                modelUsed: successfulModel
             }
         });
 
