@@ -953,11 +953,14 @@ const Admin = () => {
                                 {group.title && (
                                     <button
                                         onClick={() => toggleGroup(group.title)}
-                                        className="w-full flex items-center justify-between px-4 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400/80 dark:text-slate-500/80 select-none hover:text-primary transition-colors group/header"
+                                        className="w-full flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-slate-100/50 dark:bg-white/5 text-[10px] font-black uppercase tracking-[0.1em] text-slate-600 dark:text-slate-300 select-none hover:bg-slate-200 dark:hover:bg-white/10 hover:text-primary transition-all group/header border border-transparent hover:border-primary/20"
                                     >
-                                        <span>{group.title}</span>
-                                        <span className="text-slate-300 group-hover/header:text-primary transition-colors">
-                                            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1 h-3 rounded-full bg-slate-300 dark:bg-slate-600 group-hover/header:bg-primary transition-colors"></div>
+                                            <span>{group.title}</span>
+                                        </div>
+                                        <span className={`text-slate-400 group-hover/header:text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                                            <ChevronDown size={14} strokeWidth={2.5} />
                                         </span>
                                     </button>
                                 )}
