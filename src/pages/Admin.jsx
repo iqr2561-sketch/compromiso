@@ -90,6 +90,13 @@ const AdReorderItem = ({ ad, handleEdit, deleteAd, showConfirm }) => {
     );
 };
 
+const sidebarStructure = [
+    { title: 'Principal', items: ['dashboard'] },
+    { title: 'Gestión Editorial', items: ['news', 'cover', 'categories', 'ai-generator', 'gallery', 'comments'] },
+    { title: 'Comercial & Utilidades', items: ['ads', 'pharmacies'] },
+    { title: 'Sistema', items: ['settings', 'users', 'footer', 'menu-order'] }
+];
+
 const Admin = () => {
     console.log("Admin Component Loaded - Version 4.9.12");
     const {
@@ -118,6 +125,20 @@ const Admin = () => {
     } = useNews();
 
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [expandedGroups, setExpandedGroups] = useState({});
+
+    // Auto-expand group containing active tab
+    useEffect(() => {
+        const parentGroup = sidebarStructure.find(g => g.items.includes(activeTab));
+        if (parentGroup && parentGroup.title) {
+            setExpandedGroups(prev => ({ ...prev, [parentGroup.title]: true }));
+        }
+    }, [activeTab]);
+
+    const toggleGroup = (title) => {
+        setExpandedGroups(prev => ({ ...prev, [title]: !prev[title] }));
+    };
+
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -717,12 +738,7 @@ const Admin = () => {
         { id: 'settings', label: 'Ajustes', icon: Settings },
     ];
 
-    const sidebarStructure = [
-        { title: 'Principal', items: ['dashboard'] },
-        { title: 'Gestión Editorial', items: ['news', 'cover', 'categories', 'ai-generator', 'gallery', 'comments'] },
-        { title: 'Comercial & Utilidades', items: ['ads', 'pharmacies'] },
-        { title: 'Sistema', items: ['settings', 'users', 'footer', 'menu-order'] }
-    ];
+
 
     const upcomingDuties = pharmacyDuty
         .filter(d => d.date >= new Date().toISOString().split('T')[0])
@@ -929,47 +945,65 @@ const Admin = () => {
                 </div>
 
                 <nav className="flex flex-col gap-1 overflow-y-auto pr-2 custom-scrollbar">
-                    {sidebarStructure.map((group, gIdx) => (
-                        <div key={gIdx} className="mb-6 last:mb-0">
-                            {group.title && (
-                                <h3 className="px-4 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400/80 dark:text-slate-500/80 select-none">
-                                    {group.title}
-                                </h3>
-                            )}
-                            <div className="flex flex-col gap-1">
-                                {group.items.map(itemId => {
-                                    const item = menuItems.find(m => m.id === itemId);
-                                    if (!item) return null;
-                                    return (
-                                        <button
-                                            key={item.id}
-                                            onClick={() => {
-                                                setActiveTab(item.id);
-                                                resetForms();
-                                                if (item.id === 'cover') {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        image: coverPage.image,
-                                                        date: coverPage.date
-                                                    }));
-                                                }
-                                            }}
-                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all relative ${activeTab === item.id
-                                                ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
-                                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
-                                                }`}
+                    {sidebarStructure.map((group, gIdx) => {
+                        const isExpanded = expandedGroups[group.title] || (!group.title && true);
+                        return (
+                            <div key={gIdx} className="mb-4 last:mb-0">
+                                {group.title && (
+                                    <button
+                                        onClick={() => toggleGroup(group.title)}
+                                        className="w-full flex items-center justify-between px-4 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400/80 dark:text-slate-500/80 select-none hover:text-primary transition-colors group/header"
+                                    >
+                                        <span>{group.title}</span>
+                                        <span className="text-slate-300 group-hover/header:text-primary transition-colors">
+                                            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                        </span>
+                                    </button>
+                                )}
+                                <AnimatePresence>
+                                    {isExpanded && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="overflow-hidden flex flex-col gap-1"
                                         >
-                                            <item.icon size={18} />
-                                            <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
-                                            {activeTab === item.id && (
-                                                <motion.div layoutId="activeTabSidebar" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
-                                            )}
-                                        </button>
-                                    );
-                                })}
+                                            {group.items.map(itemId => {
+                                                const item = menuItems.find(m => m.id === itemId);
+                                                if (!item) return null;
+                                                return (
+                                                    <button
+                                                        key={item.id}
+                                                        onClick={() => {
+                                                            setActiveTab(item.id);
+                                                            resetForms();
+                                                            if (item.id === 'cover') {
+                                                                setFormData(prev => ({
+                                                                    ...prev,
+                                                                    image: coverPage.image,
+                                                                    date: coverPage.date
+                                                                }));
+                                                            }
+                                                        }}
+                                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all relative ${activeTab === item.id
+                                                            ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg'
+                                                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white border border-transparent'
+                                                            }`}
+                                                    >
+                                                        <item.icon size={18} />
+                                                        <span className="uppercase tracking-widest text-[10px]">{item.label}</span>
+                                                        {activeTab === item.id && (
+                                                            <motion.div layoutId="activeTabSidebar" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </nav>
 
                 <div className="mt-auto flex flex-col gap-2">
@@ -3274,7 +3308,30 @@ const Admin = () => {
                                                         {item.isChild && (
                                                             <div className="absolute left-8 top-1/2 -translate-y-1/2 w-8 h-12 border-l-2 border-b-2 border-slate-200 dark:border-white/10 rounded-bl-xl"></div>
                                                         )}
-                                                        <div className="flex items-center gap-4">
+                                                        <motion.div
+                                                            className="flex items-center gap-4 cursor-grab active:cursor-grabbing touch-pan-y"
+                                                            drag={activeTab === 'categories' ? "x" : false}
+                                                            dragConstraints={{ left: 0, right: 0 }}
+                                                            dragElastic={0.1}
+                                                            onDragEnd={async (e, info) => {
+                                                                if (activeTab !== 'categories') return;
+
+                                                                // Deslizar a derecha -> Indentar
+                                                                if (info.offset.x > 50 && !item.isChild && index > 0) {
+                                                                    const prev = items[index - 1];
+                                                                    const newParentId = prev.isChild ? prev.parent_id : prev.id;
+                                                                    if (newParentId === item.id) return;
+                                                                    await updateCategory(item.id, { parent_id: newParentId });
+                                                                    fetchNews(true);
+                                                                }
+
+                                                                // Deslizar a izquierda -> Desindentar
+                                                                if (info.offset.x < -50 && item.isChild) {
+                                                                    await updateCategory(item.id, { parent_id: null });
+                                                                    fetchNews(true);
+                                                                }
+                                                            }}
+                                                        >
                                                             {activeTab === 'categories' && (
                                                                 <div className="flex gap-1 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                     {item.isChild ? (
@@ -3337,7 +3394,7 @@ const Admin = () => {
                                                                     {item.active === true && <span className="text-[7px] bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded font-black tracking-widest uppercase">Activo</span>}
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </motion.div>
                                                     </td>
                                                     <td className="px-8 py-6">
                                                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.date || item.time || 'Activado'}</span>
