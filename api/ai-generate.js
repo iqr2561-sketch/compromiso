@@ -8,7 +8,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { prompt, generateImage, category } = req.body;
+    const { prompt, generateImage, category, model } = req.body;
 
     if (!prompt) {
         return res.status(400).json({ error: 'Prompt is required' });
@@ -39,7 +39,8 @@ export default async function handler(req, res) {
         }
 
         // Generate news content using Gemini
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const selectedModel = model || 'gemini-1.5-flash';
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
 
         const systemPrompt = `Eres un periodista profesional de un diario local de Argentina llamado "Compromiso". 
 Tu tarea es generar noticias completas y bien estructuradas basadas en el tema proporcionado.
@@ -79,8 +80,8 @@ Responde SOLO en formato JSON con esta estructura exacta:
             const errorData = await geminiResponse.json();
             console.error('Gemini API Error:', errorData);
             return res.status(500).json({
-                error: 'Error generating content',
-                details: errorData.error?.message || 'Unknown Gemini error'
+                error: `Error IA: ${errorData.error?.message || 'Error desconocido'}`,
+                details: errorData
             });
         }
 

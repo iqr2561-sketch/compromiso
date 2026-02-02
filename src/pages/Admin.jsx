@@ -509,7 +509,8 @@ const Admin = () => {
                 body: JSON.stringify({
                     prompt: aiGeneratorData.prompt,
                     category: aiGeneratorData.category,
-                    generateImage: aiGeneratorData.generateImage
+                    generateImage: aiGeneratorData.generateImage,
+                    model: aiConfig.model
                 })
             });
 
