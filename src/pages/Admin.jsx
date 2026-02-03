@@ -564,31 +564,67 @@ const Admin = () => {
         setAiGeneratedContent(null);
 
         try {
-            const res = await fetch('/api/ai-generate', {
+            // PASO 1: Generar sólo TEXTO (Más seguro y rápido)
+            showToast("Redactando noticia...", "info");
+            const textRes = await fetch('/api/ai-generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     prompt: aiGeneratorData.prompt,
                     category: aiGeneratorData.category,
-                    generateImage: aiGeneratorData.generateImage,
+                    generateImage: false, // Forzar solo texto primero
                     model: aiConfig.model,
-                    apiKey: aiConfig.apiKey // Enviar la clave actual para asegurar que use la nueva
+                    apiKey: aiConfig.apiKey
                 })
             });
 
-            const data = await res.json();
+            const textData = await textRes.json();
 
-            if (data.success) {
-                setAiGeneratedContent(data.data);
-                showToast("¡Noticia generada con éxito!", "success");
-            } else {
-                setAiError(data.error || data.message || 'Error al generar contenido');
-                showToast(data.error || "Error al generar contenido", "error");
+            if (!textData.success) {
+                throw new Error(textData.error || textData.message || 'Fallo al generar texto');
             }
+
+            let finalContent = textData.data;
+
+            // PASO 2: Generar IMAGEN (Si se solicitó)
+            if (aiGeneratorData.generateImage) {
+                try {
+                    showToast("Creando imagen exclusiva...", "info");
+                    const imgRes = await fetch('/api/ai-generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            prompt: finalContent.title, // Usar el título generado como prompt
+                            category: finalContent.category,
+                            onlyImage: true,
+                            model: aiConfig.model,
+                            apiKey: aiConfig.apiKey
+                        })
+                    });
+
+                    const imgData = await imgRes.json();
+                    if (imgData.success && imgData.data.image) {
+                        finalContent.image = imgData.data.image;
+                        showToast("¡Noticia e imagen generadas!", "success");
+                    } else {
+                        // Si falla la imagen, avisamos pero NO borramos el texto
+                        showToast("Noticia lista, pero la imagen falló (intenta otra Key)", "warning");
+                    }
+                } catch (imgError) {
+                    console.error("Error generando imagen:", imgError);
+                    showToast("Generamos el texto, pero la imagen dio error", "warning");
+                }
+            } else {
+                showToast("¡Noticia generada con éxito!", "success");
+            }
+
+            // Guardar resultado final (con o sin imagen)
+            setAiGeneratedContent(finalContent);
+
         } catch (err) {
             console.error('AI Generation error:', err);
-            setAiError('Error de conexión con el servidor');
-            showToast("Error de conexión", "error");
+            setAiError(err.message || 'Error de conexión con el servidor');
+            showToast(err.message || "Error fatal al generar", "error");
         } finally {
             setIsAiGenerating(false);
         }
@@ -1231,13 +1267,6 @@ const Admin = () => {
                                                                         if (src === 'gallery') { setGalleryTarget('newsMain'); setShowGallery(true); }
                                                                     }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
                                                                 ))}
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={handleGenerateImageOnly}
-                                                                    className="flex-1 py-3 bg-gradient-to-r from-accent-purple/10 to-accent-pink/10 text-accent-pink border border-accent-pink/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-accent-pink hover:text-white transition-all flex items-center justify-center gap-1 group/aibtn"
-                                                                >
-                                                                    <Sparkles size={10} className="group-hover/aibtn:animate-pulse" /> IA
-                                                                </button>
                                                             </div>
                                                             {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
                                                             {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
