@@ -8,15 +8,15 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { prompt, generateImage, category, model } = req.body;
+    const { prompt, generateImage, category, model, apiKey: providedApiKey } = req.body;
 
     if (!prompt) {
         return res.status(400).json({ error: 'Prompt is required' });
     }
 
     try {
-        // Get Gemini API key from settings or environment
-        let apiKey = process.env.GEMINI_API_KEY;
+        // Get Gemini API key: prioritize provided key (for testing), then env, then settings
+        let apiKey = providedApiKey || process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
             try {

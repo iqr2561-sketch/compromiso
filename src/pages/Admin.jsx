@@ -171,7 +171,8 @@ const Admin = () => {
                 body: JSON.stringify({
                     prompt: 'Solo di "OK" si recibes esto.',
                     model: aiConfig.model,
-                    category: 'Test'
+                    category: 'Test',
+                    apiKey: aiConfig.apiKey
                 })
             });
 
