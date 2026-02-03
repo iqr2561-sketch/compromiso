@@ -520,6 +520,39 @@ const Admin = () => {
     };
 
     // AI Content Generation
+    const handleGenerateImageOnly = async () => {
+        if (!formData?.title) {
+            showToast("Escribe un título para la noticia primero", "error");
+            return;
+        }
+
+        showToast("Generando imagen con IA...", "info");
+        try {
+            const res = await fetch('/api/ai-generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: formData.title,
+                    category: formData.category || 'General',
+                    onlyImage: true,
+                    model: aiConfig.model,
+                    apiKey: aiConfig.apiKey // Enviar clave actual
+                })
+            });
+
+            const data = await res.json();
+            if (data.success && data.data.image) {
+                setFormData(prev => ({ ...prev, image: data.data.image }));
+                showToast("¡Imagen generada con éxito!", "success");
+            } else {
+                throw new Error(data.error || 'Fallo desconocido');
+            }
+        } catch (error) {
+            console.error(error);
+            showToast(`Error al generar imagen: ${error.message}`, "error");
+        }
+    };
+
     const handleAiGenerate = async () => {
         if (!aiGeneratorData.prompt.trim()) {
             showToast("Por favor, escribe un tema para generar la noticia", "error");
@@ -1520,6 +1553,14 @@ const Admin = () => {
                                                                 className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all shadow-sm"
                                                             >
                                                                 Galería
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleGenerateImageOnly}
+                                                                className="flex-1 py-3 bg-gradient-to-r from-primary/10 to-accent-purple/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 group/aibtn"
+                                                            >
+                                                                <Sparkles size={12} className="group-hover/aibtn:animate-pulse" />
+                                                                Generar IA
                                                             </button>
                                                         </div>
                                                     </div>
@@ -3948,6 +3989,17 @@ const Admin = () => {
                                                                 Probar Conexión IA
                                                             </>
                                                         )}
+                                                    </button>
+                                                    <button
+                                                        onClick={async () => {
+                                                            const success = await updateAiConfig(aiConfig);
+                                                            if (success) showToast("Configuración guardada correctamente", "success");
+                                                            else showToast("Error al guardar en base de datos", "error");
+                                                        }}
+                                                        className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400/50 rounded-xl transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 ml-4 hover:scale-105"
+                                                    >
+                                                        <Save size={14} />
+                                                        GUARDAR CONFIGURACIÓN
                                                     </button>
                                                 </div>
                                             </div>

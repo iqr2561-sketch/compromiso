@@ -7,9 +7,9 @@ if (!admin.apps.length) {
     });
 }
 
-const dbId = process.env.FIRESTORE_DB_ID || 'compromiso';
-console.log(`🔥 Initializing Firestore with Database ID: ${dbId}`);
-const db = getFirestore(dbId);
+const dbId = process.env.FIRESTORE_DB_ID; // Remove default 'compromiso' which might not exist
+console.log(`🔥 Initializing Firestore. DB ID: ${dbId || '(default)'}`);
+const db = dbId ? getFirestore(dbId) : getFirestore();
 
 // Helper to convert Firestore timestamp to JS Date or ISO string
 export const formatFirestoreData = (doc) => {
