@@ -538,7 +538,8 @@ const Admin = () => {
                     prompt: aiGeneratorData.prompt,
                     category: aiGeneratorData.category,
                     generateImage: aiGeneratorData.generateImage,
-                    model: aiConfig.model
+                    model: aiConfig.model,
+                    apiKey: aiConfig.apiKey // Enviar la clave actual para asegurar que use la nueva
                 })
             });
 
