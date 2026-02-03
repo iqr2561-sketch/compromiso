@@ -115,8 +115,10 @@ Responde SOLO en formato JSON con esta estructura exacta:
             const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
 
             try {
-                const cleanedText = generatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                parsedContent = JSON.parse(cleanedText);
+                // Find the first '{' and the last '}' to extract the JSON object
+                const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+                const jsonString = jsonMatch ? jsonMatch[0] : generatedText;
+                parsedContent = JSON.parse(jsonString);
             } catch (parseError) {
                 parsedContent = {
                     title: prompt,

@@ -1231,6 +1231,13 @@ const Admin = () => {
                                                                         if (src === 'gallery') { setGalleryTarget('newsMain'); setShowGallery(true); }
                                                                     }} className={`flex-1 py-3 rounded-xl text-[9px] uppercase font-black transition-all ${imageSource === src ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'} `}>{src}</button>
                                                                 ))}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleGenerateImageOnly}
+                                                                    className="flex-1 py-3 bg-gradient-to-r from-accent-purple/10 to-accent-pink/10 text-accent-pink border border-accent-pink/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-accent-pink hover:text-white transition-all flex items-center justify-center gap-1 group/aibtn"
+                                                                >
+                                                                    <Sparkles size={10} className="group-hover/aibtn:animate-pulse" /> IA
+                                                                </button>
                                                             </div>
                                                             {imageSource === 'url' && <input className="bg-white dark:bg-[#0a0c10] border border-gray-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-primary shadow-inner mt-2" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="URL de imagen..." />}
                                                             {imageSource === 'pc' && <input type="file" onChange={handleFileUpload} className="mt-2 text-[10px] font-bold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer" />}
