@@ -559,6 +559,7 @@ const Admin = () => {
             return;
         }
 
+        console.log("🚀 EJECUTANDO GENERACIÓN IA SECUENCIAL V5.1");
         setIsAiGenerating(true);
         setAiError(null);
         setAiGeneratedContent(null);
@@ -1039,7 +1040,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <h2 className="text-sm font-black tracking-tight uppercase leading-none text-slate-900 dark:text-white italic">Compromiso</h2>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V5.0.0-AI (GEMINI 2.5)</span>
+                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">ADMIN V5.1.0-POWER (GEMINI 2.5)</span>
                     </div>
                 </div>
 
