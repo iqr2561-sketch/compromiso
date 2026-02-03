@@ -3950,174 +3950,174 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+
                                     </section>
                                 )}
 
-                            {settingsTab === 'visual' && (
-                                <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
-                                        <Sparkles size={200} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
-                                            <div className="size-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-500 shadow-lg shadow-pink-500/10">
-                                                <Sparkles size={24} />
-                                            </div>
-                                            Identidad Visual y Pie de Página
-                                        </h3>
-                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Personalización de elementos gráficos y secciones secundarias del portal.</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                        <div className="flex flex-col gap-4">
-                                            <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Fondo "Te Acordás Dolores"</label>
-                                            <div className="flex gap-4">
-                                                <input
-                                                    className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
-                                                    value={footerSettings.te_acordas_bg || ''}
-                                                    onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
-                                                    placeholder="URL de fondo histórico..."
-                                                />
-                                                <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="px-6 bg-white/5 text-slate-400 rounded-full border border-white/10 hover:text-primary transition-all"><ImageIcon size={20} /></button>
-                                            </div>
+                                {settingsTab === 'visual' && (
+                                    <section className="p-10 bg-[#0a0c10] rounded-[3rem] border border-white/5 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Sparkles size={200} />
                                         </div>
-
-                                        <div className="flex flex-col gap-4">
-                                            <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Título Columna Servicios (Footer)</label>
-                                            <input
-                                                className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
-                                                value={footerSettings.column_2_title || ''}
-                                                onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
-                                                placeholder="Ej: Servicios Útiles..."
-                                            />
-                                        </div>
-                                    </div>
-                                </section>
-                            )}
-
-                            {settingsTab === 'system' && (
-                                <section className="p-10 bg-slate-900 rounded-[3rem] border border-white/10 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
-                                        <Globe size={240} />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-wrap gap-6">
                                         <div>
                                             <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
-                                                <div className="size-12 rounded-2xl bg-white/5 flex items-center justify-center text-white shadow-lg">
-                                                    <Globe size={24} />
+                                                <div className="size-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-500 shadow-lg shadow-pink-500/10">
+                                                    <Sparkles size={24} />
                                                 </div>
-                                                Sistema y Núcleo de Red
+                                                Identidad Visual y Pie de Página
                                             </h3>
-                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Monitoreo de latencia, estado de base de datos y copias de seguridad.</p>
-                                        </div>
-                                        <div className="flex gap-4">
-                                            <button onClick={testDbConnection} className="px-10 py-5 bg-white/5 text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">Verificar Red</button>
-                                            <button onClick={handleDownloadBackup} className="px-10 py-5 bg-primary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
-                                                <Save size={18} /> Descargar Backup
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                        <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 flex flex-col gap-4">
-                                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Latencia de Red</span>
-                                            <div className="flex items-center gap-4">
-                                                <div className={`size-4 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`}></div>
-                                                <span className="text-2xl font-black text-white italic tracking-tighter uppercase whitespace-nowrap">
-                                                    {dbStatus?.success ? 'Nodos En Línea' : 'Pendiente'}
-                                                </span>
-                                            </div>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Personalización de elementos gráficos y secciones secundarias del portal.</p>
                                         </div>
 
-                                        {dbStatus?.success && (
-                                            <div className="md:col-span-2 p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[2.5rem] flex flex-col justify-center">
-                                                <div className="flex items-center gap-4 mb-2">
-                                                    <Activity size={18} className="text-emerald-500" />
-                                                    <span className="text-[10px] font-black uppercase text-emerald-500 tracking-widest">Detalles del Servidor</span>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Fondo "Te Acordás Dolores"</label>
+                                                <div className="flex gap-4">
+                                                    <input
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                        value={footerSettings.te_acordas_bg || ''}
+                                                        onChange={e => updateFooterSettings({ te_acordas_bg: e.target.value })}
+                                                        placeholder="URL de fondo histórico..."
+                                                    />
+                                                    <button onClick={() => { setGalleryTarget('te_acordas'); setShowGallery(true); }} className="px-6 bg-white/5 text-slate-400 rounded-full border border-white/10 hover:text-primary transition-all"><ImageIcon size={20} /></button>
                                                 </div>
-                                                <p className="text-xs font-mono text-emerald-400 uppercase tracking-tighter leading-relaxed">
-                                                    Base de Datos: {dbStatus.data.db} <br />
-                                                    Estado: OPERATIVO | Último check: {new Date(dbStatus.data.time).toLocaleString()}
-                                                </p>
                                             </div>
-                                        )}
-                                    </div>
-                                </section>
-                            )}
-                        </motion.div>
+
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest px-1">Título Columna Servicios (Footer)</label>
+                                                <input
+                                                    className="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-6 text-sm font-bold text-white outline-none focus:border-primary transition-all shadow-inner"
+                                                    value={footerSettings.column_2_title || ''}
+                                                    onChange={e => updateFooterSettings({ column_2_title: e.target.value })}
+                                                    placeholder="Ej: Servicios Útiles..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </section>
+                                )}
+
+                                {settingsTab === 'system' && (
+                                    <section className="p-10 bg-slate-900 rounded-[3rem] border border-white/10 flex flex-col gap-10 shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                            <Globe size={240} />
+                                        </div>
+                                        <div className="flex items-center justify-between flex-wrap gap-6">
+                                            <div>
+                                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2 flex items-center gap-4">
+                                                    <div className="size-12 rounded-2xl bg-white/5 flex items-center justify-center text-white shadow-lg">
+                                                        <Globe size={24} />
+                                                    </div>
+                                                    Sistema y Núcleo de Red
+                                                </h3>
+                                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Monitoreo de latencia, estado de base de datos y copias de seguridad.</p>
+                                            </div>
+                                            <div className="flex gap-4">
+                                                <button onClick={testDbConnection} className="px-10 py-5 bg-white/5 text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">Verificar Red</button>
+                                                <button onClick={handleDownloadBackup} className="px-10 py-5 bg-primary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
+                                                    <Save size={18} /> Descargar Backup
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                            <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 flex flex-col gap-4">
+                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Latencia de Red</span>
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`size-4 rounded-full ${dbStatus?.success ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`}></div>
+                                                    <span className="text-2xl font-black text-white italic tracking-tighter uppercase whitespace-nowrap">
+                                                        {dbStatus?.success ? 'Nodos En Línea' : 'Pendiente'}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {dbStatus?.success && (
+                                                <div className="md:col-span-2 p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[2.5rem] flex flex-col justify-center">
+                                                    <div className="flex items-center gap-4 mb-2">
+                                                        <Activity size={18} className="text-emerald-500" />
+                                                        <span className="text-[10px] font-black uppercase text-emerald-500 tracking-widest">Detalles del Servidor</span>
+                                                    </div>
+                                                    <p className="text-xs font-mono text-emerald-400 uppercase tracking-tighter leading-relaxed">
+                                                        Base de Datos: {dbStatus.data.db} <br />
+                                                        Estado: OPERATIVO | Último check: {new Date(dbStatus.data.time).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </section>
+                                )}
+                            </motion.div>
                         </div>
-                )
+                    )
                     }
 
-        </div >
+                </div >
             </main >
 
-    {/* Modern Toast System moved and cleaned */ }
-    < AnimatePresence >
-    { toast && (
-        <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
-                ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
-                : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
-                }`}
-        >
-            {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
-            <span className="text-sm font-black uppercase tracking-widest">{toast.message}</span>
-            <button onClick={() => setToast(null)} className="ml-4 p-1 hover:bg-white/10 rounded-full transition-colors"><X size={14} /></button>
-        </motion.div>
-    )}
+            {/* Modern Toast System moved and cleaned */}
+            < AnimatePresence >
+                {toast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[3000] px-8 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-4 ${toast.type === 'error'
+                            ? 'bg-red-500/90 border-red-400 text-white shadow-red-500/30'
+                            : 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/30'
+                            }`}
+                    >
+                        {toast.type === 'error' ? <X size={20} /> : <Zap size={20} className="animate-pulse" />}
+                        <span className="text-sm font-black uppercase tracking-widest">{toast.message}</span>
+                        <button onClick={() => setToast(null)} className="ml-4 p-1 hover:bg-white/10 rounded-full transition-colors"><X size={14} /></button>
+                    </motion.div>
+                )}
             </AnimatePresence >
 
-    {/* Custom Confirmation Modal */ }
-    < AnimatePresence >
-    { confirmConfig && (
-        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setConfirmConfig(null)}
-                className="absolute inset-0 bg-black/80 backdrop-blur-md"
-            />
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-sm bg-[#11141b] rounded-[2.5rem] border border-white/10 shadow-3xl p-10 flex flex-col items-center text-center gap-6"
-            >
-                <div className="size-20 rounded-3xl bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
-                    <Trash2 size={40} />
-                </div>
-                <div>
-                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">{confirmConfig.title}</h3>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-                        {confirmConfig.message}
-                    </p>
-                </div>
-                <div className="flex gap-4 w-full mt-4">
-                    <button
-                        onClick={() => setConfirmConfig(null)}
-                        className="flex-1 px-6 py-4 bg-white/5 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={() => {
-                            confirmConfig.onConfirm();
-                            setConfirmConfig(null);
-                        }}
-                        className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-red-500/20"
-                    >
-                        Confirmar
-                    </button>
-                </div>
-            </motion.div>
-        </div>
-    )}
+            {/* Custom Confirmation Modal */}
+            < AnimatePresence >
+                {confirmConfig && (
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setConfirmConfig(null)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-sm bg-[#11141b] rounded-[2.5rem] border border-white/10 shadow-3xl p-10 flex flex-col items-center text-center gap-6"
+                        >
+                            <div className="size-20 rounded-3xl bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
+                                <Trash2 size={40} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">{confirmConfig.title}</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                                    {confirmConfig.message}
+                                </p>
+                            </div>
+                            <div className="flex gap-4 w-full mt-4">
+                                <button
+                                    onClick={() => setConfirmConfig(null)}
+                                    className="flex-1 px-6 py-4 bg-white/5 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        confirmConfig.onConfirm();
+                                        setConfirmConfig(null);
+                                    }}
+                                    className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-red-500/20"
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
             </AnimatePresence >
 
             <AnimatePresence>
