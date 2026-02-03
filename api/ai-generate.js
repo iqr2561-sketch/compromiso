@@ -41,8 +41,10 @@ export default async function handler(req, res) {
         // Generar lista de modelos a probar en orden
         const modelsToTry = [];
         if (model) modelsToTry.push(model); // El usuario eligió uno
-        if (!modelsToTry.includes('gemini-1.5-flash')) modelsToTry.push('gemini-1.5-flash'); // Fallback 1: Flash (Rápido y estable)
-        if (!modelsToTry.includes('gemini-2.0-flash-exp')) modelsToTry.push('gemini-2.0-flash-exp'); // Fallback 2: Experimental nuevo
+        if (!modelsToTry.includes('gemini-2.5-flash')) modelsToTry.push('gemini-2.5-flash'); // Fallback 0: El más nuevo confirmado
+        if (!modelsToTry.includes('gemini-1.5-flash')) modelsToTry.push('gemini-1.5-flash'); // Fallback 1: Flash standard
+        if (!modelsToTry.includes('gemini-2.0-flash-exp')) modelsToTry.push('gemini-2.0-flash-exp'); // Fallback 2: Experimental
+        if (!modelsToTry.includes('gemini-1.0-pro-001')) modelsToTry.push('gemini-1.0-pro-001'); // Fallback 3: Legacy especifico
         // Eliminados gemini-pro y 1.0-pro que ya no están disponibles en v1beta
 
         const systemPrompt = `Eres un periodista profesional de un diario local de Argentina llamado "Compromiso". 
