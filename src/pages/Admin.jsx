@@ -3922,9 +3922,9 @@ const Admin = () => {
                                                             value={aiConfig.model}
                                                             onChange={e => updateAiConfig({ ...aiConfig, model: e.target.value })}
                                                         >
-                                                            <option value="gemini-1.5-flash" className="text-slate-900">Gemini 1.5 Flash (Velocidad)</option>
-                                                            <option value="gemini-1.5-pro" className="text-slate-900">Gemini 1.5 Pro (Precision)</option>
-                                                            <option value="gemini-2.0-flash-exp" className="text-slate-900">Gemini 2.0 Flash (Experimental)</option>
+                                                            <option value="gemini-1.5-flash" style={{ color: 'black' }}>Gemini 1.5 Flash (Velocidad - Recomendado)</option>
+                                                            <option value="gemini-1.5-pro" style={{ color: 'black' }}>Gemini 1.5 Pro (Mayor Calidad)</option>
+                                                            <option value="gemini-2.0-flash-exp" style={{ color: 'black' }}>Gemini 2.0 Flash Exp (Experimental)</option>
                                                         </select>
                                                         <ChevronRight size={18} className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none rotate-90" />
                                                     </div>
